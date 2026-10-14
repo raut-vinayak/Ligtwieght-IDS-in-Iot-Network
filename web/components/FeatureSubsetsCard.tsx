@@ -81,23 +81,23 @@ export default function FeatureSubsetsCard({
   const currentFeatures = featureSets[selectedK] || featureSets[10];
 
   return (
-    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all overflow-hidden">
+    <div className="bg-surface border-2 border-blue/35 hover:border-blue rounded-2xl p-5 md:p-6 shadow-xs hover:shadow-md transition-all overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-blue/20 gap-2">
         <div>
-          <h3 className="text-sm font-bold text-ink">Nested Feature Sets (K={selectedK})</h3>
-          <p className="text-xs text-muted mt-0.5">
+          <h3 className="text-sm font-black text-ink">Nested Feature Sets (K={selectedK})</h3>
+          <p className="text-xs text-muted mt-0.5 font-medium">
             Mutual Information ranked & Pearson correlation pruned (ρ &lt; 0.85)
           </p>
         </div>
-        <div className="flex items-center gap-1.5 bg-canvas p-1 rounded-lg border-2 border-blue/30 text-xs font-bold self-start sm:self-auto shrink-0">
+        <div className="flex items-center gap-1.5 bg-canvas p-1 rounded-xl border-2 border-blue/30 text-xs font-bold self-start sm:self-auto shrink-0">
           {[5, 10, 15, 20].map((k) => (
             <button
               key={k}
               onClick={() => onSelectK(k)}
-              className={`px-3 py-1 rounded transition-all ${
+              className={`px-3 py-1 rounded-lg transition-all cursor-pointer ${
                 selectedK === k
-                  ? "bg-blue text-white shadow-xs"
-                  : "text-muted hover:text-ink"
+                  ? "bg-blue text-white shadow-xs font-black"
+                  : "text-muted hover:text-ink font-bold"
               }`}
             >
               K={k}

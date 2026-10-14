@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { PieChart } from "lucide-react";
 
 interface ClassDistributionProps {
   task: string;
@@ -26,13 +27,16 @@ export default function ClassDistributionCard({ task }: ClassDistributionProps) 
   const items = task === "binary" ? binaryDistribution : multiclassDistribution;
 
   return (
-    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all overflow-hidden h-full flex flex-col justify-between">
+    <div className="bg-surface border-2 border-blue/35 hover:border-blue rounded-2xl p-5 md:p-6 shadow-xs hover:shadow-md transition-all overflow-hidden h-full flex flex-col justify-between">
       <div className="flex items-center justify-between pb-3 border-b-2 border-blue/20 shrink-0">
         <div>
-          <h3 className="text-sm font-bold text-ink">Class Distribution</h3>
-          <p className="text-xs text-muted mt-0.5">Authoritative ground truth split support</p>
+          <div className="flex items-center gap-2">
+            <PieChart className="w-4 h-4 text-blue" />
+            <h3 className="text-sm font-black text-ink">Class Distribution</h3>
+          </div>
+          <p className="text-xs text-muted mt-0.5 font-medium">Authoritative ground truth split support</p>
         </div>
-        <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-blue/10 border border-blue/30 text-blue shrink-0">
+        <span className="text-[11px] font-black px-2.5 py-0.5 rounded-full bg-blue/10 border border-blue/30 text-blue shrink-0 shadow-xs">
           16,000 Flows
         </span>
       </div>
@@ -41,14 +45,14 @@ export default function ClassDistributionCard({ task }: ClassDistributionProps) 
         {items.map((item) => (
           <div key={item.name} className="space-y-1">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-bold text-ink flex items-center gap-1.5">
+              <span className="font-bold text-ink flex items-center gap-2">
                 <span
-                  className="w-2.5 h-2.5 rounded-full inline-block"
+                  className="w-2.5 h-2.5 rounded-full inline-block shadow-xs"
                   style={{ backgroundColor: item.color }}
                 ></span>
                 {item.name}
               </span>
-              <span className="text-muted font-mono font-semibold">
+              <span className="text-muted font-mono font-bold">
                 {item.count.toLocaleString()} ({item.pct}%)
               </span>
             </div>

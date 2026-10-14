@@ -39,15 +39,15 @@ export default function ModelComparisonTable({
   });
 
   return (
-    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all overflow-hidden">
+    <div className="bg-surface border-2 border-blue/35 hover:border-blue rounded-2xl p-5 md:p-6 shadow-xs hover:shadow-md transition-all overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-blue/20 gap-2">
         <div>
-          <h3 className="text-sm font-bold text-ink">Comprehensive Model Scorecard</h3>
-          <p className="text-xs text-muted mt-0.5">
+          <h3 className="text-sm font-black text-ink">Comprehensive Model Scorecard</h3>
+          <p className="text-xs text-muted mt-0.5 font-medium">
             Click any row to sync KPI cards and active model highlights
           </p>
         </div>
-        <span className="text-[11px] font-bold text-blue bg-blue/10 px-2.5 py-1 rounded-md border border-blue/30 self-start sm:self-auto shrink-0">
+        <span className="text-[11px] font-black text-blue bg-blue/10 px-3 py-1 rounded-full border border-blue/30 self-start sm:self-auto shrink-0 shadow-xs">
           {scorecardData.length} Configurations Benchmarked
         </span>
       </div>

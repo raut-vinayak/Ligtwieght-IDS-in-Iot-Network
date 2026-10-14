@@ -23,29 +23,33 @@ export default function KpiRow({
       label: "Test Macro F1",
       value: (macroF1 * 100).toFixed(1) + "%",
       subtext: `${modelName} @ K=${k}`,
-      icon: <Target className="w-4 h-4 text-blue" />,
-      tag: "Holdout",
+      icon: <Target className="w-5 h-5 text-blue" />,
+      tag: "Holdout Split",
+      iconBg: "bg-blue/10 border-blue/30",
     },
     {
       label: "Balanced Accuracy",
       value: (balancedAcc * 100).toFixed(1) + "%",
       subtext: "Compensates class skew",
-      icon: <CheckCircle2 className="w-4 h-4 text-positive" />,
-      tag: "Holdout",
+      icon: <CheckCircle2 className="w-5 h-5 text-positive" />,
+      tag: "Holdout Split",
+      iconBg: "bg-positive/10 border-positive/30",
     },
     {
-      label: "Median Inference",
+      label: "Median Latency",
       value: medianLatencyMs.toFixed(3) + " ms",
       subtext: "Single-flow response time",
-      icon: <Zap className="w-4 h-4 text-warning" />,
+      icon: <Zap className="w-5 h-5 text-warning" />,
       tag: "Benchmarked",
+      iconBg: "bg-warning/10 border-warning/30",
     },
     {
       label: "Model Footprint",
       value: modelSizeKb < 1024 ? `${modelSizeKb.toFixed(1)} KB` : `${(modelSizeKb / 1024).toFixed(2)} MB`,
-      subtext: "Embedded RAM/Flash cost",
-      icon: <HardDrive className="w-4 h-4 text-indigo" />,
+      subtext: "Embedded Flash/RAM cost",
+      icon: <HardDrive className="w-5 h-5 text-indigo" />,
       tag: "Artifact",
+      iconBg: "bg-indigo/10 border-indigo/30",
     },
   ];
 
@@ -54,21 +58,23 @@ export default function KpiRow({
       {cards.map((c, i) => (
         <div
           key={i}
-          className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm hover:shadow-md transition-all overflow-hidden"
+          className="bg-gradient-to-br from-white via-white to-blue-50/40 border-2 border-blue/35 hover:border-blue rounded-2xl p-4 md:p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden flex flex-col justify-between"
         >
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-bold text-muted uppercase tracking-wider">{c.label}</span>
-            <div className="p-1.5 rounded-lg bg-blue/5 border border-blue/30">
-              {c.icon}
+          <div>
+            <div className="flex items-center justify-between mb-2.5">
+              <span className="text-[11px] font-black text-muted uppercase tracking-wider">{c.label}</span>
+              <div className={`p-2 rounded-xl border ${c.iconBg} shadow-xs`}>
+                {c.icon}
+              </div>
+            </div>
+            <div className="flex items-baseline gap-2">
+              <span className="text-3xl font-black text-ink tracking-tight">{c.value}</span>
+              <span className="text-[10px] font-black px-1.5 py-0.5 rounded-md bg-blue/10 text-blue border border-blue/30">
+                {c.tag}
+              </span>
             </div>
           </div>
-          <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-black text-ink tracking-tight">{c.value}</span>
-            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue/10 text-blue border border-blue/30">
-              {c.tag}
-            </span>
-          </div>
-          <p className="text-[11px] text-muted font-medium mt-1">{c.subtext}</p>
+          <p className="text-[11px] text-muted font-bold mt-2 pt-2 border-t border-blue/10">{c.subtext}</p>
         </div>
       ))}
     </div>

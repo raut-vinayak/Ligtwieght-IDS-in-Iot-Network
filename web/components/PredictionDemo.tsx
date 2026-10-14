@@ -14,15 +14,17 @@ import {
   Zap,
   Activity,
   AlertTriangle,
-  CheckCircle2,
-  Sliders
+  Sliders,
+  Sparkles,
+  Layers,
+  ArrowRight
 } from "lucide-react";
 
 interface PredictionDemoProps {
   task: "binary" | "multiclass";
 }
 
-// Synthesize authentic IDS alarm and chime using Web Audio API (Zero external assets needed)
+// Synthesize authentic IDS alarm and chime using Web Audio API
 function playIdsSound(isAttack: boolean) {
   try {
     const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
@@ -36,7 +38,7 @@ function playIdsSound(isAttack: boolean) {
       const gain = ctx.createGain();
       osc.type = "sawtooth";
 
-      // Siren tone modulation (alternating 880Hz / 587Hz)
+      // Siren tone modulation
       osc.frequency.setValueAtTime(880, now);
       osc.frequency.setValueAtTime(587.33, now + 0.15);
       osc.frequency.setValueAtTime(987.77, now + 0.3);
@@ -72,31 +74,22 @@ function playIdsSound(isAttack: boolean) {
   }
 }
 
-// Canonical Default Realistic Features for IoT
-const defaultBenignParams: Record<string, number> = {
-  Number: 15,
-  Rate: 22.0,
-  Srate: 18.5,
-  Drate: 3.5,
-  syn_count: 2,
-  ack_count: 14,
-  rst_count: 0,
-  AVG: 140.0,
-  "Tot sum": 2520.0,
-  "Tot size": 2520.0,
-  IAT: 0.085,
-  HTTPS: 1,
-  TCP: 1,
-  SSH: 0,
-  Telnet: 0,
-  ARP: 0,
-  DHCP: 0,
-  syn_flag_number: 0,
-  ack_flag_number: 1,
-  rst_flag_number: 0,
-  psh_flag_number: 0,
-  ece_flag_number: 0,
-  Variance: 45.0,
+// 10 Features Metadata (labels & units)
+const featureMeta: Record<string, { label: string; unit: string; desc: string }> = {
+  Rate: { label: "Packet Rate", unit: "pkts/s", desc: "Total transmission throughput" },
+  syn_count: { label: "SYN Packets", unit: "count", desc: "TCP synchronization probes" },
+  ack_count: { label: "ACK Packets", unit: "count", desc: "TCP acknowledged receipts" },
+  AVG: { label: "Avg Packet Size", unit: "bytes", desc: "Mean payload window size" },
+  Number: { label: "Flow Packet Count", unit: "packets", desc: "Total packets in sliding window" },
+  "Tot sum": { label: "Total Volume", unit: "bytes", desc: "Aggregated flow octets" },
+  syn_flag_number: { label: "SYN Flag Active", unit: "0 or 1", desc: "SYN flag present in frame" },
+  Drate: { label: "Dest Packet Rate", unit: "pkts/s", desc: "Packets delivered to target" },
+  Variance: { label: "Payload Variance", unit: "bytes²", desc: "Packet size dispersion" },
+  IAT: { label: "Inter-Arrival Time", unit: "seconds", desc: "Delta between arrivals" },
+  Srate: { label: "Source Packet Rate", unit: "pkts/s", desc: "Packets sent from client" },
+  HTTPS: { label: "HTTPS Port (443)", unit: "0 or 1", desc: "Encrypted web session" },
+  ack_flag_number: { label: "ACK Flag Active", unit: "0 or 1", desc: "ACK flag present in frame" },
+  "Tot size": { label: "Total Size", unit: "bytes", desc: "Aggregate stream length" },
 };
 
 // Recursive Decision Tree Evaluator
@@ -123,11 +116,68 @@ function evaluateTree(
 export default function PredictionDemo({ task }: PredictionDemoProps) {
   const [activeTab, setActiveTab] = useState<"manual" | "csv">("manual");
   const [engineData, setEngineData] = useState<any>(null);
-  const [contract, setContract] = useState<any>(null);
-  const [manualInputs, setManualInputs] = useState<Record<string, number>>(defaultBenignParams);
   const [loading, setLoading] = useState(false);
   const [csvResults, setCsvResults] = useState<any[]>([]);
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  // Active 10 Feature Names
+  const activeFeatures =
+    task === "binary"
+      ? [
+          "Number",
+          "ack_count",
+          "IAT",
+          "Srate",
+          "syn_count",
+          "AVG",
+          "HTTPS",
+          "ack_flag_number",
+          "syn_flag_number",
+          "Tot size",
+        ]
+      : [
+          "Rate",
+          "syn_count",
+          "ack_count",
+          "AVG",
+          "Number",
+          "Tot sum",
+          "syn_flag_number",
+          "Drate",
+          "Variance",
+          "IAT",
+        ];
+
+  // Default Benign Values (10 features)
+  const defaultBenignValues: Record<string, number> =
+    task === "binary"
+      ? {
+          Number: 16,
+          ack_count: 14,
+          IAT: 0.085,
+          Srate: 18.5,
+          syn_count: 2,
+          AVG: 140.0,
+          HTTPS: 1,
+          ack_flag_number: 1,
+          syn_flag_number: 0,
+          "Tot size": 2240.0,
+        }
+      : {
+          Rate: 22.0,
+          syn_count: 2,
+          ack_count: 14,
+          AVG: 140.0,
+          Number: 16,
+          "Tot sum": 2240.0,
+          syn_flag_number: 0,
+          Drate: 2.0,
+          Variance: 45.0,
+          IAT: 0.085,
+        };
+
+  const [manualInputs, setManualInputs] = useState<Record<string, number>>(defaultBenignValues);
+  const [activePresetName, setActivePresetName] = useState<string>("Normal Web Browsing (Safe)");
 
   // Active Live Verdict on Page
   const [liveVerdict, setLiveVerdict] = useState<{
@@ -142,246 +192,263 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
   }>({
     prediction: "Benign Traffic",
     isAttack: false,
-    confidence: 99.4,
-    latencyMs: 0.25,
+    confidence: 100.0,
+    latencyMs: 0.22,
     riskLevel: "SAFE",
-    description: "Flow parameters conform to standard IoT telemetry. Packet rate and flag ratios are normal.",
-    actionAdvice: "No action required. Traffic authenticated as legitimate IoT node transmission.",
-    flowKeySummary: "Rate: 22.0 pkts/s | syn_count: 2 | ack_count: 14 | AVG: 140 B",
+    description: "Flow parameters strictly conform to standard IoT device telemetry. Normal latency and packet intervals.",
+    actionAdvice: "No action required. Flow signature verified as legitimate IoT communication.",
+    flowKeySummary: "10 Features Monitored | Baseline: Normal Traffic",
   });
 
   // Popup Modal Alert State
   const [showModal, setShowModal] = useState(false);
   const [modalResult, setModalResult] = useState<typeof liveVerdict | null>(null);
-
   const [soundEnabled, setSoundEnabled] = useState(true);
-  const [activePresetName, setActivePresetName] = useState<string>("Normal IoT Telemetry");
 
-  // Load inference engine and contract
+  // Load inference engine JSON
   useEffect(() => {
     fetch("/data/exact_inference_engine.json")
       .then((res) => res.json())
-      .then((data) => setEngineData(data))
+      .then((data) => {
+        setEngineData(data);
+      })
       .catch((err) => console.error("Could not load inference engine:", err));
 
-    const contractUrl =
-      task === "binary"
-        ? "/data/ids_binary_contract.json"
-        : "/data/ids_multiclass_contract.json";
-    fetch(contractUrl)
-      .then((res) => res.json())
-      .then((data) => {
-        setContract(data);
-      })
-      .catch((err) => console.error("Could not load inference contract:", err));
+    setManualInputs(defaultBenignValues);
   }, [task]);
 
-  // Apply Predefined Realistic Scenarios
+  // Apply Presets (10 features strictly)
   const applyPreset = (presetKey: "benign" | "cam" | "ddos" | "recon" | "mirai" | "ssh") => {
-    const updated: Record<string, number> = { ...defaultBenignParams };
+    let updated: Record<string, number> = {};
 
-    if (presetKey === "benign") {
-      updated["Number"] = 15;
-      updated["Rate"] = 22.0;
-      updated["Srate"] = 18.5;
-      updated["Drate"] = 3.5;
-      updated["syn_count"] = 2;
-      updated["ack_count"] = 14;
-      updated["rst_count"] = 0;
-      updated["AVG"] = 140.0;
-      updated["Tot sum"] = 2520.0;
-      updated["Tot size"] = 2520.0;
-      updated["IAT"] = 0.085;
-      updated["HTTPS"] = 1;
-      updated["TCP"] = 1;
-      updated["SSH"] = 0;
-      updated["Telnet"] = 0;
-      updated["syn_flag_number"] = 0;
-      updated["ack_flag_number"] = 1;
-      setActivePresetName("Normal Web Browsing (Safe)");
-    } else if (presetKey === "cam") {
-      updated["Number"] = 22;
-      updated["Rate"] = 45.0;
-      updated["Srate"] = 40.0;
-      updated["Drate"] = 5.0;
-      updated["syn_count"] = 1;
-      updated["ack_count"] = 20;
-      updated["rst_count"] = 0;
-      updated["AVG"] = 820.0;
-      updated["Tot sum"] = 18040.0;
-      updated["Tot size"] = 18040.0;
-      updated["IAT"] = 0.035;
-      updated["HTTPS"] = 1;
-      updated["TCP"] = 1;
-      updated["SSH"] = 0;
-      updated["Telnet"] = 0;
-      updated["syn_flag_number"] = 0;
-      updated["ack_flag_number"] = 1;
-      setActivePresetName("Smart Camera Streaming (Safe)");
-    } else if (presetKey === "ddos") {
-      updated["Number"] = 250;
-      updated["Rate"] = 2200.0;
-      updated["Srate"] = 1950.0;
-      updated["Drate"] = 250.0;
-      updated["syn_count"] = 180;
-      updated["ack_count"] = 0;
-      updated["rst_count"] = 0;
-      updated["AVG"] = 64.0;
-      updated["Tot sum"] = 16000.0;
-      updated["Tot size"] = 16000.0;
-      updated["IAT"] = 0.00045;
-      updated["HTTPS"] = 0;
-      updated["TCP"] = 1;
-      updated["SSH"] = 0;
-      updated["Telnet"] = 0;
-      updated["syn_flag_number"] = 1;
-      updated["ack_flag_number"] = 0;
-      setActivePresetName("High-Rate DDoS SYN Flood (Attack)");
-    } else if (presetKey === "recon") {
-      updated["Number"] = 35;
-      updated["Rate"] = 150.0;
-      updated["Srate"] = 145.0;
-      updated["Drate"] = 5.0;
-      updated["syn_count"] = 28;
-      updated["ack_count"] = 0;
-      updated["rst_count"] = 18;
-      updated["AVG"] = 44.0;
-      updated["Tot sum"] = 1540.0;
-      updated["Tot size"] = 1540.0;
-      updated["IAT"] = 0.012;
-      updated["HTTPS"] = 0;
-      updated["TCP"] = 1;
-      updated["SSH"] = 0;
-      updated["Telnet"] = 0;
-      updated["syn_flag_number"] = 1;
-      updated["ack_flag_number"] = 0;
-      setActivePresetName("Stealth TCP Port Scan (Attack)");
-    } else if (presetKey === "mirai") {
-      updated["Number"] = 120;
-      updated["Rate"] = 850.0;
-      updated["Srate"] = 800.0;
-      updated["Drate"] = 50.0;
-      updated["syn_count"] = 55;
-      updated["ack_count"] = 5;
-      updated["rst_count"] = 12;
-      updated["AVG"] = 72.0;
-      updated["Tot sum"] = 8640.0;
-      updated["Tot size"] = 8640.0;
-      updated["IAT"] = 0.0025;
-      updated["HTTPS"] = 0;
-      updated["TCP"] = 1;
-      updated["Telnet"] = 1;
-      updated["SSH"] = 0;
-      updated["syn_flag_number"] = 1;
-      updated["ack_flag_number"] = 0;
-      setActivePresetName("Mirai Botnet Telnet Probe (Attack)");
-    } else if (presetKey === "ssh") {
-      updated["Number"] = 48;
-      updated["Rate"] = 320.0;
-      updated["Srate"] = 310.0;
-      updated["Drate"] = 10.0;
-      updated["syn_count"] = 18;
-      updated["ack_count"] = 4;
-      updated["rst_count"] = 14;
-      updated["AVG"] = 96.0;
-      updated["Tot sum"] = 4608.0;
-      updated["Tot size"] = 4608.0;
-      updated["IAT"] = 0.008;
-      updated["HTTPS"] = 0;
-      updated["TCP"] = 1;
-      updated["SSH"] = 1;
-      updated["Telnet"] = 0;
-      updated["psh_flag_number"] = 1;
-      updated["syn_flag_number"] = 1;
-      setActivePresetName("SSH Credential Brute Force (Attack)");
+    if (task === "binary") {
+      if (presetKey === "benign") {
+        updated = {
+          Number: 16,
+          ack_count: 14,
+          IAT: 0.085,
+          Srate: 18.5,
+          syn_count: 2,
+          AVG: 140.0,
+          HTTPS: 1,
+          ack_flag_number: 1,
+          syn_flag_number: 0,
+          "Tot size": 2240.0,
+        };
+        setActivePresetName("Normal Web Browsing (Safe)");
+      } else if (presetKey === "cam") {
+        updated = {
+          Number: 25,
+          ack_count: 24,
+          IAT: 0.035,
+          Srate: 40.0,
+          syn_count: 1,
+          AVG: 820.0,
+          HTTPS: 1,
+          ack_flag_number: 1,
+          syn_flag_number: 0,
+          "Tot size": 20500.0,
+        };
+        setActivePresetName("Smart Camera Streaming (Safe)");
+      } else if (presetKey === "ddos") {
+        updated = {
+          Number: 260,
+          ack_count: 0,
+          IAT: 0.0004,
+          Srate: 2200.0,
+          syn_count: 220,
+          AVG: 64.0,
+          HTTPS: 0,
+          ack_flag_number: 0,
+          syn_flag_number: 1,
+          "Tot size": 16640.0,
+        };
+        setActivePresetName("High-Rate DDoS SYN Flood (Attack)");
+      } else if (presetKey === "recon") {
+        updated = {
+          Number: 35,
+          ack_count: 0,
+          IAT: 0.015,
+          Srate: 85.0,
+          syn_count: 32,
+          AVG: 44.0,
+          HTTPS: 0,
+          ack_flag_number: 0,
+          syn_flag_number: 1,
+          "Tot size": 1540.0,
+        };
+        setActivePresetName("Stealth TCP Port Scan (Attack)");
+      } else if (presetKey === "mirai") {
+        updated = {
+          Number: 110,
+          ack_count: 5,
+          IAT: 0.002,
+          Srate: 850.0,
+          syn_count: 85,
+          AVG: 72.0,
+          HTTPS: 0,
+          ack_flag_number: 0,
+          syn_flag_number: 1,
+          "Tot size": 7920.0,
+        };
+        setActivePresetName("Mirai Botnet Telnet Flood (Attack)");
+      } else if (presetKey === "ssh") {
+        updated = {
+          Number: 45,
+          ack_count: 2,
+          IAT: 0.006,
+          Srate: 310.0,
+          syn_count: 24,
+          AVG: 98.0,
+          HTTPS: 0,
+          ack_flag_number: 0,
+          syn_flag_number: 1,
+          "Tot size": 4410.0,
+        };
+        setActivePresetName("SSH Credential Brute Force (Attack)");
+      }
+    } else {
+      // Multiclass 10 features
+      if (presetKey === "benign") {
+        updated = {
+          Rate: 22.0,
+          syn_count: 2,
+          ack_count: 14,
+          AVG: 140.0,
+          Number: 16,
+          "Tot sum": 2240.0,
+          syn_flag_number: 0,
+          Drate: 2.0,
+          Variance: 45.0,
+          IAT: 0.085,
+        };
+        setActivePresetName("Normal Web Browsing (Safe)");
+      } else if (presetKey === "cam") {
+        updated = {
+          Rate: 45.0,
+          syn_count: 1,
+          ack_count: 24,
+          AVG: 820.0,
+          Number: 25,
+          "Tot sum": 20500.0,
+          syn_flag_number: 0,
+          Drate: 5.0,
+          Variance: 120.0,
+          IAT: 0.035,
+        };
+        setActivePresetName("Smart Camera Streaming (Safe)");
+      } else if (presetKey === "ddos") {
+        updated = {
+          Rate: 2500.0,
+          syn_count: 220,
+          ack_count: 0,
+          AVG: 64.0,
+          Number: 260,
+          "Tot sum": 16640.0,
+          syn_flag_number: 1,
+          Drate: 0.0,
+          Variance: 12.0,
+          IAT: 0.0004,
+        };
+        setActivePresetName("High-Rate DDoS SYN Flood (Attack)");
+      } else if (presetKey === "recon") {
+        updated = {
+          Rate: 85.0,
+          syn_count: 32,
+          ack_count: 0,
+          AVG: 44.0,
+          Number: 35,
+          "Tot sum": 1540.0,
+          syn_flag_number: 1,
+          Drate: 0.0,
+          Variance: 4.0,
+          IAT: 0.015,
+        };
+        setActivePresetName("Stealth TCP Port Scan (Attack)");
+      } else if (presetKey === "mirai") {
+        updated = {
+          Rate: 850.0,
+          syn_count: 85,
+          ack_count: 5,
+          AVG: 72.0,
+          Number: 110,
+          "Tot sum": 7920.0,
+          syn_flag_number: 1,
+          Drate: 45.0,
+          Variance: 18.0,
+          IAT: 0.002,
+        };
+        setActivePresetName("Mirai Botnet Telnet Flood (Attack)");
+      } else if (presetKey === "ssh") {
+        updated = {
+          Rate: 310.0,
+          syn_count: 24,
+          ack_count: 2,
+          AVG: 98.0,
+          Number: 45,
+          "Tot sum": 4410.0,
+          syn_flag_number: 1,
+          Drate: 12.0,
+          Variance: 35.0,
+          IAT: 0.006,
+        };
+        setActivePresetName("SSH Credential Brute Force (Attack)");
+      }
     }
 
     setManualInputs(updated);
     setValidationError(null);
   };
 
-  // Perform classification
+  // Run Classification on 10 features
   const handleClassify = () => {
     setLoading(true);
     setValidationError(null);
 
     const t0 = performance.now();
     try {
-      // 1. Transparent Rule / Decision Tree Evaluation
-      let rawPred = "Benign";
-      let confidence = 99.2;
-
-      if (engineData) {
-        const activeTree =
-          task === "binary"
-            ? engineData.binary_tree_raw
-            : engineData.multiclass_tree_raw;
-        const evalRes = evaluateTree(activeTree, manualInputs);
-        rawPred = evalRes.prediction;
-        confidence = evalRes.confidence;
+      if (!engineData) {
+        throw new Error("Edge inference rules loading... please wait.");
       }
 
-      // Check key threshold indicators for foolproof detection
-      const rateVal = manualInputs["Rate"] || 0;
-      const synVal = manualInputs["syn_count"] || 0;
-      const ackVal = manualInputs["ack_count"] || 0;
-      const telnetVal = manualInputs["Telnet"] || 0;
-      const sshVal = manualInputs["SSH"] || 0;
-      const numVal = manualInputs["Number"] || 0;
+      const activeTree =
+        task === "binary"
+          ? engineData.binary_tree_raw
+          : engineData.multiclass_tree_raw;
 
-      // Behavioral heuristic checks to guarantee zero false negatives on severe attacks:
-      let detectedLabel = rawPred;
-      let isAttack =
+      const evalRes = evaluateTree(activeTree, manualInputs);
+      const latencyMs = Math.max(0.12, performance.now() - t0);
+
+      const rawPred = evalRes.prediction;
+      const isAttack =
         rawPred !== "Benign" &&
         rawPred !== "0" &&
         rawPred.toLowerCase() !== "benign";
-
-      if (telnetVal >= 0.5) {
-        detectedLabel = "Mirai";
-        isAttack = true;
-      } else if (sshVal >= 0.5 && synVal > 10) {
-        detectedLabel = "Brute Force";
-        isAttack = true;
-      } else if (rateVal > 1000 || (synVal > 50 && ackVal === 0)) {
-        detectedLabel = "DDoS";
-        isAttack = true;
-      } else if (synVal > 15 && ackVal === 0) {
-        detectedLabel = "Recon";
-        isAttack = true;
-      } else if (rateVal > 300 && numVal > 30) {
-        detectedLabel = "DoS";
-        isAttack = true;
-      } else if (rateVal < 80 && synVal < 8 && telnetVal === 0 && sshVal === 0 && numVal < 28) {
-        detectedLabel = "Benign";
-        isAttack = false;
-      }
-
-      const latencyMs = Math.max(0.12, performance.now() - t0);
 
       const finalLabel =
         task === "binary"
           ? isAttack
             ? "Attack Traffic"
             : "Benign Traffic"
-          : detectedLabel;
+          : rawPred;
 
-      // Risk profiling
+      // Risk level profiling
       let risk: "CRITICAL" | "HIGH" | "ELEVATED" | "SAFE" = "SAFE";
-      let desc = "Flow parameters conform to standard IoT telemetry. Packet rate and flag ratios are normal.";
+      let desc = "Flow parameters strictly conform to standard IoT telemetry. Packet rate and flag ratios are normal.";
       let advice = "No action required. Traffic authenticated as legitimate IoT node transmission.";
 
       if (isAttack) {
         if (finalLabel === "DDoS" || finalLabel === "DoS" || finalLabel === "Attack Traffic") {
           risk = "CRITICAL";
-          desc = `Volumetric flood anomaly detected! Packet rate (${rateVal} pkts/s) exceeds baseline with high SYN ratio (${synVal} SYNs vs ${ackVal} ACKs).`;
+          desc = `Volumetric flood anomaly detected! Packet rate (${manualInputs["Rate"] || manualInputs["Srate"] || 0} pkts/s) exceeds edge threshold with abnormal SYN/ACK ratio.`;
           advice = "Trigger rate-limiting ACL on ingress edge switch. Drop suspicious flow 5-tuple immediately.";
         } else if (finalLabel === "Mirai" || finalLabel === "Brute Force") {
           risk = "HIGH";
-          desc = `Unauthorized credential probing / botnet beacon detected (Port signature Telnet=${telnetVal}, SSH=${sshVal} active).`;
+          desc = `Unauthorized credential probing / botnet signature detected across monitored flow attributes.`;
           advice = "Block device MAC address and initiate credential rotation on IoT gateway.";
         } else {
           risk = "ELEVATED";
-          desc = `Reconnaissance / scanning pattern detected (${synVal} unacknowledged probes with 0 ACKs).`;
+          desc = `Reconnaissance scanning pattern detected (${manualInputs["syn_count"] || 0} unacknowledged probes).`;
           advice = "Flag source IP for observation and enable strict port-scanning drop policy.";
         }
       }
@@ -389,19 +456,19 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
       const verdictPayload = {
         prediction: finalLabel,
         isAttack,
-        confidence: Number(confidence.toFixed(1)),
+        confidence: Number(evalRes.confidence.toFixed(1)),
         latencyMs: Number(latencyMs.toFixed(3)),
         riskLevel: risk,
         description: desc,
         actionAdvice: advice,
-        flowKeySummary: `Rate: ${rateVal} pkts/s | syn_count: ${synVal} | ack_count: ${ackVal} | AVG: ${manualInputs["AVG"] || 0} B`,
+        flowKeySummary: `K=10 Features | Pkts: ${manualInputs["Number"] || 0} | SYNs: ${manualInputs["syn_count"] || 0} | ACKs: ${manualInputs["ack_count"] || 0} | AVG: ${manualInputs["AVG"] || 0} B`,
       };
 
       setLiveVerdict(verdictPayload);
       setModalResult(verdictPayload);
       setShowModal(true);
 
-      // Trigger Audio Alert
+      // Play Sound
       if (soundEnabled) {
         playIdsSound(isAttack);
       }
@@ -456,7 +523,7 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
 
           parsedRows.push({
             rowIdx: i,
-            featuresSample: `Rate=${rowObj["Rate"] || 0}, syn=${rowObj["syn_count"] || 0}, AVG=${rowObj["AVG"] || 0}`,
+            featuresSample: `Rate=${rowObj["Rate"] || rowObj["Srate"] || 0}, syn=${rowObj["syn_count"] || 0}, AVG=${rowObj["AVG"] || 0}`,
             predicted: isAtk ? res.prediction : "Benign",
             isAttack: isAtk,
             confidence: res.confidence,
@@ -478,42 +545,23 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
     reader.readAsText(file);
   };
 
-  const activeFeatures = contract?.features || [
-    "Rate",
-    "syn_count",
-    "ack_count",
-    "AVG",
-    "Number",
-    "Tot sum",
-    "syn_flag_number",
-    "Drate",
-    "Variance",
-    "IAT",
-    "rst_count",
-    "ack_flag_number",
-    "rst_flag_number",
-    "Telnet",
-    "HTTPS",
-    "psh_flag_number",
-    "SSH",
-    "ARP",
-    "DHCP",
-    "ece_flag_number",
-  ];
-
   return (
     <div className="space-y-6">
       {/* 1. Main Live Simulator Card */}
-      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 md:p-6 shadow-sm transition-all overflow-hidden">
+      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-2xl p-5 md:p-6 shadow-sm transition-all overflow-hidden">
         {/* Card Header with prominent controls */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b-2 border-blue/20 gap-3">
           <div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5">
               <span className="w-3 h-3 rounded-full bg-blue animate-pulse shrink-0"></span>
-              <h3 className="text-base font-bold text-ink">Interactive Edge Detection Simulator</h3>
+              <h3 className="text-base font-bold text-ink">Edge Threat Detection Simulator</h3>
+              <span className="px-2.5 py-0.5 rounded-full bg-blue/10 border-2 border-blue/30 text-blue font-black text-[11px] tracking-wide flex items-center gap-1">
+                <Sparkles className="w-3 h-3 text-blue" />
+                K=10 Features
+              </span>
             </div>
             <p className="text-xs text-muted mt-1 font-medium">
-              Real-time client inference. Classify custom IoT flows with instant alarm siren and verdict modal.
+              Tested on the top 10 Mutual Information ranked features for resource-constrained IoT nodes.
             </p>
           </div>
 
@@ -521,43 +569,43 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
             {/* Audio Toggle */}
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className={`px-3 py-1.5 rounded-lg border-2 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+              className={`px-3 py-1.5 rounded-xl border-2 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
                 soundEnabled
-                  ? "bg-blue/10 border-blue text-blue"
+                  ? "bg-blue/10 border-blue text-blue shadow-xs"
                   : "bg-canvas border-border text-muted"
               }`}
               title={soundEnabled ? "Audio Alarm Siren is ON" : "Audio Muted"}
             >
               {soundEnabled ? (
                 <>
-                  <Volume2 className="w-4 h-4 text-blue" />
-                  <span>Siren ON</span>
+                  <Volume2 className="w-4 h-4 text-blue animate-bounce" />
+                  <span>Siren Alert ON</span>
                 </>
               ) : (
                 <>
                   <VolumeX className="w-4 h-4 text-muted" />
-                  <span>Muted</span>
+                  <span>Siren Muted</span>
                 </>
               )}
             </button>
 
             {/* Mode Tabs */}
-            <div className="flex items-center gap-1 bg-canvas p-1 rounded-lg border-2 border-blue/30 text-xs font-bold">
+            <div className="flex items-center gap-1 bg-canvas p-1 rounded-xl border-2 border-blue/30 text-xs font-bold">
               <button
                 onClick={() => setActiveTab("manual")}
-                className={`px-3 py-1 rounded transition-all cursor-pointer ${
-                  activeTab === "manual" ? "bg-blue text-white shadow-xs" : "text-muted hover:text-ink"
+                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                  activeTab === "manual" ? "bg-blue text-white shadow-xs font-bold" : "text-muted hover:text-ink"
                 }`}
               >
-                Interactive Flow
+                10-Feature Flow
               </button>
               <button
                 onClick={() => setActiveTab("csv")}
-                className={`px-3 py-1 rounded transition-all cursor-pointer ${
-                  activeTab === "csv" ? "bg-blue text-white shadow-xs" : "text-muted hover:text-ink"
+                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
+                  activeTab === "csv" ? "bg-blue text-white shadow-xs font-bold" : "text-muted hover:text-ink"
                 }`}
               >
-                Upload CSV
+                Batch CSV
               </button>
             </div>
           </div>
@@ -565,7 +613,7 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
 
         {/* Validation Errors */}
         {validationError && (
-          <div className="mt-4 p-3.5 rounded-lg bg-danger/10 border-2 border-danger text-danger text-xs flex items-center gap-2">
+          <div className="mt-4 p-3.5 rounded-xl bg-danger/10 border-2 border-danger text-danger text-xs flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 shrink-0" />
             <span className="font-semibold">{validationError}</span>
           </div>
@@ -575,8 +623,8 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
         <div
           className={`mt-5 p-4 rounded-xl border-2 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
             liveVerdict.isAttack
-              ? "bg-danger/10 border-danger text-ink"
-              : "bg-positive/10 border-positive text-ink"
+              ? "bg-danger/10 border-danger text-ink shadow-sm"
+              : "bg-positive/10 border-positive text-ink shadow-sm"
           }`}
         >
           <div className="flex items-start sm:items-center gap-3.5">
@@ -588,9 +636,9 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
               }`}
             >
               {liveVerdict.isAttack ? (
-                <ShieldAlert className="w-6 h-6" />
+                <ShieldAlert className="w-6 h-6 text-white" />
               ) : (
-                <ShieldCheck className="w-6 h-6" />
+                <ShieldCheck className="w-6 h-6 text-white" />
               )}
             </div>
             <div>
@@ -603,7 +651,7 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
                   {liveVerdict.riskLevel}
                 </span>
                 <span className="text-xs font-bold text-muted">
-                  Active Preset: <strong className="text-ink">{activePresetName}</strong>
+                  Active Scenario: <strong className="text-ink">{activePresetName}</strong>
                 </span>
               </div>
               <h4 className="text-base font-black text-ink mt-0.5">
@@ -617,7 +665,7 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
 
           <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
             <div className="text-right">
-              <span className="text-[10px] text-muted font-bold block uppercase">Latency / Parity</span>
+              <span className="text-[10px] text-muted font-bold block uppercase tracking-wider">Edge Inference</span>
               <span className="text-xs font-mono font-bold text-ink">
                 {liveVerdict.latencyMs} ms &bull; {liveVerdict.confidence}% Conf
               </span>
@@ -628,9 +676,10 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
                 setShowModal(true);
                 if (soundEnabled) playIdsSound(liveVerdict.isAttack);
               }}
-              className="px-3.5 py-2 rounded-lg bg-surface border-2 border-blue text-blue hover:bg-blue hover:text-white text-xs font-bold transition-all shadow-xs cursor-pointer"
+              className="px-3.5 py-2 rounded-xl bg-surface border-2 border-blue text-blue hover:bg-blue hover:text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
             >
-              View Alert Modal
+              <span>View Alert Modal</span>
+              <ArrowRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -643,7 +692,7 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black text-ink uppercase tracking-wider flex items-center gap-1.5">
                   <Zap className="w-4 h-4 text-blue" />
-                  Quick Test Scenarios (Click Any to Load Parameters)
+                  Quick Test Scenarios (1-Click Evaluation)
                 </span>
                 <button
                   onClick={() => applyPreset("benign")}
@@ -657,86 +706,94 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-1">
                 <button
                   onClick={() => applyPreset("benign")}
-                  className="p-2.5 rounded-lg border-2 border-positive/50 bg-positive/10 hover:bg-positive/20 text-positive text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer"
+                  className="p-2.5 rounded-xl border-2 border-positive/50 bg-positive/10 hover:bg-positive/20 text-positive text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
                 >
                   <span>🟢 Normal Web</span>
-                  <span className="text-[10px] text-muted font-normal">Safe HTTPS</span>
+                  <span className="text-[10px] text-muted font-medium">Safe HTTPS</span>
                 </button>
                 <button
                   onClick={() => applyPreset("cam")}
-                  className="p-2.5 rounded-lg border-2 border-positive/50 bg-positive/10 hover:bg-positive/20 text-positive text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer"
+                  className="p-2.5 rounded-xl border-2 border-positive/50 bg-positive/10 hover:bg-positive/20 text-positive text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
                 >
-                  <span>🟢 Smart Camera</span>
-                  <span className="text-[10px] text-muted font-normal">Safe Video Feed</span>
+                  <span>🟢 Smart Cam</span>
+                  <span className="text-[10px] text-muted font-medium">Safe Video Feed</span>
                 </button>
                 <button
                   onClick={() => applyPreset("ddos")}
-                  className="p-2.5 rounded-lg border-2 border-danger/50 bg-danger/10 hover:bg-danger/20 text-danger text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer"
+                  className="p-2.5 rounded-xl border-2 border-danger/50 bg-danger/10 hover:bg-danger/20 text-danger text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
                 >
                   <span>🔴 DDoS Flood</span>
-                  <span className="text-[10px] text-muted font-normal">2,200 pkts/s</span>
+                  <span className="text-[10px] text-muted font-medium">2,500 pkts/s</span>
                 </button>
                 <button
                   onClick={() => applyPreset("recon")}
-                  className="p-2.5 rounded-lg border-2 border-warning/50 bg-warning/10 hover:bg-warning/20 text-warning text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer"
+                  className="p-2.5 rounded-xl border-2 border-warning/50 bg-warning/10 hover:bg-warning/20 text-warning text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
                 >
                   <span>🟡 TCP Port Scan</span>
-                  <span className="text-[10px] text-muted font-normal">SYN Sweep</span>
+                  <span className="text-[10px] text-muted font-medium">SYN Sweep</span>
                 </button>
                 <button
                   onClick={() => applyPreset("mirai")}
-                  className="p-2.5 rounded-lg border-2 border-indigo/50 bg-indigo/10 hover:bg-indigo/20 text-indigo text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer"
+                  className="p-2.5 rounded-xl border-2 border-indigo/50 bg-indigo/10 hover:bg-indigo/20 text-indigo text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
                 >
                   <span>🟣 Mirai Probe</span>
-                  <span className="text-[10px] text-muted font-normal">Telnet Port 23</span>
+                  <span className="text-[10px] text-muted font-medium">Botnet Telemetry</span>
                 </button>
                 <button
                   onClick={() => applyPreset("ssh")}
-                  className="p-2.5 rounded-lg border-2 border-danger/50 bg-danger/10 hover:bg-danger/20 text-danger text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer"
+                  className="p-2.5 rounded-xl border-2 border-danger/50 bg-danger/10 hover:bg-danger/20 text-danger text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
                 >
                   <span>🔴 SSH Spray</span>
-                  <span className="text-[10px] text-muted font-normal">Brute Force</span>
+                  <span className="text-[10px] text-muted font-medium">Brute Force</span>
                 </button>
               </div>
             </div>
 
-            {/* Parameter Input Grid */}
-            <div className="space-y-2">
+            {/* Exactly 10 Parameter Input Cards */}
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-1.5">
                   <Sliders className="w-3.5 h-3.5 text-blue" />
-                  Flow Attributes ({activeFeatures.length} Active Features)
+                  Monitored Feature Attributes (Exactly 10 Inputs)
                 </span>
-                <span className="text-[11px] text-muted font-medium">
-                  Edit any number to test edge sensitivity
+                <span className="text-[11px] text-blue font-bold bg-blue/10 px-2 py-0.5 rounded border border-blue/30">
+                  K=10 Feature Budget
                 </span>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 max-h-80 overflow-y-auto p-1 pr-2">
-                {activeFeatures.map((feat: string) => {
+              {/* Clean 2-Row / 5-Column Grid */}
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                {activeFeatures.map((feat: string, idx: number) => {
                   const val = manualInputs[feat] !== undefined ? manualInputs[feat] : 0;
+                  const meta = featureMeta[feat] || {
+                    label: feat,
+                    unit: "num",
+                    desc: "Feature parameter",
+                  };
+
                   return (
                     <div
                       key={feat}
-                      className="p-2.5 rounded-lg bg-blue/5 border-2 border-blue/25 hover:border-blue transition-all space-y-1 overflow-hidden"
+                      className="p-3 rounded-xl bg-blue/5 border-2 border-blue/25 hover:border-blue transition-all space-y-1.5 overflow-hidden flex flex-col justify-between"
                     >
-                      <div className="flex items-center justify-between">
+                      <div>
+                        <div className="flex items-center justify-between">
+                          <span className="w-5 h-5 rounded-full bg-blue text-white text-[10px] font-black flex items-center justify-center shrink-0">
+                            {idx + 1}
+                          </span>
+                          <span className="text-[10px] font-mono font-bold text-muted uppercase px-1.5 py-0.5 rounded bg-white/70 border border-border">
+                            {meta.unit}
+                          </span>
+                        </div>
                         <label
-                          className="text-xs font-bold text-ink truncate block"
-                          title={feat}
+                          className="text-xs font-black text-ink block truncate mt-1.5"
+                          title={meta.label}
                         >
                           {feat}
                         </label>
-                        <span className="text-[10px] text-muted font-mono uppercase">
-                          {feat.includes("Rate")
-                            ? "pkts/s"
-                            : feat.includes("flag") || feat === "Telnet" || feat === "SSH" || feat === "HTTPS" || feat === "TCP"
-                            ? "0 or 1"
-                            : feat.includes("size") || feat === "AVG" || feat === "Tot sum"
-                            ? "bytes"
-                            : "num"}
-                        </span>
+                        <p className="text-[10px] text-muted truncate">{meta.label}</p>
                       </div>
+
                       <input
                         type="number"
                         step="any"
@@ -749,7 +806,7 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
                           });
                           setActivePresetName("Custom Modified Parameters");
                         }}
-                        className="w-full text-xs font-mono font-bold px-2.5 py-1.5 rounded-md border-2 border-blue/30 bg-white text-ink focus:outline-none focus:border-blue transition-all"
+                        className="w-full text-xs font-mono font-black px-2.5 py-1.5 rounded-lg border-2 border-blue/30 bg-white text-ink focus:outline-none focus:border-blue transition-all mt-1"
                       />
                     </div>
                   );
@@ -757,13 +814,13 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
               </div>
             </div>
 
-            {/* Action Button */}
-            <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t-2 border-blue/20">
+            {/* Action Buttons */}
+            <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t-2 border-blue/20">
               <div className="flex items-center gap-3">
                 <button
                   onClick={handleClassify}
                   disabled={loading}
-                  className="px-6 py-3 rounded-lg bg-blue hover:bg-indigo text-white text-xs font-black transition-all shadow-md flex items-center justify-center gap-2 border-2 border-blue cursor-pointer"
+                  className="px-6 py-3 rounded-xl bg-blue hover:bg-indigo text-white text-xs font-black transition-all shadow-md flex items-center justify-center gap-2 border-2 border-blue cursor-pointer"
                 >
                   {loading ? (
                     <RefreshCw className="w-4 h-4 animate-spin" />
@@ -775,14 +832,14 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
 
                 <button
                   onClick={() => applyPreset("benign")}
-                  className="px-4 py-3 rounded-lg bg-surface border-2 border-blue/30 hover:border-blue text-ink text-xs font-bold transition-all cursor-pointer"
+                  className="px-4 py-3 rounded-xl bg-surface border-2 border-blue/30 hover:border-blue text-ink text-xs font-bold transition-all cursor-pointer shadow-xs"
                 >
                   Reset Form
                 </button>
               </div>
 
               <span className="text-xs text-muted font-medium">
-                ⚡ Evaluates locally in &lt;1 ms. Alarm sounds when threat is detected.
+                ⚡ Evaluated on 10 edge features in &lt;1 ms with siren alarm.
               </span>
             </div>
           </div>
@@ -791,15 +848,15 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
         {/* Tab 2: Upload CSV */}
         {activeTab === "csv" && (
           <div className="mt-5 space-y-4">
-            <div className="border-2 border-dashed border-blue/50 rounded-xl p-8 text-center bg-blue/5 hover:bg-blue/10 transition-all overflow-hidden">
+            <div className="border-2 border-dashed border-blue/50 rounded-2xl p-8 text-center bg-blue/5 hover:bg-blue/10 transition-all overflow-hidden">
               <FileSpreadsheet className="w-10 h-10 text-blue mx-auto mb-2" />
-              <h4 className="text-sm font-bold text-ink">Upload Unlabeled Flow CSV</h4>
+              <h4 className="text-sm font-bold text-ink">Upload 10-Feature Flow CSV</h4>
               <p className="text-xs text-muted mt-1 max-w-md mx-auto">
                 Batch flows are parsed and evaluated locally row-by-row on your device with 0 network latency.
               </p>
 
               <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-                <label className="cursor-pointer px-4 py-2.5 rounded-lg bg-blue text-white text-xs font-bold hover:bg-indigo transition-all shadow-md border-2 border-blue">
+                <label className="cursor-pointer px-4 py-2.5 rounded-xl bg-blue text-white text-xs font-bold hover:bg-indigo transition-all shadow-md border-2 border-blue">
                   <span>Choose CSV File</span>
                   <input
                     type="file"
@@ -812,17 +869,17 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
                 <a
                   href="/data/sample_traffic_for_prediction.csv"
                   download="sample_traffic_for_prediction.csv"
-                  className="px-4 py-2.5 rounded-lg border-2 border-blue/40 bg-surface text-blue text-xs font-bold hover:bg-blue/10 transition-all flex items-center gap-1.5"
+                  className="px-4 py-2.5 rounded-xl border-2 border-blue/40 bg-surface text-blue text-xs font-bold hover:bg-blue/10 transition-all flex items-center gap-1.5 shadow-xs"
                 >
                   <Download className="w-3.5 h-3.5" />
-                  <span>Download Sample CSV</span>
+                  <span>Download Sample K=10 CSV</span>
                 </a>
               </div>
             </div>
 
             {/* Batch Table */}
             {csvResults.length > 0 && (
-              <div className="mt-4 border-2 border-blue/30 rounded-xl overflow-hidden shadow-xs">
+              <div className="mt-4 border-2 border-blue/30 rounded-2xl overflow-hidden shadow-xs">
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[560px] text-left text-xs border-collapse">
                     <thead>
@@ -867,7 +924,7 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
       {showModal && modalResult && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-navy-dark/80 backdrop-blur-sm animate-in fade-in duration-150">
           <div
-            className={`relative w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border-4 transition-all overflow-hidden ${
+            className={`relative w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl border-4 transition-all overflow-hidden ${
               modalResult.isAttack
                 ? "border-danger shadow-danger/30"
                 : "border-positive shadow-positive/30"
@@ -876,7 +933,7 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
             {/* Close Button */}
             <button
               onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-lg bg-canvas hover:bg-border text-muted hover:text-ink transition-all cursor-pointer"
+              className="absolute top-4 right-4 p-1.5 rounded-xl bg-canvas hover:bg-border text-muted hover:text-ink transition-all cursor-pointer"
             >
               <X className="w-5 h-5" />
             </button>
@@ -919,7 +976,7 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
                 </h3>
 
                 <p className="text-xs text-muted mt-0.5 font-medium">
-                  Evaluated in <strong className="text-ink">{modalResult.latencyMs} ms</strong> with{" "}
+                  Evaluated on 10 features in <strong className="text-ink">{modalResult.latencyMs} ms</strong> with{" "}
                   <strong className="text-ink">{modalResult.confidence}% confidence</strong>.
                 </p>
               </div>
@@ -927,7 +984,7 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
 
             {/* Body Assessment Box */}
             <div
-              className={`p-4 rounded-xl border-2 mb-4 space-y-2 ${
+              className={`p-4 rounded-2xl border-2 mb-4 space-y-2 ${
                 modalResult.isAttack
                   ? "bg-danger/10 border-danger/40 text-ink"
                   : "bg-positive/10 border-positive/40 text-ink"
@@ -944,9 +1001,9 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
             </div>
 
             {/* Action Advice Box */}
-            <div className="p-3.5 rounded-xl bg-canvas border-2 border-border mb-5">
+            <div className="p-3.5 rounded-2xl bg-canvas border-2 border-border mb-5">
               <span className="text-[11px] font-black text-ink uppercase tracking-wider block mb-1">
-                Recommended Action:
+                Recommended Defensive Action:
               </span>
               <p className="text-xs text-muted leading-relaxed font-medium">
                 {modalResult.actionAdvice}
@@ -959,15 +1016,15 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
                 onClick={() => {
                   if (soundEnabled) playIdsSound(modalResult.isAttack);
                 }}
-                className="px-3.5 py-2 rounded-lg border-2 border-border bg-canvas text-ink text-xs font-bold hover:bg-border transition-all flex items-center gap-1.5 cursor-pointer"
+                className="px-3.5 py-2 rounded-xl border-2 border-border bg-canvas text-ink text-xs font-bold hover:bg-border transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <Volume2 className="w-3.5 h-3.5 text-blue" />
-                <span>Replay Siren Sound</span>
+                <span>Replay Siren Audio</span>
               </button>
 
               <button
                 onClick={() => setShowModal(false)}
-                className={`px-5 py-2 rounded-lg text-white text-xs font-black transition-all shadow-md cursor-pointer ${
+                className={`px-5 py-2 rounded-xl text-white text-xs font-black transition-all shadow-md cursor-pointer ${
                   modalResult.isAttack
                     ? "bg-danger hover:bg-red-700 border-2 border-danger"
                     : "bg-positive hover:bg-green-700 border-2 border-positive"

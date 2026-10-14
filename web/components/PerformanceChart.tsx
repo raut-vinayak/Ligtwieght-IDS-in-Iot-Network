@@ -11,6 +11,7 @@ import {
   Legend,
   CartesianGrid
 } from "recharts";
+import { TrendingUp } from "lucide-react";
 
 interface PerformanceChartProps {
   scorecardData: any[];
@@ -39,16 +40,19 @@ export default function PerformanceChart({ scorecardData, task }: PerformanceCha
   const models = ["DecisionTree", "LogisticRegression", "SmallRandomForest", "ConstrainedLightGBM"];
 
   return (
-    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all overflow-hidden h-full flex flex-col justify-between">
+    <div className="bg-surface border-2 border-blue/35 hover:border-blue rounded-2xl p-5 md:p-6 shadow-xs hover:shadow-md transition-all overflow-hidden h-full flex flex-col justify-between">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b-2 border-blue/20 gap-2 shrink-0">
         <div>
-          <h3 className="text-sm font-bold text-ink">Model Performance by Feature Count</h3>
+          <div className="flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-blue" />
+            <h3 className="text-sm font-black text-ink">Model Performance by Feature Count</h3>
+          </div>
           <p className="text-xs text-muted mt-0.5 font-medium">
             Test Macro-F1 across nested feature subsets $K \in [5, 10, 15, 20]$ ({task.toUpperCase()} Task)
           </p>
         </div>
-        <div className="flex items-center gap-2 text-[11px] font-bold text-blue bg-blue/10 px-2.5 py-1 rounded-md border border-blue/30 self-start sm:self-auto shrink-0">
-          <span className="w-2.5 h-2.5 rounded-full bg-blue inline-block"></span>
+        <div className="flex items-center gap-2 text-[11px] font-black text-blue bg-blue/10 px-3 py-1 rounded-full border border-blue/30 self-start sm:self-auto shrink-0 shadow-xs">
+          <span className="w-2 h-2 rounded-full bg-blue inline-block animate-pulse"></span>
           <span>DecisionTree is Edge Champion</span>
         </div>
       </div>
@@ -59,13 +63,13 @@ export default function PerformanceChart({ scorecardData, task }: PerformanceCha
             <CartesianGrid strokeDasharray="3 3" stroke="#E2E6EC" />
             <XAxis
               dataKey="k"
-              tick={{ fontSize: 12, fill: "#8C9BA5", fontWeight: 600 }}
+              tick={{ fontSize: 12, fill: "#8C9BA5", fontWeight: 700 }}
               axisLine={{ stroke: "#0A24E9", strokeWidth: 1.5 }}
               tickLine={false}
             />
             <YAxis
               domain={[0.5, 1.02]}
-              tick={{ fontSize: 11, fill: "#8C9BA5", fontWeight: 600 }}
+              tick={{ fontSize: 11, fill: "#8C9BA5", fontWeight: 700 }}
               axisLine={{ stroke: "#0A24E9", strokeWidth: 1.5 }}
               tickLine={false}
               tickFormatter={(val) => `${(val * 100).toFixed(0)}%`}
@@ -75,10 +79,10 @@ export default function PerformanceChart({ scorecardData, task }: PerformanceCha
                 backgroundColor: "#FFFFFF",
                 borderColor: "#0A24E9",
                 borderWidth: "2px",
-                borderRadius: "10px",
+                borderRadius: "12px",
                 fontSize: "12px",
                 fontWeight: "bold",
-                boxShadow: "0 4px 14px rgba(10,36,233,0.12)",
+                boxShadow: "0 8px 24px rgba(10,36,233,0.15)",
               }}
               formatter={(value: any, name: any) => [
                 `${(Number(value) * 100).toFixed(2)}%`,
@@ -86,7 +90,7 @@ export default function PerformanceChart({ scorecardData, task }: PerformanceCha
               ]}
             />
             <Legend
-              wrapperStyle={{ paddingTop: "12px", fontSize: "11px", fontWeight: "bold" }}
+              wrapperStyle={{ paddingTop: "14px", fontSize: "11px", fontWeight: "bold" }}
               iconType="circle"
               iconSize={8}
             />
