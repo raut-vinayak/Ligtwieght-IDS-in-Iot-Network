@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { ArrowUpDown, Check } from "lucide-react";
+import { ArrowUpDown, Check, Award } from "lucide-react";
 
 interface ModelComparisonTableProps {
   scorecardData: any[];
@@ -39,130 +39,121 @@ export default function ModelComparisonTable({
   });
 
   return (
-    <div className="bg-surface border-2 border-blue/35 hover:border-blue rounded-2xl p-5 md:p-6 shadow-xs hover:shadow-md transition-all overflow-hidden">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-blue/20 gap-2">
+    <div className="bg-white border border-border rounded-xl p-5 shadow-card overflow-hidden">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-border gap-2">
         <div>
-          <h3 className="text-sm font-black text-ink">Comprehensive Model Scorecard</h3>
-          <p className="text-xs text-muted mt-0.5 font-medium">
-            Click any row to sync KPI cards and active model highlights
+          <h3 className="text-sm font-semibold text-ink">Model Architecture Scorecard</h3>
+          <p className="text-xs text-muted mt-0.5">
+            Click any row to synchronize KPI metrics and active decision tree parameters.
           </p>
         </div>
-        <span className="text-[11px] font-black text-blue bg-blue/10 px-3 py-1 rounded-full border border-blue/30 self-start sm:self-auto shrink-0 shadow-xs">
-          {scorecardData.length} Configurations Benchmarked
+        <span className="text-[10px] font-mono font-medium text-slate-600 bg-slate-100 px-2.5 py-1 rounded-md border border-slate-200 self-start sm:self-auto shrink-0">
+          {scorecardData.length} Benchmark Configurations
         </span>
       </div>
 
-      <div className="mt-4 overflow-x-auto border-2 border-blue/20 rounded-xl">
-        <table className="w-full min-w-[720px] text-left text-xs border-collapse">
+      <div className="mt-3.5 overflow-x-auto border border-border rounded-lg">
+        <table className="w-full min-w-[700px] text-left text-xs border-collapse font-mono">
           <thead>
-            <tr className="border-b-2 border-blue/20 bg-blue/5 text-ink font-bold">
-              <th className="p-3">Status</th>
+            <tr className="border-b border-border bg-slate-50 text-slate-500 text-[11px]">
+              <th className="px-3 py-2.5 font-medium">Rank</th>
               <th
-                className="p-3 cursor-pointer hover:text-blue transition-colors"
+                className="px-3 py-2.5 font-medium cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("model")}
               >
                 <div className="flex items-center gap-1">
-                  <span>Model</span>
-                  <ArrowUpDown className="w-3.5 h-3.5" />
+                  <span>Architecture</span>
+                  <ArrowUpDown className="w-3 h-3" />
                 </div>
               </th>
               <th
-                className="p-3 cursor-pointer hover:text-blue transition-colors"
+                className="px-3 py-2.5 font-medium cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("k")}
               >
                 <div className="flex items-center gap-1">
-                  <span>K Features</span>
-                  <ArrowUpDown className="w-3.5 h-3.5" />
+                  <span>Subset</span>
+                  <ArrowUpDown className="w-3 h-3" />
                 </div>
               </th>
               <th
-                className="p-3 cursor-pointer hover:text-blue transition-colors"
+                className="px-3 py-2.5 font-medium cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("test_macro_f1")}
               >
                 <div className="flex items-center gap-1">
                   <span>Macro F1</span>
-                  <ArrowUpDown className="w-3.5 h-3.5" />
+                  <ArrowUpDown className="w-3 h-3" />
                 </div>
               </th>
               <th
-                className="p-3 cursor-pointer hover:text-blue transition-colors"
+                className="px-3 py-2.5 font-medium cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("test_balanced_acc")}
               >
                 <div className="flex items-center gap-1">
                   <span>Balanced Acc</span>
-                  <ArrowUpDown className="w-3.5 h-3.5" />
+                  <ArrowUpDown className="w-3 h-3" />
                 </div>
               </th>
               <th
-                className="p-3 cursor-pointer hover:text-blue transition-colors"
+                className="px-3 py-2.5 font-medium cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("median_latency_ms")}
               >
                 <div className="flex items-center gap-1">
-                  <span>Median Latency</span>
-                  <ArrowUpDown className="w-3.5 h-3.5" />
+                  <span>Latency</span>
+                  <ArrowUpDown className="w-3 h-3" />
                 </div>
               </th>
               <th
-                className="p-3 cursor-pointer hover:text-blue transition-colors"
-                onClick={() => handleSort("p95_latency_ms")}
-              >
-                <div className="flex items-center gap-1">
-                  <span>P95 Latency</span>
-                  <ArrowUpDown className="w-3.5 h-3.5" />
-                </div>
-              </th>
-              <th
-                className="p-3 cursor-pointer hover:text-blue transition-colors"
+                className="px-3 py-2.5 font-medium cursor-pointer hover:text-slate-900 transition-colors"
                 onClick={() => handleSort("model_size_kb")}
               >
                 <div className="flex items-center gap-1">
-                  <span>Size (KB)</span>
-                  <ArrowUpDown className="w-3.5 h-3.5" />
+                  <span>Size</span>
+                  <ArrowUpDown className="w-3 h-3" />
                 </div>
               </th>
-              <th className="p-3">Run ID</th>
+              <th className="px-3 py-2.5 font-medium">Split ID</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-slate-100">
             {sortedData.map((row) => {
               const isSelected = row.model === selectedModel && row.k === selectedK;
               const isChampion =
-                row.model === "DecisionTree" && (row.k === 5 || row.k === 20);
+                row.model === "DecisionTree" && (row.k === 5 || row.k === 10 || row.k === 20);
 
               return (
                 <tr
                   key={`${row.model}-${row.k}`}
                   onClick={() => onSelectModelRow(row.model, row.k)}
-                  className={`border-b border-border cursor-pointer transition-colors ${
+                  className={`cursor-pointer transition-colors ${
                     isSelected
-                      ? "bg-blue/15 border-blue font-bold"
-                      : "hover:bg-blue/5"
+                      ? "bg-blue-50/70 text-slate-900 font-semibold"
+                      : "hover:bg-slate-50/70 text-slate-700"
                   }`}
                 >
-                  <td className="p-3">
+                  <td className="px-3 py-2.5">
                     {isChampion ? (
-                      <span className="text-[10px] font-black px-2 py-0.5 rounded bg-positive/10 text-positive border border-positive/40">
-                        CHAMPION
+                      <span className="inline-flex items-center gap-1 text-[9px] font-mono px-1.5 py-0.2 rounded bg-emerald-50 text-emerald-700 border border-emerald-200">
+                        <Award className="w-2.5 h-2.5 text-emerald-600" />
+                        <span>Pareto</span>
                       </span>
                     ) : (
-                      <span className="text-[10px] text-muted font-bold">BENCH</span>
+                      <span className="text-[10px] text-slate-400 font-mono">Ranked</span>
                     )}
                   </td>
-                  <td className="p-3 text-ink font-bold flex items-center gap-1.5">
-                    {isSelected && <Check className="w-4 h-4 text-blue shrink-0" />}
+                  <td className="px-3 py-2.5 text-ink font-sans font-medium flex items-center gap-1.5">
+                    {isSelected && <Check className="w-3.5 h-3.5 text-blue shrink-0" />}
                     <span>{row.model}</span>
                   </td>
-                  <td className="p-3 text-ink font-semibold">K={row.k}</td>
-                  <td className="p-3 text-blue font-black">
+                  <td className="px-3 py-2.5 text-slate-600">K={row.k}</td>
+                  <td className="px-3 py-2.5 text-blue font-semibold">
                     {(row.test_macro_f1 * 100).toFixed(2)}%
                   </td>
-                  <td className="p-3 text-ink font-bold">
+                  <td className="px-3 py-2.5 text-slate-800">
                     {(row.test_balanced_acc * 100).toFixed(2)}%
                   </td>
-                  <td className="p-3 text-ink font-mono font-semibold">{row.median_latency_ms.toFixed(3)} ms</td>
-                  <td className="p-3 text-muted font-mono">{row.p95_latency_ms.toFixed(3)} ms</td>
-                  <td className="p-3 text-ink font-mono font-bold">{row.model_size_kb.toFixed(1)} KB</td>
-                  <td className="p-3 text-muted font-mono text-[10px]">{row.run_id}</td>
+                  <td className="px-3 py-2.5 text-slate-700">{row.median_latency_ms.toFixed(3)} ms</td>
+                  <td className="px-3 py-2.5 text-slate-700">{row.model_size_kb.toFixed(1)} KB</td>
+                  <td className="px-3 py-2.5 text-slate-400 text-[10px]">{row.run_id}</td>
                 </tr>
               );
             })}

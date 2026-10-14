@@ -3,18 +3,22 @@
 @tailwind utilities;
 
 :root {
-  --canvas: #f0f2f5;
+  --canvas: #f8fafc;
   --surface: #ffffff;
-  --border: #caced6;
-  --ink: #0b0d17;
-  --navy: #29315d;
-  --navy-dark: #1e2445;
-  --blue: #0a24e9;
-  --indigo: #152eae;
-  --muted: #8c9ba5;
-  --positive: #5c9764;
-  --danger: #c94040;
-  --warning: #c47b18;
+  --surface-subtle: #f1f5f9;
+  --border: #e2e8f0;
+  --border-strong: #cbd5e1;
+  --ink: #0f172a;
+  --muted: #64748b;
+  --faint: #94a3b8;
+  --navy: #0f172a;
+  --navy-dark: #0b0f19;
+  --navy-panel: #1e293b;
+  --blue: #2563eb;
+  --indigo: #3b82f6;
+  --positive: #10b981;
+  --danger: #ef4444;
+  --warning: #f59e0b;
 }
 
 body {
@@ -25,18 +29,28 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Custom scrollbars */
+/* Polished Minimalist Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: #f0f2f5;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #caced6;
-  border-radius: 3px;
+  background: #cbd5e1;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #8c9ba5;
+  background: #94a3b8;
+}
+
+/* Number input spinner cleanup */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type="number"] {
+  -moz-appearance: textfield;
 }

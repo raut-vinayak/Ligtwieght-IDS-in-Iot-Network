@@ -2,11 +2,15 @@
 
 import React from "react";
 import {
-  ShieldAlert,
-  Cpu,
+  Shield,
+  Activity,
+  BarChart2,
   Bot,
-  Sparkles,
-  BarChart3
+  X,
+  Radio,
+  Sliders,
+  CheckCircle,
+  Layers,
 } from "lucide-react";
 
 export type TabId = "predict" | "scores" | "assistant";
@@ -14,85 +18,198 @@ export type TabId = "predict" | "scores" | "assistant";
 interface SidebarProps {
   currentTab: TabId;
   onSelectTab: (tab: TabId) => void;
+  mobileOpen?: boolean;
+  onCloseMobile?: () => void;
 }
 
-export default function Sidebar({ currentTab, onSelectTab }: SidebarProps) {
-  const navItems: { id: TabId; label: string; icon: React.ReactNode; badge?: string }[] = [
-    { id: "predict", label: "Live Edge Detection", icon: <ShieldAlert className="w-4 h-4" />, badge: "K=10" },
-    { id: "scores", label: "Model Scores & Benchmark", icon: <BarChart3 className="w-4 h-4" />, badge: "Scorecard" },
-    { id: "assistant", label: "AI Security Analyst", icon: <Bot className="w-4 h-4" />, badge: "Sentinel AI" },
+export default function Sidebar({
+  currentTab,
+  onSelectTab,
+  mobileOpen = false,
+  onCloseMobile,
+}: SidebarProps) {
+  const navItems: {
+    id: TabId;
+    label: string;
+    description: string;
+    icon: React.ElementType;
+    badge?: string;
+  }[] = [
+    {
+      id: "predict",
+      label: "Edge Telemetry",
+      description: "10-Feature Inference",
+      icon: Activity,
+      badge: "K=10",
+    },
+    {
+      id: "scores",
+      label: "Model Benchmarks",
+      description: "Pareto & F1 Metrics",
+      icon: BarChart2,
+      badge: "CICIoT",
+    },
+    {
+      id: "assistant",
+      label: "Sentinel AI Analyst",
+      description: "Threat Explainer",
+      icon: Bot,
+      badge: "AI Copilot",
+    },
   ];
 
-  return (
-    <aside className="w-64 bg-navy text-white flex flex-col justify-between shrink-0 h-screen border-r-2 border-blue/40 shadow-2xl overflow-y-auto">
-      <div>
-        {/* Brand Header with gradient cyber border */}
-        <div className="p-5 border-b-2 border-blue/30 flex items-center gap-3.5 bg-gradient-to-b from-[#1E2445] to-[#151a36]">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue to-indigo-500 flex items-center justify-center text-white shadow-lg border-2 border-white/20">
-            <ShieldAlert className="w-5 h-5 text-white" />
+  const content = (
+    <div className="flex flex-col h-full bg-[#0B0F19] text-slate-300 border-r border-slate-800/80">
+      {/* Brand Header */}
+      <div className="px-5 py-4 border-b border-slate-800/80 flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-lg bg-blue-600/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
+            <Shield className="w-4 h-4 text-blue-400" />
           </div>
           <div>
-            <div className="flex items-center gap-1.5">
-              <h1 className="text-sm font-black tracking-wide text-white leading-tight">Lightweight IDS</h1>
-              <span className="w-1.5 h-1.5 rounded-full bg-blue animate-ping"></span>
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold tracking-tight text-white">
+                Lightweight IDS
+              </span>
+              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                v2.1
+              </span>
             </div>
-            <p className="text-[11px] text-blue-300 font-bold leading-tight mt-0.5 flex items-center gap-1">
-              <Sparkles className="w-3 h-3 text-blue-400" />
-              <span>IoT Threat Hub</span>
-            </p>
+            <p className="text-[11px] text-slate-400 font-mono">CICIoT2023 Engine</p>
           </div>
         </div>
 
-        {/* Navigation Items (Streamlined to 3 Essential Centers) */}
-        <nav className="p-3.5 space-y-2">
-          <div className="px-3 py-2 text-[10px] font-black tracking-wider text-muted uppercase">
-            Essential Operations
-          </div>
-          {navItems.map((item) => {
-            const active = currentTab === item.id;
-            return (
-              <button
-                key={item.id}
-                onClick={() => onSelectTab(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-3.5 rounded-xl text-xs font-bold transition-all border-2 cursor-pointer ${
-                  active
-                    ? "bg-gradient-to-r from-blue to-indigo text-white border-blue shadow-lg scale-[1.02]"
-                    : "border-transparent text-gray-300 hover:bg-[#343E73]/70 hover:text-white hover:border-blue/30"
-                }`}
-              >
-                <div className="flex items-center gap-3">
-                  <span className={active ? "text-white" : "text-gray-400"}>{item.icon}</span>
-                  <span className="font-bold">{item.label}</span>
-                </div>
-                {item.badge && (
-                  <span
-                    className={`text-[10px] font-black px-2 py-0.5 rounded-md border ${
-                      active
-                        ? "bg-white/20 text-white border-white/40"
-                        : "bg-blue/20 text-blue-300 border-blue/40"
-                    }`}
-                  >
-                    {item.badge}
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </nav>
+        {/* Mobile close button */}
+        {onCloseMobile && (
+          <button
+            onClick={onCloseMobile}
+            className="lg:hidden p-1.5 text-slate-400 hover:text-white rounded-md hover:bg-slate-800"
+            aria-label="Close navigation"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        )}
       </div>
 
-      {/* AI Assistance & Edge Ready Badge */}
-      <div className="p-4 border-t-2 border-blue/30 bg-[#1E2445]/90">
-        <div className="bg-gradient-to-br from-[#152EAE]/30 to-blue/10 rounded-xl p-3 border-2 border-blue/40 shadow-inner">
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-positive animate-pulse"></span>
-            <span className="text-[11px] font-black tracking-wide text-white uppercase">AI ANALYST ON DUTY</span>
+      {/* Main Navigation */}
+      <div className="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
+        <div>
+          <div className="px-3 pb-2 text-[10px] font-semibold text-slate-500 uppercase tracking-wider font-mono">
+            Security Operations
           </div>
-          <p className="text-[11px] text-gray-300 leading-relaxed font-medium">
-            Natural human language explanations for every detected threat and flow anomaly.
-          </p>
+          <nav className="space-y-1">
+            {navItems.map((item) => {
+              const Icon = item.icon;
+              const isActive = currentTab === item.id;
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => {
+                    onSelectTab(item.id);
+                    if (onCloseMobile) onCloseMobile();
+                  }}
+                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition-all group ${
+                    isActive
+                      ? "bg-slate-800/90 text-white font-medium shadow-sm border border-slate-700/60"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0">
+                    <Icon
+                      className={`w-4 h-4 shrink-0 transition-colors ${
+                        isActive
+                          ? "text-blue-400"
+                          : "text-slate-400 group-hover:text-slate-200"
+                      }`}
+                    />
+                    <div className="truncate">
+                      <div className="text-xs leading-none">{item.label}</div>
+                      <div className="text-[10px] text-slate-400 mt-1 leading-none font-mono">
+                        {item.description}
+                      </div>
+                    </div>
+                  </div>
+                  {item.badge && (
+                    <span
+                      className={`text-[9px] font-mono px-1.5 py-0.5 rounded border leading-none ${
+                        isActive
+                          ? "bg-blue-500/10 text-blue-300 border-blue-500/30"
+                          : "bg-slate-800/80 text-slate-400 border-slate-700/60"
+                      }`}
+                    >
+                      {item.badge}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </nav>
+        </div>
+
+        {/* Telemetry Architecture Specs */}
+        <div className="px-3 pt-4 border-t border-slate-800/60">
+          <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider font-mono mb-2.5">
+            Edge Constraint Budget
+          </div>
+          <div className="space-y-2 text-xs">
+            <div className="flex items-center justify-between text-[11px] py-1 border-b border-slate-800/40">
+              <span className="text-slate-400">Feature Cap:</span>
+              <span className="font-mono text-slate-200 font-semibold">K = 10 Max</span>
+            </div>
+            <div className="flex items-center justify-between text-[11px] py-1 border-b border-slate-800/40">
+              <span className="text-slate-400">Inference Budget:</span>
+              <span className="font-mono text-emerald-400 font-semibold">&lt; 1.5 ms</span>
+            </div>
+            <div className="flex items-center justify-between text-[11px] py-1 border-b border-slate-800/40">
+              <span className="text-slate-400">RAM Ceiling:</span>
+              <span className="font-mono text-slate-200 font-semibold">&lt; 500 KB</span>
+            </div>
+            <div className="flex items-center justify-between text-[11px] py-1">
+              <span className="text-slate-400">Runtime Target:</span>
+              <span className="font-mono text-blue-400 font-semibold">MicroPython / C</span>
+            </div>
+          </div>
         </div>
       </div>
-    </aside>
+
+      {/* Edge Status Footer */}
+      <div className="p-3 border-t border-slate-800/80 bg-slate-900/60">
+        <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-md bg-slate-800/40 border border-slate-800">
+          <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></div>
+          <div className="min-w-0">
+            <div className="text-[11px] font-medium text-slate-300 leading-none truncate">
+              Local Inference Engine
+            </div>
+            <div className="text-[9px] text-slate-400 font-mono mt-0.5 leading-none">
+              Client-Side Tree (0 Server Calls)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      {/* Desktop Sidebar (Permanent) */}
+      <aside className="hidden lg:block w-60 shrink-0 h-screen">
+        {content}
+      </aside>
+
+      {/* Mobile Drawer (Responsive Overlay) */}
+      {mobileOpen && (
+        <div className="fixed inset-0 z-50 lg:hidden">
+          {/* Backdrop */}
+          <div
+            className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity"
+            onClick={onCloseMobile}
+          />
+          {/* Drawer */}
+          <div className="fixed inset-y-0 left-0 w-72 max-w-full z-10 shadow-2xl">
+            {content}
+          </div>
+        </div>
+      )}
+    </>
   );
 }

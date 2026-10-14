@@ -2,98 +2,97 @@
 
 import React, { useState, useEffect } from "react";
 import {
-  Play,
-  FileSpreadsheet,
-  Download,
-  RefreshCw,
-  ShieldCheck,
   ShieldAlert,
+  ShieldCheck,
+  Zap,
   Volume2,
   VolumeX,
-  X,
-  Zap,
-  Activity,
-  AlertTriangle,
-  Sliders,
+  Upload,
+  Play,
+  RotateCcw,
   Sparkles,
+  Info,
+  CheckCircle2,
+  AlertTriangle,
   ArrowRight,
-  Bot
+  Bot,
+  Sliders,
+  X,
+  SlidersHorizontal,
+  ChevronRight,
+  Activity,
+  Layers,
 } from "lucide-react";
 
 interface PredictionDemoProps {
   task: "binary" | "multiclass";
-  onOpenAiAssistant?: (flow: any) => void;
+  onOpenAiAssistant?: (flow: {
+    prediction: string;
+    isAttack: boolean;
+    confidence: number;
+    latencyMs: number;
+    riskLevel: string;
+    description: string;
+    inputs: Record<string, number>;
+  }) => void;
 }
 
-// Synthesize authentic IDS alarm and chime using Web Audio API
+// Minimal Audio Synthesizer for Clean Telemetry Feedback
 function playIdsSound(isAttack: boolean) {
   try {
-    const AudioContextClass = window.AudioContext || (window as any).webkitAudioContext;
-    if (!AudioContextClass) return;
-    const ctx = new AudioContextClass();
+    const AudioContext =
+      window.AudioContext || (window as any).webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
 
     if (isAttack) {
-      // 3-pulse urgency cybersecurity siren beep
-      const now = ctx.currentTime;
-      const osc = ctx.createOscillator();
+      // Clean dual-tone security chime for intrusion detection
+      const osc1 = ctx.createOscillator();
+      const osc2 = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = "sawtooth";
 
-      // Siren tone modulation
-      osc.frequency.setValueAtTime(880, now);
-      osc.frequency.setValueAtTime(587.33, now + 0.15);
-      osc.frequency.setValueAtTime(987.77, now + 0.3);
-      osc.frequency.setValueAtTime(587.33, now + 0.45);
-      osc.frequency.setValueAtTime(880, now + 0.6);
+      osc1.type = "sawtooth";
+      osc2.type = "sine";
+      osc1.frequency.setValueAtTime(660, ctx.currentTime);
+      osc1.frequency.exponentialRampToValueAtTime(440, ctx.currentTime + 0.25);
+      osc2.frequency.setValueAtTime(880, ctx.currentTime);
+      osc2.frequency.exponentialRampToValueAtTime(550, ctx.currentTime + 0.25);
 
-      gain.gain.setValueAtTime(0.35, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.85);
+      gain.gain.setValueAtTime(0.08, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.3);
 
-      osc.connect(gain);
+      osc1.connect(gain);
+      osc2.connect(gain);
       gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.85);
+
+      osc1.start();
+      osc2.start();
+      osc1.stop(ctx.currentTime + 0.32);
+      osc2.stop(ctx.currentTime + 0.32);
     } else {
-      // Pleasant affirmative dual-tone chime
-      const now = ctx.currentTime;
+      // Gentle harmonic chime for verified safe telemetry
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
-      osc.type = "sine";
-      osc.frequency.setValueAtTime(523.25, now); // C5
-      osc.frequency.exponentialRampToValueAtTime(659.25, now + 0.18); // E5
 
-      gain.gain.setValueAtTime(0.25, now);
-      gain.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+      osc.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08); // E5
+
+      gain.gain.setValueAtTime(0.04, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
 
       osc.connect(gain);
       gain.connect(ctx.destination);
-      osc.start(now);
-      osc.stop(now + 0.5);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 0.26);
     }
-  } catch (err) {
-    console.warn("Audio playback not allowed until user interaction:", err);
+  } catch (e) {
+    console.debug("Web Audio blocked or unavailable:", e);
   }
 }
 
-// 10 Features Metadata (labels & units)
-const featureMeta: Record<string, { label: string; unit: string; desc: string }> = {
-  Rate: { label: "Packet Rate", unit: "pkts/s", desc: "Total transmission throughput" },
-  syn_count: { label: "SYN Packets", unit: "count", desc: "TCP synchronization probes" },
-  ack_count: { label: "ACK Packets", unit: "count", desc: "TCP acknowledged receipts" },
-  AVG: { label: "Avg Packet Size", unit: "bytes", desc: "Mean payload window size" },
-  Number: { label: "Flow Packet Count", unit: "packets", desc: "Total packets in sliding window" },
-  "Tot sum": { label: "Total Volume", unit: "bytes", desc: "Aggregated flow octets" },
-  syn_flag_number: { label: "SYN Flag Active", unit: "0 or 1", desc: "SYN flag present in frame" },
-  Drate: { label: "Dest Packet Rate", unit: "pkts/s", desc: "Packets delivered to target" },
-  Variance: { label: "Payload Variance", unit: "bytes²", desc: "Packet size dispersion" },
-  IAT: { label: "Inter-Arrival Time", unit: "seconds", desc: "Delta between arrivals" },
-  Srate: { label: "Source Packet Rate", unit: "pkts/s", desc: "Packets sent from client" },
-  HTTPS: { label: "HTTPS Port (443)", unit: "0 or 1", desc: "Encrypted web session" },
-  ack_flag_number: { label: "ACK Flag Active", unit: "0 or 1", desc: "ACK flag present in frame" },
-  "Tot size": { label: "Total Size", unit: "bytes", desc: "Aggregate stream length" },
-};
-
-// Recursive Decision Tree Evaluator
+// Exact Recursive Decision Tree Evaluator
 function evaluateTree(
   node: any,
   inputs: Record<string, number>
@@ -106,13 +105,37 @@ function evaluateTree(
     };
   }
   const featureName = node.feature;
-  const currentVal = typeof inputs[featureName] === "number" && !isNaN(inputs[featureName]) ? inputs[featureName] : 0;
+  const currentVal =
+    typeof inputs[featureName] === "number" && !isNaN(inputs[featureName])
+      ? inputs[featureName]
+      : 0;
   if (currentVal <= node.threshold) {
     return evaluateTree(node.left, inputs);
   } else {
     return evaluateTree(node.right, inputs);
   }
 }
+
+// Feature Metadata (Labels, Units, Ranges)
+const FEATURE_METADATA: Record<
+  string,
+  { label: string; unit: string; step: number; min: number; desc: string }
+> = {
+  Rate: { label: "Flow Rate", unit: "pkts/s", step: 5, min: 0, desc: "Total packet rate per second" },
+  syn_count: { label: "SYN Count", unit: "pkts", step: 1, min: 0, desc: "TCP synchronization flags" },
+  ack_count: { label: "ACK Count", unit: "pkts", step: 1, min: 0, desc: "TCP acknowledgement flags" },
+  AVG: { label: "Avg Packet Size", unit: "bytes", step: 10, min: 0, desc: "Mean packet payload size" },
+  Number: { label: "Packet Count", unit: "pkts", step: 1, min: 0, desc: "Packets recorded in flow" },
+  "Tot sum": { label: "Total Volume", unit: "bytes", step: 100, min: 0, desc: "Sum of packet lengths" },
+  syn_flag_number: { label: "SYN Flag Ratio", unit: "ratio", step: 0.1, min: 0, desc: "Ratio of SYN packets" },
+  Drate: { label: "Destination Rate", unit: "pkts/s", step: 2, min: 0, desc: "Packets to destination/sec" },
+  Variance: { label: "Size Variance", unit: "σ²", step: 5, min: 0, desc: "Packet length dispersion" },
+  IAT: { label: "Inter-Arrival", unit: "sec", step: 0.005, min: 0, desc: "Time interval between packets" },
+  Srate: { label: "Source Rate", unit: "pkts/s", step: 5, min: 0, desc: "Packets sent from source/sec" },
+  HTTPS: { label: "TLS/HTTPS", unit: "flag", step: 1, min: 0, desc: "Encrypted traffic identifier" },
+  ack_flag_number: { label: "ACK Flag Ratio", unit: "ratio", step: 0.1, min: 0, desc: "Ratio of ACK packets" },
+  "Tot size": { label: "Total Payload", unit: "bytes", step: 100, min: 0, desc: "Aggregated flow byte size" },
+};
 
 export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDemoProps) {
   const [activeTab, setActiveTab] = useState<"manual" | "csv">("manual");
@@ -178,7 +201,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
         };
 
   const [manualInputs, setManualInputs] = useState<Record<string, number>>(defaultBenignValues);
-  const [activePresetName, setActivePresetName] = useState<string>("Normal Web Browsing (Safe)");
+  const [activePresetName, setActivePresetName] = useState<string>("Normal Sensor Telemetry");
 
   // Active Live Verdict on Page
   const [liveVerdict, setLiveVerdict] = useState<{
@@ -189,6 +212,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
     riskLevel: "CRITICAL" | "HIGH" | "ELEVATED" | "SAFE";
     description: string;
     actionAdvice: string;
+    humanExplanationHinglish: string;
     flowKeySummary: string;
   }>({
     prediction: "Benign Traffic",
@@ -196,9 +220,10 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
     confidence: 100.0,
     latencyMs: 0.22,
     riskLevel: "SAFE",
-    description: "Flow parameters strictly conform to standard IoT device telemetry. Normal latency and packet intervals.",
-    actionAdvice: "No action required. Flow signature verified as legitimate IoT communication.",
-    flowKeySummary: "10 Features Monitored | Baseline: Normal Traffic",
+    description: "Monitored flow features strictly conform to standard IoT edge telemetry. Rates, arrival intervals, and flag distributions match legitimate sensor baselines.",
+    actionAdvice: "No defensive action required. Edge gateway permits uninterrupted flow forwarding.",
+    humanExplanationHinglish: "Yeh flow completely SAFE hai. Packet rate aur intervals normal limits ke andar hain, aur SYN requests ke against valid ACKs barabar exchange ho rahe hain.",
+    flowKeySummary: "10 Features Evaluated • Normal Sensor Baseline",
   });
 
   // Popup Modal Alert State
@@ -236,7 +261,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
           syn_flag_number: 0,
           "Tot size": 2240.0,
         };
-        setActivePresetName("Normal Web Browsing (Safe)");
+        setActivePresetName("Normal Telemetry");
       } else if (presetKey === "cam") {
         updated = {
           Number: 25,
@@ -250,66 +275,66 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
           syn_flag_number: 0,
           "Tot size": 20500.0,
         };
-        setActivePresetName("Smart Camera Streaming (Safe)");
+        setActivePresetName("IP Camera Stream");
       } else if (presetKey === "ddos") {
         updated = {
-          Number: 260,
+          Number: 850,
           ack_count: 0,
-          IAT: 0.0004,
-          Srate: 2200.0,
-          syn_count: 220,
-          AVG: 64.0,
+          IAT: 0.0002,
+          Srate: 4200.0,
+          syn_count: 820,
+          AVG: 54.0,
           HTTPS: 0,
           ack_flag_number: 0,
           syn_flag_number: 1,
-          "Tot size": 16640.0,
+          "Tot size": 45900.0,
         };
-        setActivePresetName("High-Rate DDoS SYN Flood (Attack)");
+        setActivePresetName("DDoS SYN Flood");
       } else if (presetKey === "recon") {
         updated = {
-          Number: 35,
+          Number: 42,
           ack_count: 0,
-          IAT: 0.015,
+          IAT: 0.012,
           Srate: 85.0,
-          syn_count: 32,
-          AVG: 44.0,
+          syn_count: 40,
+          AVG: 48.0,
           HTTPS: 0,
           ack_flag_number: 0,
           syn_flag_number: 1,
-          "Tot size": 1540.0,
+          "Tot size": 2016.0,
         };
-        setActivePresetName("Stealth TCP Port Scan (Attack)");
+        setActivePresetName("Stealth Port Scan");
       } else if (presetKey === "mirai") {
         updated = {
-          Number: 110,
-          ack_count: 5,
-          IAT: 0.002,
-          Srate: 850.0,
-          syn_count: 85,
-          AVG: 72.0,
+          Number: 120,
+          ack_count: 4,
+          IAT: 0.0018,
+          Srate: 750.0,
+          syn_count: 95,
+          AVG: 68.0,
           HTTPS: 0,
           ack_flag_number: 0,
           syn_flag_number: 1,
-          "Tot size": 7920.0,
+          "Tot size": 8160.0,
         };
-        setActivePresetName("Mirai Botnet Telnet Flood (Attack)");
+        setActivePresetName("Mirai Telnet Probe");
       } else if (presetKey === "ssh") {
         updated = {
-          Number: 45,
-          ack_count: 2,
-          IAT: 0.006,
-          Srate: 310.0,
-          syn_count: 24,
-          AVG: 98.0,
+          Number: 65,
+          ack_count: 3,
+          IAT: 0.0045,
+          Srate: 280.0,
+          syn_count: 30,
+          AVG: 92.0,
           HTTPS: 0,
           ack_flag_number: 0,
           syn_flag_number: 1,
-          "Tot size": 4410.0,
+          "Tot size": 5980.0,
         };
-        setActivePresetName("SSH Credential Brute Force (Attack)");
+        setActivePresetName("SSH Brute Force");
       }
     } else {
-      // Multiclass 10 features
+      // Multiclass Top 10
       if (presetKey === "benign") {
         updated = {
           Rate: 22.0,
@@ -323,35 +348,35 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
           Variance: 45.0,
           IAT: 0.085,
         };
-        setActivePresetName("Normal Web Browsing (Safe)");
+        setActivePresetName("Normal Telemetry");
       } else if (presetKey === "cam") {
         updated = {
-          Rate: 45.0,
+          Rate: 48.0,
           syn_count: 1,
-          ack_count: 24,
-          AVG: 820.0,
-          Number: 25,
-          "Tot sum": 20500.0,
+          ack_count: 28,
+          AVG: 950.0,
+          Number: 32,
+          "Tot sum": 30400.0,
           syn_flag_number: 0,
-          Drate: 5.0,
+          Drate: 8.0,
           Variance: 120.0,
-          IAT: 0.035,
+          IAT: 0.025,
         };
-        setActivePresetName("Smart Camera Streaming (Safe)");
+        setActivePresetName("IP Camera Stream");
       } else if (presetKey === "ddos") {
         updated = {
-          Rate: 2500.0,
-          syn_count: 220,
+          Rate: 8450.0,
+          syn_count: 980,
           ack_count: 0,
-          AVG: 64.0,
-          Number: 260,
-          "Tot sum": 16640.0,
+          AVG: 54.0,
+          Number: 1020,
+          "Tot sum": 55080.0,
           syn_flag_number: 1,
           Drate: 0.0,
           Variance: 12.0,
           IAT: 0.0004,
         };
-        setActivePresetName("High-Rate DDoS SYN Flood (Attack)");
+        setActivePresetName("DDoS SYN Flood");
       } else if (presetKey === "recon") {
         updated = {
           Rate: 85.0,
@@ -365,7 +390,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
           Variance: 4.0,
           IAT: 0.015,
         };
-        setActivePresetName("Stealth TCP Port Scan (Attack)");
+        setActivePresetName("Stealth Port Scan");
       } else if (presetKey === "mirai") {
         updated = {
           Rate: 850.0,
@@ -379,7 +404,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
           Variance: 18.0,
           IAT: 0.002,
         };
-        setActivePresetName("Mirai Botnet Telnet Flood (Attack)");
+        setActivePresetName("Mirai Telnet Probe");
       } else if (presetKey === "ssh") {
         updated = {
           Rate: 310.0,
@@ -393,7 +418,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
           Variance: 35.0,
           IAT: 0.006,
         };
-        setActivePresetName("SSH Credential Brute Force (Attack)");
+        setActivePresetName("SSH Brute Force");
       }
     }
 
@@ -409,7 +434,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
     const t0 = performance.now();
     try {
       if (!engineData) {
-        throw new Error("Edge inference rules loading... please wait.");
+        throw new Error("Inference engine loading. Please try in a moment.");
       }
 
       const activeTree =
@@ -435,22 +460,26 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
 
       // Risk level profiling
       let risk: "CRITICAL" | "HIGH" | "ELEVATED" | "SAFE" = "SAFE";
-      let desc = "Flow parameters strictly conform to standard IoT telemetry. Packet rate and flag ratios are normal.";
-      let advice = "No action required. Traffic authenticated as legitimate IoT node transmission.";
+      let desc = "Flow parameters conform to standard IoT telemetry. Packet rates and flag ratios match legitimate sensor communication.";
+      let advice = "No action required. Flow signature verified as legitimate IoT traffic.";
+      let hinglishExplanation = "Yeh flow completely SAFE hai. Packet rates aur interval timings baseline standards ke mutabiq hain.";
 
       if (isAttack) {
-        if (finalLabel === "DDoS" || finalLabel === "DoS" || finalLabel === "Attack Traffic") {
+        if (finalLabel.includes("DDoS") || finalLabel.includes("DoS") || finalLabel === "Attack Traffic") {
           risk = "CRITICAL";
-          desc = `Volumetric flood anomaly detected! Packet rate (${manualInputs["Rate"] || manualInputs["Srate"] || 0} pkts/s) exceeds edge threshold with abnormal SYN/ACK ratio.`;
-          advice = "Trigger rate-limiting ACL on ingress edge switch. Drop suspicious flow 5-tuple immediately.";
-        } else if (finalLabel === "Mirai" || finalLabel === "Brute Force") {
+          desc = `Volumetric flood anomaly detected. Packet arrival rate (${manualInputs["Rate"] || manualInputs["Srate"] || 0} pkts/s) severely exceeds baseline with 0 ACK acknowledgements.`;
+          advice = "Enforce rate-limiting ACL on ingress edge switch. Drop offending 5-tuple immediately.";
+          hinglishExplanation = `Critical Alert: DDoS SYN Flood detect hua hai! Attacker flow me abnormal packets (${manualInputs["Rate"] || manualInputs["Srate"] || 0} pkts/s) bhej kar device buffers ko exhaust kar raha hai. Edge switch par rate-limiting enforce karein.`;
+        } else if (finalLabel.includes("Mirai") || finalLabel.includes("Brute") || finalLabel.includes("SSH")) {
           risk = "HIGH";
-          desc = `Unauthorized credential probing / botnet signature detected across monitored flow attributes.`;
-          advice = "Block device MAC address and initiate credential rotation on IoT gateway.";
+          desc = `Unauthorized credential probing / automated botnet scanning pattern identified across TCP attributes.`;
+          advice = "Block device MAC address at edge switch and rotate management passwords.";
+          hinglishExplanation = `High Risk: Botnet ya brute-force probe detect hua hai. Default IoT management ports (22/23) par scanning chal rahi hai. Internet-facing management ports turant disable karein.`;
         } else {
           risk = "ELEVATED";
-          desc = `Reconnaissance scanning pattern detected (${manualInputs["syn_count"] || 0} unacknowledged probes).`;
-          advice = "Flag source IP for observation and enable strict port-scanning drop policy.";
+          desc = `Stealth reconnaissance pattern detected (${manualInputs["syn_count"] || 0} unacknowledged probes).`;
+          advice = "Quarantine source IP in gateway drop list and monitor surrounding subnet.";
+          hinglishExplanation = `Elevated Risk: Network reconnaissance / port scan detect hua hai. Attacker open ports probe kar raha hai taaki vulnerability find kar sake. Is IP ko quarantine karein.`;
         }
       }
 
@@ -462,7 +491,8 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
         riskLevel: risk,
         description: desc,
         actionAdvice: advice,
-        flowKeySummary: `K=10 Features | Pkts: ${manualInputs["Number"] || 0} | SYNs: ${manualInputs["syn_count"] || 0} | ACKs: ${manualInputs["ack_count"] || 0} | AVG: ${manualInputs["AVG"] || 0} B`,
+        humanExplanationHinglish: hinglishExplanation,
+        flowKeySummary: `K=10 Features • Latency: ${Number(latencyMs.toFixed(3))} ms • Confidence: ${Number(evalRes.confidence.toFixed(1))}%`,
       };
 
       setLiveVerdict(verdictPayload);
@@ -480,22 +510,32 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
     }
   };
 
-  // CSV Batch Classification
-  const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (featureName: string, value: string) => {
+    const num = parseFloat(value);
+    setManualInputs((prev) => ({
+      ...prev,
+      [featureName]: isNaN(num) ? 0 : num,
+    }));
+  };
+
+  // CSV Batch Upload Handler
+  const handleCsvUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-    setValidationError(null);
     setLoading(true);
+    setValidationError(null);
 
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
         const text = event.target?.result as string;
-        const lines = text.split("\n").filter((l) => l.trim().length > 0);
-        if (lines.length < 2) throw new Error("CSV file is empty or missing headers.");
+        const lines = text.trim().split("\n");
+        if (lines.length < 2) {
+          throw new Error("CSV file must contain a header row and data rows.");
+        }
 
-        const headers = lines[0].split(",").map((h) => h.trim().replace(/^"|"$/g, ""));
+        const headers = lines[0].split(",").map((h) => h.trim());
         const activeTree =
           task === "binary"
             ? engineData?.binary_tree_raw
@@ -548,65 +588,163 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
 
   return (
     <div className="space-y-6">
-      {/* 1. Main Live Simulator Card */}
-      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-2xl p-5 md:p-6 shadow-sm transition-all overflow-hidden">
-        {/* Card Header with prominent controls */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b-2 border-blue/20 gap-3">
+      {/* 1. In-Page Telemetry HUD Card (Clean Enterprise Status) */}
+      <div
+        className={`p-4 sm:p-5 rounded-xl border bg-white transition-all shadow-subtle ${
+          liveVerdict.isAttack
+            ? "border-rose-200 bg-rose-50/20"
+            : "border-slate-200 bg-white"
+        }`}
+      >
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          {/* Status Left */}
+          <div className="flex items-start sm:items-center gap-3.5">
+            <div
+              className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border ${
+                liveVerdict.isAttack
+                  ? "bg-rose-500 text-white border-rose-600 shadow-xs"
+                  : "bg-emerald-500 text-white border-emerald-600 shadow-xs"
+              }`}
+            >
+              {liveVerdict.isAttack ? (
+                <ShieldAlert className="w-5 h-5 text-white" />
+              ) : (
+                <ShieldCheck className="w-5 h-5 text-white" />
+              )}
+            </div>
+
+            <div>
+              <div className="flex items-center gap-2 flex-wrap">
+                <span
+                  className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${
+                    liveVerdict.riskLevel === "CRITICAL"
+                      ? "bg-rose-100 text-rose-700 border-rose-200"
+                      : liveVerdict.riskLevel === "HIGH"
+                      ? "bg-rose-50 text-rose-700 border-rose-200"
+                      : liveVerdict.riskLevel === "ELEVATED"
+                      ? "bg-amber-100 text-amber-800 border-amber-200"
+                      : "bg-emerald-100 text-emerald-700 border-emerald-200"
+                  }`}
+                >
+                  STATUS: {liveVerdict.riskLevel}
+                </span>
+
+                <span className="text-xs font-mono text-muted">•</span>
+
+                <span className="text-xs font-mono text-slate-500">
+                  Latency: <strong className="text-slate-800 font-medium">{liveVerdict.latencyMs} ms</strong>
+                </span>
+
+                <span className="text-xs font-mono text-slate-500">
+                  Confidence: <strong className="text-slate-800 font-medium">{liveVerdict.confidence}%</strong>
+                </span>
+              </div>
+
+              <h3 className="text-sm sm:text-base font-semibold text-ink mt-1">
+                {liveVerdict.isAttack ? (
+                  <span className="text-rose-700">Threat Detected: {liveVerdict.prediction}</span>
+                ) : (
+                  <span className="text-emerald-700">Clean Flow: {liveVerdict.prediction}</span>
+                )}
+              </h3>
+            </div>
+          </div>
+
+          {/* AI Quick Insight & Action Button */}
+          <div className="flex items-center gap-2.5 self-start md:self-auto shrink-0">
+            {onOpenAiAssistant && (
+              <button
+                onClick={() =>
+                  onOpenAiAssistant({ ...liveVerdict, inputs: manualInputs })
+                }
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-medium transition-colors shadow-xs cursor-pointer"
+              >
+                <Bot className="w-3.5 h-3.5 text-blue" />
+                <span>Explain in Sentinel AI</span>
+              </button>
+            )}
+
+            <button
+              onClick={() => {
+                setModalResult(liveVerdict);
+                setShowModal(true);
+              }}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-xs font-medium transition-colors shadow-xs cursor-pointer"
+            >
+              <Info className="w-3.5 h-3.5" />
+              <span>View Incident Details</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Human Language Summary Bar */}
+        <div className="mt-3.5 pt-3 border-t border-slate-200/70 text-xs text-slate-600 flex items-start gap-2">
+          <Bot className="w-4 h-4 text-blue shrink-0 mt-0.5" />
+          <p className="leading-relaxed">
+            <strong className="text-slate-800 font-medium">Sentinel AI Analysis: </strong>
+            {liveVerdict.humanExplanationHinglish}
+          </p>
+        </div>
+      </div>
+
+      {/* 2. Main Edge Telemetry Matrix Card */}
+      <div className="bg-surface border border-border rounded-xl p-5 shadow-card space-y-5">
+        {/* Top Controls: Preset selector + Mode tabs + Audio toggle */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-border gap-3">
           <div>
-            <div className="flex items-center gap-2.5">
-              <span className="w-3 h-3 rounded-full bg-blue animate-pulse shrink-0"></span>
-              <h3 className="text-base font-bold text-ink">Edge Threat Detection Simulator</h3>
-              <span className="px-2.5 py-0.5 rounded-full bg-blue/10 border-2 border-blue/30 text-blue font-black text-[11px] tracking-wide flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-blue" />
-                K=10 Features
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-semibold text-ink tracking-tight">
+                Edge Flow Telemetry Matrix
+              </span>
+              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-700 border border-slate-200 font-medium">
+                K = 10 Features
               </span>
             </div>
-            <p className="text-xs text-muted mt-1 font-medium">
-              Tested on the top 10 Mutual Information ranked features for resource-constrained IoT nodes.
+            <p className="text-xs text-muted mt-0.5">
+              Deterministic inference evaluated directly against unscaled Decision Tree rules.
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 self-start sm:self-auto shrink-0">
+          <div className="flex items-center gap-2 flex-wrap">
             {/* Audio Toggle */}
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className={`px-3 py-1.5 rounded-xl border-2 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer ${
+              className={`p-1.5 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
                 soundEnabled
-                  ? "bg-blue/10 border-blue text-blue shadow-xs"
-                  : "bg-canvas border-border text-muted"
+                  ? "bg-slate-100 border-slate-300 text-slate-700"
+                  : "bg-white border-slate-200 text-slate-400"
               }`}
-              title={soundEnabled ? "Audio Alarm Siren is ON" : "Audio Muted"}
+              title={soundEnabled ? "Audio chime enabled" : "Audio muted"}
+              aria-label="Toggle audio alarms"
             >
               {soundEnabled ? (
-                <>
-                  <Volume2 className="w-4 h-4 text-blue animate-bounce" />
-                  <span>Siren Alert ON</span>
-                </>
+                <Volume2 className="w-4 h-4 text-blue" />
               ) : (
-                <>
-                  <VolumeX className="w-4 h-4 text-muted" />
-                  <span>Siren Muted</span>
-                </>
+                <VolumeX className="w-4 h-4 text-slate-400" />
               )}
             </button>
 
-            {/* Mode Tabs */}
-            <div className="flex items-center gap-1 bg-canvas p-1 rounded-xl border-2 border-blue/30 text-xs font-bold">
+            {/* Manual vs CSV Tab */}
+            <div className="inline-flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
               <button
                 onClick={() => setActiveTab("manual")}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  activeTab === "manual" ? "bg-blue text-white shadow-xs font-bold" : "text-muted hover:text-ink"
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer ${
+                  activeTab === "manual"
+                    ? "bg-white text-ink shadow-xs font-semibold"
+                    : "text-muted hover:text-ink"
                 }`}
               >
-                10-Feature Flow
+                Manual Flow
               </button>
               <button
                 onClick={() => setActiveTab("csv")}
-                className={`px-3 py-1.5 rounded-lg transition-all cursor-pointer ${
-                  activeTab === "csv" ? "bg-blue text-white shadow-xs font-bold" : "text-muted hover:text-ink"
+                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer ${
+                  activeTab === "csv"
+                    ? "bg-white text-ink shadow-xs font-semibold"
+                    : "text-muted hover:text-ink"
                 }`}
               >
-                Batch CSV
+                CSV Batch
               </button>
             </div>
           </div>
@@ -614,463 +752,304 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
 
         {/* Validation Errors */}
         {validationError && (
-          <div className="mt-4 p-3.5 rounded-xl bg-danger/10 border-2 border-danger text-danger text-xs flex items-center gap-2">
+          <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
             <AlertTriangle className="w-4 h-4 shrink-0" />
-            <span className="font-semibold">{validationError}</span>
+            <span>{validationError}</span>
           </div>
         )}
 
-        {/* Active Verdict Status Card (Permanently Visible on Page) */}
-        <div
-          className={`mt-5 p-4 rounded-xl border-2 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4 ${
-            liveVerdict.isAttack
-              ? "bg-danger/10 border-danger text-ink shadow-sm"
-              : "bg-positive/10 border-positive text-ink shadow-sm"
-          }`}
-        >
-          <div className="flex items-start sm:items-center gap-3.5">
-            <div
-              className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border-2 ${
-                liveVerdict.isAttack
-                  ? "bg-danger text-white border-danger animate-pulse"
-                  : "bg-positive text-white border-positive"
-              }`}
-            >
-              {liveVerdict.isAttack ? (
-                <ShieldAlert className="w-6 h-6 text-white" />
-              ) : (
-                <ShieldCheck className="w-6 h-6 text-white" />
-              )}
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span
-                  className={`text-[10px] font-black px-2 py-0.5 rounded text-white ${
-                    liveVerdict.isAttack ? "bg-danger" : "bg-positive"
-                  }`}
-                >
-                  {liveVerdict.riskLevel}
-                </span>
-                <span className="text-xs font-bold text-muted">
-                  Active Scenario: <strong className="text-ink">{activePresetName}</strong>
-                </span>
-              </div>
-              <h4 className="text-base font-black text-ink mt-0.5">
-                {liveVerdict.isAttack
-                  ? `🚨 THREAT DETECTED: ${liveVerdict.prediction.toUpperCase()}`
-                  : "🛡️ TRAFFIC VERIFIED: 100% SAFE (BENIGN)"}
-              </h4>
-              <p className="text-xs text-muted mt-0.5 font-medium">{liveVerdict.description}</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-2.5 self-end sm:self-auto shrink-0 flex-wrap">
-            <div className="text-right mr-1">
-              <span className="text-[10px] text-muted font-bold block uppercase tracking-wider">Edge Inference</span>
-              <span className="text-xs font-mono font-bold text-ink">
-                {liveVerdict.latencyMs} ms &bull; {liveVerdict.confidence}% Conf
-              </span>
-            </div>
-            {onOpenAiAssistant && (
-              <button
-                onClick={() => onOpenAiAssistant({ ...liveVerdict, inputs: manualInputs })}
-                className="px-3.5 py-2 rounded-xl bg-blue/10 border-2 border-blue/40 text-blue hover:bg-blue hover:text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
-                title="Explain this flow in simple human language with Sentinel AI"
-              >
-                <Bot className="w-4 h-4 text-blue" />
-                <span>Explain with AI</span>
-              </button>
-            )}
-            <button
-              onClick={() => {
-                setModalResult(liveVerdict);
-                setShowModal(true);
-                if (soundEnabled) playIdsSound(liveVerdict.isAttack);
-              }}
-              className="px-3.5 py-2 rounded-xl bg-surface border-2 border-blue text-blue hover:bg-blue hover:text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
-            >
-              <span>View Alert Modal</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
-          </div>
-        </div>
-
-        {/* Tab 1: Interactive Manual Flow Testing */}
+        {/* Scenario Presets Bar */}
         {activeTab === "manual" && (
-          <div className="mt-5 space-y-5">
-            {/* 6 Quick Scenario Presets */}
-            <div className="p-4 rounded-xl bg-blue/5 border-2 border-blue/30 space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-ink uppercase tracking-wider flex items-center gap-1.5">
-                  <Zap className="w-4 h-4 text-blue" />
-                  Quick Test Scenarios (1-Click Evaluation)
-                </span>
-                <button
-                  onClick={() => applyPreset("benign")}
-                  className="text-xs text-blue hover:underline flex items-center gap-1 font-bold cursor-pointer"
-                >
-                  <RefreshCw className="w-3 h-3" />
-                  Reset to Safe Baseline
-                </button>
-              </div>
-
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 pt-1">
-                <button
-                  onClick={() => applyPreset("benign")}
-                  className="p-2.5 rounded-xl border-2 border-positive/50 bg-positive/10 hover:bg-positive/20 text-positive text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
-                >
-                  <span>🟢 Normal Web</span>
-                  <span className="text-[10px] text-muted font-medium">Safe HTTPS</span>
-                </button>
-                <button
-                  onClick={() => applyPreset("cam")}
-                  className="p-2.5 rounded-xl border-2 border-positive/50 bg-positive/10 hover:bg-positive/20 text-positive text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
-                >
-                  <span>🟢 Smart Cam</span>
-                  <span className="text-[10px] text-muted font-medium">Safe Video Feed</span>
-                </button>
-                <button
-                  onClick={() => applyPreset("ddos")}
-                  className="p-2.5 rounded-xl border-2 border-danger/50 bg-danger/10 hover:bg-danger/20 text-danger text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
-                >
-                  <span>🔴 DDoS Flood</span>
-                  <span className="text-[10px] text-muted font-medium">2,500 pkts/s</span>
-                </button>
-                <button
-                  onClick={() => applyPreset("recon")}
-                  className="p-2.5 rounded-xl border-2 border-warning/50 bg-warning/10 hover:bg-warning/20 text-warning text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
-                >
-                  <span>🟡 TCP Port Scan</span>
-                  <span className="text-[10px] text-muted font-medium">SYN Sweep</span>
-                </button>
-                <button
-                  onClick={() => applyPreset("mirai")}
-                  className="p-2.5 rounded-xl border-2 border-indigo/50 bg-indigo/10 hover:bg-indigo/20 text-indigo text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
-                >
-                  <span>🟣 Mirai Probe</span>
-                  <span className="text-[10px] text-muted font-medium">Botnet Telemetry</span>
-                </button>
-                <button
-                  onClick={() => applyPreset("ssh")}
-                  className="p-2.5 rounded-xl border-2 border-danger/50 bg-danger/10 hover:bg-danger/20 text-danger text-xs font-bold transition-all text-left flex flex-col gap-0.5 cursor-pointer shadow-xs"
-                >
-                  <span>🔴 SSH Spray</span>
-                  <span className="text-[10px] text-muted font-medium">Brute Force</span>
-                </button>
-              </div>
+          <div>
+            <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider font-mono mb-2">
+              Realistic Test Scenarios:
             </div>
+            <div className="flex items-center gap-1.5 flex-wrap">
+              {[
+                { key: "benign", label: "Baseline Normal" },
+                { key: "cam", label: "Camera Stream" },
+                { key: "ddos", label: "DDoS SYN Flood" },
+                { key: "recon", label: "Port Recon" },
+                { key: "mirai", label: "Mirai Probe" },
+                { key: "ssh", label: "SSH Brute" },
+              ].map((p) => {
+                const isSelected = activePresetName.toLowerCase().includes(p.label.toLowerCase());
+                return (
+                  <button
+                    key={p.key}
+                    onClick={() => applyPreset(p.key as any)}
+                    className={`px-2.5 py-1.2 rounded-lg text-xs font-medium transition-colors border cursor-pointer ${
+                      isSelected
+                        ? "bg-slate-900 text-white border-slate-900 shadow-xs"
+                        : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                    }`}
+                  >
+                    {p.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
-            {/* Exactly 10 Parameter Input Cards */}
-            <div className="space-y-2.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-muted uppercase tracking-wider flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-blue" />
-                  Monitored Feature Attributes (Exactly 10 Inputs)
-                </span>
-                <span className="text-[11px] text-blue font-bold bg-blue/10 px-2 py-0.5 rounded border border-blue/30">
-                  K=10 Feature Budget
-                </span>
-              </div>
+        {/* Tab 1: Manual 10-Feature Inputs (Grid of 5x2 or 2x5) */}
+        {activeTab === "manual" && (
+          <div className="space-y-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
+              {activeFeatures.map((feat) => {
+                const meta = FEATURE_METADATA[feat] || {
+                  label: feat,
+                  unit: "val",
+                  step: 1,
+                  min: 0,
+                  desc: feat,
+                };
+                const val = manualInputs[feat] !== undefined ? manualInputs[feat] : 0;
 
-              {/* Clean 2-Row / 5-Column Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                {activeFeatures.map((feat: string, idx: number) => {
-                  const val = manualInputs[feat] !== undefined ? manualInputs[feat] : 0;
-                  const meta = featureMeta[feat] || {
-                    label: feat,
-                    unit: "num",
-                    desc: "Feature parameter",
-                  };
+                return (
+                  <div
+                    key={feat}
+                    className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-colors flex flex-col justify-between"
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label
+                        htmlFor={`input-${feat}`}
+                        className="text-xs font-medium text-slate-700 truncate"
+                        title={meta.desc}
+                      >
+                        {meta.label}
+                      </label>
+                      <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-1 py-0.2 rounded border border-slate-200">
+                        {meta.unit}
+                      </span>
+                    </div>
 
-                  return (
-                    <div
-                      key={feat}
-                      className="p-3 rounded-xl bg-blue/5 border-2 border-blue/25 hover:border-blue transition-all space-y-1.5 overflow-hidden flex flex-col justify-between"
-                    >
-                      <div>
-                        <div className="flex items-center justify-between">
-                          <span className="w-5 h-5 rounded-full bg-blue text-white text-[10px] font-black flex items-center justify-center shrink-0">
-                            {idx + 1}
-                          </span>
-                          <span className="text-[10px] font-mono font-bold text-muted uppercase px-1.5 py-0.5 rounded bg-white/70 border border-border">
-                            {meta.unit}
-                          </span>
-                        </div>
-                        <label
-                          className="text-xs font-black text-ink block truncate mt-1.5"
-                          title={meta.label}
-                        >
-                          {feat}
-                        </label>
-                        <p className="text-[10px] text-muted truncate">{meta.label}</p>
-                      </div>
-
+                    <div className="relative">
                       <input
+                        id={`input-${feat}`}
                         type="number"
-                        step="any"
+                        step={meta.step}
+                        min={meta.min}
                         value={val}
-                        onChange={(e) => {
-                          const parsed = parseFloat(e.target.value);
-                          setManualInputs({
-                            ...manualInputs,
-                            [feat]: isNaN(parsed) ? 0 : parsed,
-                          });
-                          setActivePresetName("Custom Modified Parameters");
-                        }}
-                        className="w-full text-xs font-mono font-black px-2.5 py-1.5 rounded-lg border-2 border-blue/30 bg-white text-ink focus:outline-none focus:border-blue transition-all mt-1"
+                        onChange={(e) => handleInputChange(feat, e.target.value)}
+                        className="w-full px-2.5 py-1.5 text-xs font-mono font-semibold bg-white border border-slate-200 rounded-md text-ink focus:outline-hidden focus:border-blue focus:ring-1 focus:ring-blue/30"
                       />
                     </div>
-                  );
-                })}
-              </div>
+
+                    <div className="mt-1.5 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                      <span>{feat}</span>
+                      <span>step: {meta.step}</span>
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            {/* Action Buttons */}
-            <div className="pt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-t-2 border-blue/20">
-              <div className="flex items-center gap-3">
+            {/* Action Bar */}
+            <div className="flex items-center justify-between pt-3 border-t border-slate-200 flex-wrap gap-3">
+              <button
+                onClick={() => {
+                  setManualInputs(defaultBenignValues);
+                  setActivePresetName("Normal Telemetry");
+                }}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 text-xs font-medium transition-colors cursor-pointer"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span>Reset to Defaults</span>
+              </button>
+
+              <div className="flex items-center gap-2">
                 <button
                   onClick={handleClassify}
                   disabled={loading}
-                  className="px-6 py-3 rounded-xl bg-blue hover:bg-indigo text-white text-xs font-black transition-all shadow-md flex items-center justify-center gap-2 border-2 border-blue cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-blue text-white hover:bg-blue/90 text-xs font-medium transition-colors shadow-xs border border-blue cursor-pointer disabled:opacity-50"
                 >
-                  {loading ? (
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <Play className="w-4 h-4 fill-white" />
-                  )}
-                  <span>Classify Flow Sample (Run IDS)</span>
-                </button>
-
-                <button
-                  onClick={() => applyPreset("benign")}
-                  className="px-4 py-3 rounded-xl bg-surface border-2 border-blue/30 hover:border-blue text-ink text-xs font-bold transition-all cursor-pointer shadow-xs"
-                >
-                  Reset Form
+                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <span>{loading ? "Evaluating Flow..." : "Classify Flow Sample"}</span>
                 </button>
               </div>
-
-              <span className="text-xs text-muted font-medium">
-                ⚡ Evaluated on 10 edge features in &lt;1 ms with siren alarm.
-              </span>
             </div>
           </div>
         )}
 
-        {/* Tab 2: Upload CSV */}
+        {/* Tab 2: Batch CSV Upload */}
         {activeTab === "csv" && (
-          <div className="mt-5 space-y-4">
-            <div className="border-2 border-dashed border-blue/50 rounded-2xl p-8 text-center bg-blue/5 hover:bg-blue/10 transition-all overflow-hidden">
-              <FileSpreadsheet className="w-10 h-10 text-blue mx-auto mb-2" />
-              <h4 className="text-sm font-bold text-ink">Upload 10-Feature Flow CSV</h4>
-              <p className="text-xs text-muted mt-1 max-w-md mx-auto">
-                Batch flows are parsed and evaluated locally row-by-row on your device with 0 network latency.
-              </p>
-
-              <div className="mt-5 flex flex-wrap items-center justify-center gap-3">
-                <label className="cursor-pointer px-4 py-2.5 rounded-xl bg-blue text-white text-xs font-bold hover:bg-indigo transition-all shadow-md border-2 border-blue">
-                  <span>Choose CSV File</span>
-                  <input
-                    type="file"
-                    accept=".csv"
-                    onChange={handleFileUpload}
-                    className="hidden"
-                  />
-                </label>
-
-                <a
-                  href="/data/sample_traffic_for_prediction.csv"
-                  download="sample_traffic_for_prediction.csv"
-                  className="px-4 py-2.5 rounded-xl border-2 border-blue/40 bg-surface text-blue text-xs font-bold hover:bg-blue/10 transition-all flex items-center gap-1.5 shadow-xs"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>Download Sample K=10 CSV</span>
-                </a>
+          <div className="space-y-4">
+            <div className="p-6 border-2 border-dashed border-slate-200 rounded-xl text-center bg-slate-50/50 hover:bg-slate-50 transition-colors">
+              <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
+              <div className="text-xs font-medium text-slate-700">
+                Upload CSV File with 10 Monitored Features
               </div>
+              <p className="text-[11px] text-muted mt-0.5">
+                Evaluates first 25 network flows using the lightweight decision tree engine.
+              </p>
+              <input
+                type="file"
+                accept=".csv"
+                onChange={handleCsvUpload}
+                className="mt-3 text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-slate-900 file:text-white hover:file:bg-slate-800 cursor-pointer"
+              />
             </div>
 
-            {/* Batch Table */}
             {csvResults.length > 0 && (
-              <div className="mt-4 border-2 border-blue/30 rounded-2xl overflow-hidden shadow-xs">
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[560px] text-left text-xs border-collapse">
-                    <thead>
-                      <tr className="border-b-2 border-blue/20 bg-blue/10 text-ink font-bold">
-                        <th className="p-3">Flow #</th>
-                        <th className="p-3">Flow Attributes Summary</th>
-                        <th className="p-3">Classification</th>
-                        <th className="p-3">Latency</th>
+              <div className="border border-slate-200 rounded-lg overflow-x-auto">
+                <table className="w-full text-xs text-left">
+                  <thead className="bg-slate-50 border-b border-slate-200 font-mono text-[11px] text-slate-500">
+                    <tr>
+                      <th className="px-3 py-2">Row #</th>
+                      <th className="px-3 py-2">Feature Snapshot</th>
+                      <th className="px-3 py-2">Verdict</th>
+                      <th className="px-3 py-2">Confidence</th>
+                      <th className="px-3 py-2">Latency</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100 font-mono">
+                    {csvResults.map((r) => (
+                      <tr key={r.rowIdx} className="hover:bg-slate-50/60">
+                        <td className="px-3 py-2 text-slate-500">{r.rowIdx}</td>
+                        <td className="px-3 py-2 text-slate-700">{r.featuresSample}</td>
+                        <td className="px-3 py-2">
+                          <span
+                            className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                              r.isAttack
+                                ? "bg-rose-100 text-rose-700 border border-rose-200"
+                                : "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                            }`}
+                          >
+                            {r.predicted}
+                          </span>
+                        </td>
+                        <td className="px-3 py-2 text-slate-600">{r.confidence}%</td>
+                        <td className="px-3 py-2 text-slate-600">{r.latencyMs} ms</td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {csvResults.map((r) => (
-                        <tr key={r.rowIdx} className="border-b border-border hover:bg-canvas/40">
-                          <td className="p-3 font-mono font-bold text-muted">Flow #{r.rowIdx}</td>
-                          <td className="p-3 font-mono text-ink">{r.featuresSample}</td>
-                          <td className="p-3">
-                            <span
-                              className={`px-2.5 py-1 rounded-md text-[11px] font-bold border-2 ${
-                                r.isAttack
-                                  ? "bg-danger/10 text-danger border-danger"
-                                  : "bg-positive/10 text-positive border-positive"
-                              }`}
-                            >
-                              {r.isAttack ? `🚨 ${r.predicted}` : `🛡️ ${r.predicted}`}
-                            </span>
-                          </td>
-                          <td className="p-3 font-mono text-muted">{r.latencyMs} ms</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
+                    ))}
+                  </tbody>
+                </table>
               </div>
             )}
           </div>
         )}
       </div>
 
-      {/* ========================================================================= */}
-      {/* POPUP ALERT MODAL (Triggered immediately upon clicking Classify)           */}
-      {/* ========================================================================= */}
+      {/* 3. Professional Incident Modal Dialog */}
       {showModal && modalResult && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-navy-dark/80 backdrop-blur-sm animate-in fade-in duration-150">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          {/* Backdrop */}
           <div
-            className={`relative w-full max-w-lg rounded-3xl bg-white p-6 shadow-2xl border-4 transition-all overflow-hidden ${
-              modalResult.isAttack
-                ? "border-danger shadow-danger/30"
-                : "border-positive shadow-positive/30"
-            }`}
-          >
-            {/* Close Button */}
-            <button
-              onClick={() => setShowModal(false)}
-              className="absolute top-4 right-4 p-1.5 rounded-xl bg-canvas hover:bg-border text-muted hover:text-ink transition-all cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
+            className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity"
+            onClick={() => setShowModal(false)}
+          />
 
-            {/* Header Icon + Title */}
-            <div className="flex items-start gap-4 mb-4">
-              <div
-                className={`w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 border-2 ${
-                  modalResult.isAttack
-                    ? "bg-danger text-white border-danger animate-pulse"
-                    : "bg-positive text-white border-positive"
-                }`}
-              >
-                {modalResult.isAttack ? (
-                  <ShieldAlert className="w-8 h-8 text-white" />
-                ) : (
-                  <ShieldCheck className="w-8 h-8 text-white" />
-                )}
-              </div>
-
-              <div>
-                <span
-                  className={`text-[10px] font-black px-2.5 py-0.5 rounded text-white ${
-                    modalResult.riskLevel === "CRITICAL"
-                      ? "bg-danger"
-                      : modalResult.riskLevel === "HIGH"
-                      ? "bg-danger/90"
-                      : modalResult.riskLevel === "ELEVATED"
-                      ? "bg-warning"
-                      : "bg-positive"
+          {/* Modal Container */}
+          <div className="relative bg-white rounded-xl shadow-float border border-slate-200 max-w-lg w-full p-5 sm:p-6 z-10 space-y-4">
+            {/* Header with Close */}
+            <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
+              <div className="flex items-center gap-3">
+                <div
+                  className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border ${
+                    modalResult.isAttack
+                      ? "bg-rose-500 text-white border-rose-600"
+                      : "bg-emerald-500 text-white border-emerald-600"
                   }`}
                 >
-                  RISK: {modalResult.riskLevel}
-                </span>
+                  {modalResult.isAttack ? (
+                    <ShieldAlert className="w-5 h-5 text-white" />
+                  ) : (
+                    <ShieldCheck className="w-5 h-5 text-white" />
+                  )}
+                </div>
 
-                <h3 className="text-xl font-black text-ink mt-1">
-                  {modalResult.isAttack
-                    ? `🚨 INTRUSION DETECTED: ${modalResult.prediction.toUpperCase()}`
-                    : "🛡️ SAFE: 100% NORMAL BENIGN TRAFFIC"}
-                </h3>
+                <div>
+                  <div className="flex items-center gap-2">
+                    <span
+                      className={`text-[9px] font-mono font-semibold px-1.5 py-0.2 rounded border ${
+                        modalResult.riskLevel === "CRITICAL"
+                          ? "bg-rose-100 text-rose-700 border-rose-200"
+                          : modalResult.riskLevel === "HIGH"
+                          ? "bg-rose-50 text-rose-700 border-rose-200"
+                          : modalResult.riskLevel === "ELEVATED"
+                          ? "bg-amber-100 text-amber-800 border-amber-200"
+                          : "bg-emerald-100 text-emerald-700 border-emerald-200"
+                      }`}
+                    >
+                      {modalResult.riskLevel}
+                    </span>
+                    <span className="text-[11px] font-mono text-slate-400">
+                      {modalResult.latencyMs} ms • {modalResult.confidence}% confidence
+                    </span>
+                  </div>
 
-                <p className="text-xs text-muted mt-0.5 font-medium">
-                  Evaluated on 10 features in <strong className="text-ink">{modalResult.latencyMs} ms</strong> with{" "}
-                  <strong className="text-ink">{modalResult.confidence}% confidence</strong>.
-                </p>
+                  <h3 className="text-sm sm:text-base font-semibold text-ink mt-0.5">
+                    {modalResult.isAttack
+                      ? `Incident Alert: ${modalResult.prediction}`
+                      : "Verified Clean Telemetry"}
+                  </h3>
+                </div>
               </div>
+
+              <button
+                onClick={() => setShowModal(false)}
+                className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                aria-label="Close dialog"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
-            {/* Body Assessment Box */}
-            <div
-              className={`p-4 rounded-2xl border-2 mb-4 space-y-2 ${
-                modalResult.isAttack
-                  ? "bg-danger/10 border-danger/40 text-ink"
-                  : "bg-positive/10 border-positive/40 text-ink"
-              }`}
-            >
-              <div className="text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
-                <Activity className="w-3.5 h-3.5" />
-                <span>Behavioral Assessment</span>
+            {/* Technical Behavior Assessment */}
+            <div className="space-y-1.5 text-xs">
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider font-mono">
+                Technical Behavior Assessment
               </div>
-              <p className="text-xs leading-relaxed font-medium">{modalResult.description}</p>
-              <div className="pt-1 text-[11px] font-mono text-muted">
-                {modalResult.flowKeySummary}
-              </div>
-            </div>
-
-            {/* Sentinel AI Human Language Breakdown */}
-            <div className="p-4 rounded-2xl bg-gradient-to-r from-blue/10 via-indigo/10 to-blue/5 border-2 border-blue/30 mb-4 space-y-1.5">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-ink uppercase tracking-wider flex items-center gap-1.5">
-                  <Bot className="w-4 h-4 text-blue" />
-                  Sentinel AI (Human Language Breakdown):
-                </span>
-                <span className="text-[10px] font-black text-blue bg-blue/15 px-2 py-0.5 rounded border border-blue/30">
-                  Aasan Bhasha
-                </span>
-              </div>
-              <p className="text-xs text-ink font-semibold leading-relaxed">
-                {modalResult.isAttack
-                  ? `Bhai dekho: ${modalResult.prediction} attack detect hua hai! Attacker flow me abnormal packets bhej kar connection buffers ko jam karne ki koshish kar raha hai. Turant edge switch par rate-limiting lagao aur IP block karo.`
-                  : `Bhai tension mat lo: Yeh flow 100% SAFE hai! Standard IoT device telemetry hai jisme packet rate normal hai aur SYN ke badle ACK barabar mil rahe hain.`}
+              <p className="text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200">
+                {modalResult.description}
               </p>
             </div>
 
-            {/* Action Advice Box */}
-            <div className="p-3.5 rounded-2xl bg-canvas border-2 border-border mb-5">
-              <span className="text-[11px] font-black text-ink uppercase tracking-wider block mb-1">
-                Recommended Defensive Action:
-              </span>
-              <p className="text-xs text-muted leading-relaxed font-medium">
+            {/* Sentinel AI Plain Language Diagnosis */}
+            <div className="space-y-1.5 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider font-mono flex items-center gap-1.5">
+                  <Bot className="w-3.5 h-3.5 text-blue" />
+                  <span>Sentinel AI Diagnosis (Aasan Bhasha)</span>
+                </span>
+                <span className="text-[10px] font-mono text-blue font-medium">
+                  Plain Language
+                </span>
+              </div>
+              <div className="p-3 rounded-lg bg-blue-50/60 border border-blue-200 text-slate-800 leading-relaxed">
+                {modalResult.humanExplanationHinglish}
+              </div>
+            </div>
+
+            {/* Recommended Defensive Protocol */}
+            <div className="space-y-1.5 text-xs">
+              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider font-mono">
+                Recommended Defense Action
+              </div>
+              <p className="text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-200 font-mono text-[11px]">
                 {modalResult.actionAdvice}
               </p>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-2.5 flex-wrap">
-              <button
-                onClick={() => {
-                  if (soundEnabled) playIdsSound(modalResult.isAttack);
-                }}
-                className="px-3.5 py-2 rounded-xl border-2 border-border bg-canvas text-ink text-xs font-bold hover:bg-border transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
-              >
-                <Volume2 className="w-3.5 h-3.5 text-blue" />
-                <span>Replay Siren</span>
-              </button>
-
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
               {onOpenAiAssistant && (
                 <button
                   onClick={() => {
                     setShowModal(false);
                     onOpenAiAssistant({ ...modalResult, inputs: manualInputs });
                   }}
-                  className="px-4 py-2 rounded-xl bg-blue/10 border-2 border-blue text-blue hover:bg-blue hover:text-white text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue text-blue hover:bg-blue-50 text-xs font-medium transition-colors cursor-pointer"
                 >
                   <Bot className="w-3.5 h-3.5" />
-                  <span>Chat with AI</span>
+                  <span>Open in AI Assistant</span>
                 </button>
               )}
 
               <button
                 onClick={() => setShowModal(false)}
-                className={`px-5 py-2 rounded-xl text-white text-xs font-black transition-all shadow-md cursor-pointer ${
-                  modalResult.isAttack
-                    ? "bg-danger hover:bg-red-700 border-2 border-danger"
-                    : "bg-positive hover:bg-green-700 border-2 border-positive"
-                }`}
+                className="px-4 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-xs font-medium transition-colors shadow-xs cursor-pointer"
               >
                 Acknowledge & Close
               </button>

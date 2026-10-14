@@ -29,9 +29,9 @@ export default function ScoresView({
   activeRow,
 }: ScoresViewProps) {
   return (
-    <div className="flex flex-col xl:flex-row gap-6 items-start">
+    <div className="flex flex-col xl:flex-row gap-5 items-start">
       {/* Center Workspace */}
-      <div className="flex-1 space-y-6 min-w-0 w-full">
+      <div className="flex-1 space-y-5 min-w-0 w-full">
         {/* KPI Row */}
         <KpiRow
           macroF1={activeRow.test_macro_f1 || 0.989}
@@ -43,7 +43,7 @@ export default function ScoresView({
         />
 
         {/* Main Performance Chart & Class Distribution */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-stretch">
           <div className="lg:col-span-2 min-w-0">
             <PerformanceChart scorecardData={activeScorecard} task={task} />
           </div>
@@ -53,7 +53,7 @@ export default function ScoresView({
         </div>
 
         {/* Confusion Matrix & Feature Subsets */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 items-start">
           <div className="min-w-0">
             <ConfusionMatrixCard task={task} />
           </div>
@@ -78,7 +78,7 @@ export default function ScoresView({
       </div>
 
       {/* Right Insights Rail */}
-      <div className="w-full xl:w-80 shrink-0 min-w-0">
+      <div className="w-full xl:w-72 shrink-0 min-w-0">
         <InsightsRail task={task} selectedK={selectedK} />
       </div>
     </div>

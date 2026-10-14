@@ -9,7 +9,7 @@ import {
   YAxis,
   Tooltip,
   Legend,
-  CartesianGrid
+  CartesianGrid,
 } from "recharts";
 import { TrendingUp } from "lucide-react";
 
@@ -30,59 +30,61 @@ export default function PerformanceChart({ scorecardData, task }: PerformanceCha
     return entry;
   });
 
-  const modelColors: Record<string, string> = {
-    DecisionTree: "#0A24E9",
-    LogisticRegression: "#152EAE",
-    SmallRandomForest: "#5C9764",
-    ConstrainedLightGBM: "#C47B18",
+  const modelConfig: Record<string, { color: string; strokeWidth: number; dash?: string }> = {
+    DecisionTree: { color: "#2563EB", strokeWidth: 2.5 },
+    SmallRandomForest: { color: "#10B981", strokeWidth: 2 },
+    ConstrainedLightGBM: { color: "#F59E0B", strokeWidth: 1.5 },
+    LogisticRegression: { color: "#94A3B8", strokeWidth: 1.5, dash: "4 4" },
   };
 
-  const models = ["DecisionTree", "LogisticRegression", "SmallRandomForest", "ConstrainedLightGBM"];
+  const models = ["DecisionTree", "SmallRandomForest", "ConstrainedLightGBM", "LogisticRegression"];
 
   return (
-    <div className="bg-surface border-2 border-blue/35 hover:border-blue rounded-2xl p-5 md:p-6 shadow-xs hover:shadow-md transition-all overflow-hidden h-full flex flex-col justify-between">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b-2 border-blue/20 gap-2 shrink-0">
+    <div className="bg-white border border-border rounded-xl p-5 shadow-card h-full flex flex-col justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-border gap-2 shrink-0">
         <div>
           <div className="flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-blue" />
-            <h3 className="text-sm font-black text-ink">Model Performance by Feature Count</h3>
+            <h3 className="text-sm font-semibold text-ink">
+              Macro-F1 Trajectory vs Feature Budget (K)
+            </h3>
           </div>
-          <p className="text-xs text-muted mt-0.5 font-medium">
-            Test Macro-F1 across nested feature subsets $K \in [5, 10, 15, 20]$ ({task.toUpperCase()} Task)
+          <p className="text-xs text-muted mt-0.5">
+            Holdout evaluation across nested feature subsets $K \in [5, 10, 15, 20]$ ({task.toUpperCase()})
           </p>
         </div>
-        <div className="flex items-center gap-2 text-[11px] font-black text-blue bg-blue/10 px-3 py-1 rounded-full border border-blue/30 self-start sm:self-auto shrink-0 shadow-xs">
-          <span className="w-2 h-2 rounded-full bg-blue inline-block animate-pulse"></span>
-          <span>DecisionTree is Edge Champion</span>
+        <div className="flex items-center gap-1.5 text-[10px] font-mono font-medium text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 self-start sm:self-auto shrink-0">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
+          <span>Decision Tree Dominates</span>
         </div>
       </div>
 
       <div className="h-72 w-full pt-4 min-w-0">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={chartData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#E2E6EC" />
+            <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
             <XAxis
               dataKey="k"
-              tick={{ fontSize: 12, fill: "#8C9BA5", fontWeight: 700 }}
-              axisLine={{ stroke: "#0A24E9", strokeWidth: 1.5 }}
+              tick={{ fontSize: 11, fill: "#64748B", fontFamily: "JetBrains Mono, monospace" }}
+              axisLine={{ stroke: "#E2E8F0" }}
               tickLine={false}
             />
             <YAxis
               domain={[0.5, 1.02]}
-              tick={{ fontSize: 11, fill: "#8C9BA5", fontWeight: 700 }}
-              axisLine={{ stroke: "#0A24E9", strokeWidth: 1.5 }}
+              tick={{ fontSize: 11, fill: "#64748B", fontFamily: "JetBrains Mono, monospace" }}
+              axisLine={{ stroke: "#E2E8F0" }}
               tickLine={false}
               tickFormatter={(val) => `${(val * 100).toFixed(0)}%`}
             />
             <Tooltip
               contentStyle={{
-                backgroundColor: "#FFFFFF",
-                borderColor: "#0A24E9",
-                borderWidth: "2px",
-                borderRadius: "12px",
-                fontSize: "12px",
-                fontWeight: "bold",
-                boxShadow: "0 8px 24px rgba(10,36,233,0.15)",
+                backgroundColor: "#0F172A",
+                color: "#FFFFFF",
+                borderRadius: "8px",
+                border: "none",
+                fontSize: "11px",
+                fontFamily: "JetBrains Mono, monospace",
+                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
               }}
               formatter={(value: any, name: any) => [
                 `${(Number(value) * 100).toFixed(2)}%`,
@@ -90,21 +92,25 @@ export default function PerformanceChart({ scorecardData, task }: PerformanceCha
               ]}
             />
             <Legend
-              wrapperStyle={{ paddingTop: "14px", fontSize: "11px", fontWeight: "bold" }}
+              wrapperStyle={{ paddingTop: "12px", fontSize: "11px", fontFamily: "Inter, sans-serif" }}
               iconType="circle"
-              iconSize={8}
+              iconSize={7}
             />
-            {models.map((model) => (
-              <Line
-                key={model}
-                type="monotone"
-                dataKey={model}
-                stroke={modelColors[model] || "#0A24E9"}
-                strokeWidth={model === "DecisionTree" ? 3.5 : 2}
-                dot={{ r: 4.5, strokeWidth: 2, fill: "#FFFFFF" }}
-                activeDot={{ r: 7 }}
-              />
-            ))}
+            {models.map((model) => {
+              const cfg = modelConfig[model] || { color: "#64748B", strokeWidth: 1.5 };
+              return (
+                <Line
+                  key={model}
+                  type="monotone"
+                  dataKey={model}
+                  stroke={cfg.color}
+                  strokeWidth={cfg.strokeWidth}
+                  strokeDasharray={cfg.dash}
+                  dot={{ r: 3, fill: cfg.color }}
+                  activeDot={{ r: 5 }}
+                />
+              );
+            })}
           </LineChart>
         </ResponsiveContainer>
       </div>

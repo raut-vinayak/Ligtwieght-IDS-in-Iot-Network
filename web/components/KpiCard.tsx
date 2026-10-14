@@ -22,61 +22,81 @@ export default function KpiRow({
     {
       label: "Test Macro F1",
       value: (macroF1 * 100).toFixed(1) + "%",
-      subtext: `${modelName} @ K=${k}`,
-      icon: <Target className="w-5 h-5 text-blue" />,
-      tag: "Holdout Split",
-      iconBg: "bg-blue/10 border-blue/30",
+      subtext: `${modelName} (K=${k})`,
+      icon: Target,
+      tag: "Holdout",
+      tagColor: "bg-blue-50 text-blue-700 border-blue-200",
+      iconColor: "text-blue",
     },
     {
       label: "Balanced Accuracy",
       value: (balancedAcc * 100).toFixed(1) + "%",
-      subtext: "Compensates class skew",
-      icon: <CheckCircle2 className="w-5 h-5 text-positive" />,
-      tag: "Holdout Split",
-      iconBg: "bg-positive/10 border-positive/30",
+      subtext: "Class skew compensated",
+      icon: CheckCircle2,
+      tag: "Verified",
+      tagColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
+      iconColor: "text-emerald-500",
     },
     {
       label: "Median Latency",
       value: medianLatencyMs.toFixed(3) + " ms",
-      subtext: "Single-flow response time",
-      icon: <Zap className="w-5 h-5 text-warning" />,
-      tag: "Benchmarked",
-      iconBg: "bg-warning/10 border-warning/30",
+      subtext: "Single flow inference",
+      icon: Zap,
+      tag: "Edge Cap",
+      tagColor: "bg-amber-50 text-amber-700 border-amber-200",
+      iconColor: "text-amber-500",
     },
     {
-      label: "Model Footprint",
-      value: modelSizeKb < 1024 ? `${modelSizeKb.toFixed(1)} KB` : `${(modelSizeKb / 1024).toFixed(2)} MB`,
-      subtext: "Embedded Flash/RAM cost",
-      icon: <HardDrive className="w-5 h-5 text-indigo" />,
-      tag: "Artifact",
-      iconBg: "bg-indigo/10 border-indigo/30",
+      label: "Memory Footprint",
+      value:
+        modelSizeKb < 1024
+          ? `${modelSizeKb.toFixed(1)} KB`
+          : `${(modelSizeKb / 1024).toFixed(2)} MB`,
+      subtext: "Flash/RAM storage cost",
+      icon: HardDrive,
+      tag: "Embedded",
+      tagColor: "bg-slate-100 text-slate-700 border-slate-200",
+      iconColor: "text-slate-600",
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-      {cards.map((c, i) => (
-        <div
-          key={i}
-          className="bg-gradient-to-br from-white via-white to-blue-50/40 border-2 border-blue/35 hover:border-blue rounded-2xl p-4 md:p-5 shadow-xs hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 overflow-hidden flex flex-col justify-between"
-        >
-          <div>
-            <div className="flex items-center justify-between mb-2.5">
-              <span className="text-[11px] font-black text-muted uppercase tracking-wider">{c.label}</span>
-              <div className={`p-2 rounded-xl border ${c.iconBg} shadow-xs`}>
-                {c.icon}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+      {cards.map((c, i) => {
+        const Icon = c.icon;
+        return (
+          <div
+            key={i}
+            className="bg-white border border-border rounded-xl p-4 shadow-card hover:border-slate-300 transition-colors flex flex-col justify-between"
+          >
+            <div>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-[11px] font-mono font-medium text-slate-500 uppercase tracking-wider">
+                  {c.label}
+                </span>
+                <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-200/80">
+                  <Icon className={`w-3.5 h-3.5 ${c.iconColor}`} />
+                </div>
+              </div>
+
+              <div className="flex items-baseline gap-2">
+                <span className="text-2xl font-mono font-semibold text-ink tracking-tight">
+                  {c.value}
+                </span>
+                <span
+                  className={`text-[9px] font-mono font-medium px-1.5 py-0.2 rounded border ${c.tagColor}`}
+                >
+                  {c.tag}
+                </span>
               </div>
             </div>
-            <div className="flex items-baseline gap-2">
-              <span className="text-3xl font-black text-ink tracking-tight">{c.value}</span>
-              <span className="text-[10px] font-black px-1.5 py-0.5 rounded-md bg-blue/10 text-blue border border-blue/30">
-                {c.tag}
-              </span>
-            </div>
+
+            <p className="text-[11px] text-muted font-mono mt-2 pt-2 border-t border-slate-100">
+              {c.subtext}
+            </p>
           </div>
-          <p className="text-[11px] text-muted font-bold mt-2 pt-2 border-t border-blue/10">{c.subtext}</p>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

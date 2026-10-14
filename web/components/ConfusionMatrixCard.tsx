@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { Grid } from "lucide-react";
 
 interface ConfusionMatrixProps {
   task: string;
@@ -25,14 +26,14 @@ export default function ConfusionMatrixCard({ task }: ConfusionMatrixProps) {
   ];
 
   const multiMatrixNorm = [
-    [0.99, 0.00, 0.01, 0.00, 0.00, 0.00, 0.00, 0.00],
-    [0.00, 0.99, 0.01, 0.00, 0.00, 0.00, 0.00, 0.00],
-    [0.01, 0.02, 0.96, 0.01, 0.00, 0.00, 0.00, 0.00],
-    [0.00, 0.01, 0.00, 0.98, 0.01, 0.00, 0.00, 0.00],
-    [0.02, 0.00, 0.00, 0.02, 0.95, 0.01, 0.00, 0.00],
-    [0.00, 0.00, 0.00, 0.00, 0.00, 1.00, 0.00, 0.00],
-    [0.00, 0.00, 0.01, 0.00, 0.00, 0.00, 0.99, 0.00],
-    [0.00, 0.01, 0.00, 0.00, 0.00, 0.00, 0.00, 0.99],
+    [0.99, 0.0, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.99, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0],
+    [0.01, 0.02, 0.96, 0.01, 0.0, 0.0, 0.0, 0.0],
+    [0.0, 0.01, 0.0, 0.98, 0.01, 0.0, 0.0, 0.0],
+    [0.02, 0.0, 0.0, 0.02, 0.95, 0.01, 0.0, 0.0],
+    [0.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0],
+    [0.0, 0.0, 0.01, 0.0, 0.0, 0.0, 0.99, 0.0],
+    [0.0, 0.01, 0.0, 0.0, 0.0, 0.0, 0.0, 0.99],
   ];
 
   const multiMatrixRaw = [
@@ -57,87 +58,112 @@ export default function ConfusionMatrixCard({ task }: ConfusionMatrixProps) {
 
   const getCellBg = (val: number) => {
     const intensity = normalized ? val : val > 0 ? Math.min(1, val / 500) : 0;
-    if (intensity === 0) return "#FFFFFF";
+    if (intensity === 0) return "#F8FAFC";
     if (intensity < 0.1) return "#EEF2FF";
     if (intensity < 0.5) return "#C7D2FE";
     if (intensity < 0.8) return "#818CF8";
-    if (intensity < 0.95) return "#4338CA";
-    return "#152EAE";
+    if (intensity < 0.95) return "#4F46E5";
+    return "#312E81";
   };
 
   const getTextColor = (val: number) => {
     const intensity = normalized ? val : val > 0 ? Math.min(1, val / 500) : 0;
-    return intensity >= 0.7 ? "#FFFFFF" : "#0B0D17";
+    return intensity >= 0.7 ? "#FFFFFF" : "#0F172A";
   };
 
   return (
-    <div className="bg-surface border-2 border-blue/35 hover:border-blue rounded-2xl p-5 md:p-6 shadow-xs hover:shadow-md transition-all overflow-hidden">
-      <div className="flex items-center justify-between pb-3 border-b-2 border-blue/20">
+    <div className="bg-white border border-border rounded-xl p-5 shadow-card overflow-hidden">
+      <div className="flex items-center justify-between pb-3.5 border-b border-border">
         <div>
-          <h3 className="text-sm font-black text-ink">Confusion Matrix Heatmap</h3>
-          <p className="text-xs text-muted mt-0.5 font-medium">
-            Champion Model: DecisionTree (Holdout Test Split)
+          <div className="flex items-center gap-2">
+            <Grid className="w-4 h-4 text-blue" />
+            <h3 className="text-sm font-semibold text-ink">Confusion Matrix Heatmap</h3>
+          </div>
+          <p className="text-xs text-muted mt-0.5">
+            Decision Tree evaluation on stratified holdout test split
           </p>
         </div>
-        <div className="flex items-center gap-1 bg-canvas p-1 rounded-xl border-2 border-blue/30 text-[11px] font-bold shrink-0">
+
+        <div className="inline-flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
           <button
             onClick={() => setNormalized(true)}
-            className={`px-2.5 py-1 rounded transition-all ${
-              normalized ? "bg-blue text-white shadow-xs" : "text-muted hover:text-ink"
+            className={`px-2 py-0.8 rounded text-xs font-medium transition-all ${
+              normalized
+                ? "bg-white text-ink shadow-xs font-semibold"
+                : "text-muted hover:text-ink"
             }`}
           >
             Norm (%)
           </button>
           <button
             onClick={() => setNormalized(false)}
-            className={`px-2.5 py-1 rounded transition-all ${
-              !normalized ? "bg-blue text-white shadow-xs" : "text-muted hover:text-ink"
+            className={`px-2 py-0.8 rounded text-xs font-medium transition-all ${
+              !normalized
+                ? "bg-white text-ink shadow-xs font-semibold"
+                : "text-muted hover:text-ink"
             }`}
           >
-            Count
+            Counts
           </button>
         </div>
       </div>
 
-      <div className="mt-4 overflow-x-auto rounded-lg border border-blue/30">
-        <table className="w-full min-w-[440px] text-center text-xs border-collapse">
-          <thead>
-            <tr className="bg-blue/5">
-              <th className="p-1.5 text-[11px] font-bold text-muted text-left border border-blue/20">Actual \ Pred</th>
-              {classes.map((cls) => (
-                <th key={cls} className="p-1.5 text-[11px] font-bold text-ink border border-blue/20">
-                  {cls}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {classes.map((rowCls, rowIdx) => (
-              <tr key={rowCls}>
-                <td className="p-1.5 text-[11px] font-bold text-ink text-left whitespace-nowrap border border-blue/20">
-                  {rowCls}
-                </td>
-                {classes.map((_, colIdx) => {
-                  const val = currentMatrix[rowIdx][colIdx];
-                  const display = normalized ? `${(val * 100).toFixed(0)}%` : val;
-                  return (
-                    <td
-                      key={colIdx}
-                      className="p-1.5 border border-blue/20 transition-all font-mono"
-                      style={{
-                        backgroundColor: getCellBg(val),
-                        color: getTextColor(val),
-                        fontWeight: rowIdx === colIdx ? 800 : 500,
-                      }}
-                    >
-                      {display}
-                    </td>
-                  );
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <div className="mt-4 overflow-x-auto">
+        <div className="min-w-[280px]">
+          <div className="flex text-[10px] text-muted font-mono mb-1.5 ml-14">
+            <span className="font-semibold text-slate-700">Predicted Class →</span>
+          </div>
+
+          <div className="flex">
+            {/* Y-axis label */}
+            <div className="w-14 flex items-center justify-center">
+              <span className="text-[10px] font-mono font-semibold text-slate-700 -rotate-90">
+                True Class
+              </span>
+            </div>
+
+            {/* Matrix Table */}
+            <div className="flex-1">
+              <table className="w-full text-xs font-mono border-collapse border border-slate-200">
+                <thead>
+                  <tr>
+                    <th className="p-1.5 text-[10px] text-slate-400 bg-slate-50 border border-slate-200"></th>
+                    {classes.map((c) => (
+                      <th
+                        key={c}
+                        className="p-1.5 text-[10px] text-slate-600 bg-slate-50 border border-slate-200 truncate max-w-[65px]"
+                        title={c}
+                      >
+                        {c}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {currentMatrix.map((row, rIdx) => (
+                    <tr key={rIdx}>
+                      <td className="p-1.5 text-[10px] text-slate-600 bg-slate-50 border border-slate-200 truncate max-w-[65px] font-semibold">
+                        {classes[rIdx]}
+                      </td>
+                      {row.map((val, cIdx) => (
+                        <td
+                          key={cIdx}
+                          className="p-1.5 text-center border border-slate-200 text-[11px] font-semibold transition-colors"
+                          style={{
+                            backgroundColor: getCellBg(val),
+                            color: getTextColor(val),
+                          }}
+                        >
+                          {normalized ? (val * 100).toFixed(0) + "%" : val}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

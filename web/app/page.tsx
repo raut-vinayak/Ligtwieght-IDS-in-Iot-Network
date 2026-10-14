@@ -12,6 +12,7 @@ export default function DashboardPage() {
   const [task, setTask] = useState<"binary" | "multiclass">("multiclass");
   const [selectedK, setSelectedK] = useState<number>(10);
   const [selectedModel, setSelectedModel] = useState<string>("DecisionTree");
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const [summaryData, setSummaryData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -31,7 +32,7 @@ export default function DashboardPage() {
     confidence: 100.0,
     latencyMs: 0.18,
     riskLevel: "SAFE",
-    description: "Flow parameters strictly conform to standard IoT telemetry. Packet rate and flag ratios are normal.",
+    description: "Monitored flow features strictly conform to standard IoT edge telemetry. Rates, interval arrival times, and flag distributions match legitimate sensor baselines.",
     inputs: {
       Rate: 22.0,
       syn_count: 2,
@@ -98,8 +99,13 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-canvas">
-      {/* 1. Left Sidebar (Streamlined Operations Menu) */}
-      <Sidebar currentTab={currentTab} onSelectTab={setCurrentTab} />
+      {/* 1. Left Sidebar (Collapsible Mobile Drawer + Desktop Fixed) */}
+      <Sidebar
+        currentTab={currentTab}
+        onSelectTab={setCurrentTab}
+        mobileOpen={mobileNavOpen}
+        onCloseMobile={() => setMobileNavOpen(false)}
+      />
 
       {/* 2. Main Content Canvas */}
       <div className="flex-1 flex flex-col h-screen min-w-0 overflow-hidden">
@@ -111,10 +117,11 @@ export default function DashboardPage() {
             setSelectedK(10);
           }}
           onExport={handleExport}
+          onOpenMobileNav={() => setMobileNavOpen(true)}
         />
 
-        <main className="flex-1 p-4 sm:p-5 md:p-6 lg:p-7 overflow-y-auto min-w-0 scroll-smooth">
-          <div className="max-w-[1500px] mx-auto w-full space-y-6">
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto min-w-0 scroll-smooth">
+          <div className="max-w-7xl mx-auto w-full space-y-6 pb-8">
             {/* Center 1: Live Detection Simulator (K=10 Features + Alerts) */}
             {currentTab === "predict" && (
               <PredictionDemo
