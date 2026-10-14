@@ -39,7 +39,7 @@ export default function ModelComparisonTable({
   });
 
   return (
-    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all">
+    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-blue/20 gap-2">
         <div>
           <h3 className="text-sm font-bold text-ink">Comprehensive Model Scorecard</h3>
@@ -47,13 +47,13 @@ export default function ModelComparisonTable({
             Click any row to sync KPI cards and active model highlights
           </p>
         </div>
-        <span className="text-[11px] font-bold text-blue bg-blue/10 px-2.5 py-1 rounded-md border border-blue/30">
+        <span className="text-[11px] font-bold text-blue bg-blue/10 px-2.5 py-1 rounded-md border border-blue/30 self-start sm:self-auto shrink-0">
           {scorecardData.length} Configurations Benchmarked
         </span>
       </div>
 
       <div className="mt-4 overflow-x-auto border-2 border-blue/20 rounded-xl">
-        <table className="w-full text-left text-xs border-collapse">
+        <table className="w-full min-w-[720px] text-left text-xs border-collapse">
           <thead>
             <tr className="border-b-2 border-blue/20 bg-blue/5 text-ink font-bold">
               <th className="p-3">Status</th>

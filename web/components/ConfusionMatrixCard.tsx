@@ -71,7 +71,7 @@ export default function ConfusionMatrixCard({ task }: ConfusionMatrixProps) {
   };
 
   return (
-    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all">
+    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all overflow-hidden">
       <div className="flex items-center justify-between pb-3 border-b-2 border-blue/20">
         <div>
           <h3 className="text-sm font-bold text-ink">Confusion Matrix Heatmap</h3>
@@ -79,7 +79,7 @@ export default function ConfusionMatrixCard({ task }: ConfusionMatrixProps) {
             Champion Model: DecisionTree (Holdout Test Split)
           </p>
         </div>
-        <div className="flex items-center gap-1 bg-canvas p-1 rounded-lg border-2 border-blue/30 text-[11px] font-bold">
+        <div className="flex items-center gap-1 bg-canvas p-1 rounded-lg border-2 border-blue/30 text-[11px] font-bold shrink-0">
           <button
             onClick={() => setNormalized(true)}
             className={`px-2.5 py-1 rounded transition-all ${
@@ -99,8 +99,8 @@ export default function ConfusionMatrixCard({ task }: ConfusionMatrixProps) {
         </div>
       </div>
 
-      <div className="mt-4 overflow-x-auto">
-        <table className="w-full text-center text-xs border-collapse border border-blue/30">
+      <div className="mt-4 overflow-x-auto rounded-lg border border-blue/30">
+        <table className="w-full min-w-[440px] text-center text-xs border-collapse">
           <thead>
             <tr className="bg-blue/5">
               <th className="p-1.5 text-[11px] font-bold text-muted text-left border border-blue/20">Actual \ Pred</th>

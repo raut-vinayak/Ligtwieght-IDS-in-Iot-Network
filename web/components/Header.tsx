@@ -41,7 +41,7 @@ export default function Header({ currentTab, task, onTaskChange, onExport }: Hea
   const currentInfo = tabTitles[currentTab] || tabTitles.overview;
 
   return (
-    <header className="bg-surface border-b-2 border-blue/30 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
+    <header className="bg-surface border-b-2 border-blue/30 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs shrink-0">
       <div>
         <div className="flex items-center gap-2 text-[11px] text-muted font-bold mb-1">
           <span>DASHBOARD</span>

@@ -28,7 +28,7 @@ export default function Sidebar({ currentTab, onSelectTab }: SidebarProps) {
   ];
 
   return (
-    <aside className="w-64 bg-navy text-white flex flex-col justify-between shrink-0 min-h-screen border-r-2 border-blue/40 shadow-xl">
+    <aside className="w-64 bg-navy text-white flex flex-col justify-between shrink-0 h-screen border-r-2 border-blue/40 shadow-xl overflow-y-auto">
       <div>
         {/* Brand Header with blue accent border */}
         <div className="p-5 border-b-2 border-blue/30 flex items-center gap-3 bg-[#1E2445]/50">

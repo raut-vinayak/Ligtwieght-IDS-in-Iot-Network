@@ -67,7 +67,7 @@ export default function ReportsView() {
   return (
     <div className="space-y-6">
       {/* Downloadable Artifacts */}
-      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-4 transition-all">
+      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-4 transition-all overflow-hidden">
         <div className="flex items-center gap-2 pb-3 border-b-2 border-blue/20">
           <FileText className="w-4 h-4 text-blue" />
           <h3 className="text-sm font-bold text-ink">Reproducible Research Artifacts</h3>
@@ -77,10 +77,10 @@ export default function ReportsView() {
           {artifacts.map((art) => (
             <div
               key={art.title}
-              className="p-3.5 rounded-xl bg-blue/5 border-2 border-blue/30 flex items-start justify-between gap-3 hover:border-blue transition-all"
+              className="p-3.5 rounded-xl bg-blue/5 border-2 border-blue/30 flex items-start justify-between gap-3 hover:border-blue transition-all overflow-hidden"
             >
-              <div className="space-y-1">
-                <h4 className="text-xs font-bold text-ink">{art.title}</h4>
+              <div className="space-y-1 min-w-0">
+                <h4 className="text-xs font-bold text-ink truncate">{art.title}</h4>
                 <p className="text-[11px] text-muted leading-relaxed font-medium">{art.desc}</p>
               </div>
               <a
@@ -97,7 +97,7 @@ export default function ReportsView() {
       </div>
 
       {/* Generated Figures Gallery */}
-      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-4 transition-all">
+      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-4 transition-all overflow-hidden">
         <div className="flex items-center gap-2 pb-3 border-b-2 border-blue/20">
           <ImageIcon className="w-4 h-4 text-indigo" />
           <h3 className="text-sm font-bold text-ink">Scientific Evaluation Figures</h3>

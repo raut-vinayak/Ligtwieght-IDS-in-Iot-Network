@@ -13,11 +13,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className="h-full">
       <head>
         <Script src="/ort/ort.min.js" strategy="beforeInteractive" />
       </head>
-      <body className="min-h-screen bg-canvas text-ink antialiased">
+      <body className="h-full bg-canvas text-ink antialiased overflow-hidden">
         {children}
       </body>
     </html>

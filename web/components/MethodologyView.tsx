@@ -18,7 +18,7 @@ export default function MethodologyView() {
   return (
     <div className="space-y-6">
       {/* 1. Taxonomy */}
-      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-4 transition-all">
+      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-4 transition-all overflow-hidden">
         <div className="flex items-center gap-2 pb-3 border-b-2 border-blue/20">
           <BookOpen className="w-4 h-4 text-blue" />
           <h3 className="text-sm font-bold text-ink">Authoritative CICIoT2023 Classification Taxonomy</h3>
@@ -28,7 +28,7 @@ export default function MethodologyView() {
         </p>
 
         <div className="overflow-x-auto border-2 border-blue/20 rounded-xl">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full min-w-[620px] text-left text-xs border-collapse">
             <thead>
               <tr className="border-b-2 border-blue/20 bg-blue/5 text-ink font-bold">
                 <th className="p-3">Canonical Family</th>
@@ -51,7 +51,7 @@ export default function MethodologyView() {
 
       {/* 2. Leakage Safe Pipeline */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-3 transition-all">
+        <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-3 transition-all overflow-hidden">
           <div className="flex items-center gap-2 pb-2.5 border-b-2 border-blue/20">
             <ShieldCheck className="w-4 h-4 text-positive" />
             <h4 className="text-xs font-bold text-ink uppercase tracking-wider">Data Leakage Prevention</h4>

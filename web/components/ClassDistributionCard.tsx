@@ -26,18 +26,18 @@ export default function ClassDistributionCard({ task }: ClassDistributionProps) 
   const items = task === "binary" ? binaryDistribution : multiclassDistribution;
 
   return (
-    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all h-full">
-      <div className="flex items-center justify-between pb-3 border-b-2 border-blue/20">
+    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all overflow-hidden h-full flex flex-col justify-between">
+      <div className="flex items-center justify-between pb-3 border-b-2 border-blue/20 shrink-0">
         <div>
           <h3 className="text-sm font-bold text-ink">Class Distribution</h3>
           <p className="text-xs text-muted mt-0.5">Authoritative ground truth split support</p>
         </div>
-        <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-blue/10 border border-blue/30 text-blue">
+        <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-blue/10 border border-blue/30 text-blue shrink-0">
           16,000 Flows
         </span>
       </div>
 
-      <div className="mt-4 space-y-3">
+      <div className="mt-4 space-y-2.5 overflow-y-auto max-h-[280px] pr-1">
         {items.map((item) => (
           <div key={item.name} className="space-y-1">
             <div className="flex items-center justify-between text-xs">

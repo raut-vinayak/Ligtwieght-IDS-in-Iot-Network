@@ -54,7 +54,7 @@ export default function KpiRow({
       {cards.map((c, i) => (
         <div
           key={i}
-          className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm hover:shadow-md transition-all"
+          className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm hover:shadow-md transition-all overflow-hidden"
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs font-bold text-muted uppercase tracking-wider">{c.label}</span>

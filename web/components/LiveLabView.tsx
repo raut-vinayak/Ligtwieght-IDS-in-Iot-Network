@@ -35,7 +35,7 @@ export default function LiveLabView() {
 
       {/* 2. Network Topology & VM Setup */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-3 transition-all">
+        <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-3 transition-all overflow-hidden">
           <div className="flex items-center gap-2 pb-2.5 border-b-2 border-blue/20">
             <Network className="w-4 h-4 text-blue" />
             <h4 className="text-xs font-bold text-ink uppercase tracking-wider">Isolated Lab Topology</h4>
@@ -56,7 +56,7 @@ export default function LiveLabView() {
           </div>
         </div>
 
-        <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-3 transition-all">
+        <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm space-y-3 transition-all overflow-hidden">
           <div className="flex items-center gap-2 pb-2.5 border-b-2 border-blue/20">
             <Terminal className="w-4 h-4 text-indigo" />
             <h4 className="text-xs font-bold text-ink uppercase tracking-wider">IDS Sniffer Launch Command</h4>
@@ -75,7 +75,7 @@ sudo python3 -m src.live_capture \\
       </div>
 
       {/* 3. Replay Stream Table */}
-      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all">
+      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all overflow-hidden">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-blue/20 gap-2">
           <div className="flex items-center gap-2">
             <span className="w-3 h-3 rounded-full bg-blue animate-pulse"></span>
@@ -90,7 +90,7 @@ sudo python3 -m src.live_capture \\
         </div>
 
         <div className="mt-4 overflow-x-auto border-2 border-blue/20 rounded-xl">
-          <table className="w-full text-left text-xs border-collapse">
+          <table className="w-full min-w-[680px] text-left text-xs border-collapse">
             <thead>
               <tr className="border-b-2 border-blue/20 bg-blue/5 text-ink font-bold">
                 <th className="p-3">Timestamp</th>

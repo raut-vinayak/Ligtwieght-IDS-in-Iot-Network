@@ -75,12 +75,12 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-canvas">
+    <div className="flex h-screen w-full overflow-hidden bg-canvas">
       {/* 1. Left Sidebar */}
       <Sidebar currentTab={currentTab} onSelectTab={setCurrentTab} />
 
       {/* 2. Main Content Canvas */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col h-screen min-w-0 overflow-hidden">
         <Header
           currentTab={currentTab}
           task={task}
@@ -91,12 +91,69 @@ export default function DashboardPage() {
           onExport={handleExport}
         />
 
-        <main className="flex-1 p-5 md:p-7 overflow-y-auto">
-          {currentTab === "overview" && (
-            <div className="flex flex-col xl:flex-row gap-6">
-              {/* Center Workspace */}
-              <div className="flex-1 space-y-6 min-w-0">
-                {/* KPI Row */}
+        <main className="flex-1 p-4 sm:p-5 md:p-6 lg:p-7 overflow-y-auto min-w-0 scroll-smooth">
+          <div className="max-w-[1600px] mx-auto w-full space-y-6">
+            {currentTab === "overview" && (
+              <div className="flex flex-col xl:flex-row gap-6 items-start">
+                {/* Center Workspace */}
+                <div className="flex-1 space-y-6 min-w-0 w-full">
+                  {/* KPI Row */}
+                  <KpiRow
+                    macroF1={activeRow.test_macro_f1 || 0.989}
+                    balancedAcc={activeRow.test_balanced_acc || 0.996}
+                    medianLatencyMs={activeRow.median_latency_ms || 1.45}
+                    modelSizeKb={activeRow.model_size_kb || 8.2}
+                    modelName={activeRow.model || selectedModel}
+                    k={activeRow.k || selectedK}
+                  />
+
+                  {/* Main Performance Chart & Class Distribution */}
+                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
+                    <div className="lg:col-span-2 min-w-0">
+                      <PerformanceChart
+                        scorecardData={activeScorecard}
+                        task={task}
+                      />
+                    </div>
+                    <div className="min-w-0">
+                      <ClassDistributionCard task={task} />
+                    </div>
+                  </div>
+
+                  {/* Confusion Matrix & Feature Subsets */}
+                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+                    <div className="min-w-0">
+                      <ConfusionMatrixCard task={task} />
+                    </div>
+                    <div className="min-w-0">
+                      <FeatureSubsetsCard
+                        selectedK={selectedK}
+                        onSelectK={setSelectedK}
+                        task={task}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Model Comparison Table */}
+                  <div className="min-w-0">
+                    <ModelComparisonTable
+                      scorecardData={activeScorecard}
+                      selectedModel={selectedModel}
+                      selectedK={selectedK}
+                      onSelectModelRow={handleSelectModelRow}
+                    />
+                  </div>
+                </div>
+
+                {/* Right Insights Rail */}
+                <div className="w-full xl:w-80 shrink-0 min-w-0">
+                  <InsightsRail task={task} selectedK={selectedK} />
+                </div>
+              </div>
+            )}
+
+            {currentTab === "models" && (
+              <div className="space-y-6">
                 <KpiRow
                   macroF1={activeRow.test_macro_f1 || 0.989}
                   balancedAcc={activeRow.test_balanced_acc || 0.996}
@@ -105,31 +162,7 @@ export default function DashboardPage() {
                   modelName={activeRow.model || selectedModel}
                   k={activeRow.k || selectedK}
                 />
-
-                {/* Main Performance Chart & Class Distribution */}
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                  <div className="lg:col-span-2">
-                    <PerformanceChart
-                      scorecardData={activeScorecard}
-                      task={task}
-                    />
-                  </div>
-                  <div>
-                    <ClassDistributionCard task={task} />
-                  </div>
-                </div>
-
-                {/* Confusion Matrix & Feature Subsets */}
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                  <ConfusionMatrixCard task={task} />
-                  <FeatureSubsetsCard
-                    selectedK={selectedK}
-                    onSelectK={setSelectedK}
-                    task={task}
-                  />
-                </div>
-
-                {/* Model Comparison Table */}
+                <PerformanceChart scorecardData={activeScorecard} task={task} />
                 <ModelComparisonTable
                   scorecardData={activeScorecard}
                   selectedModel={selectedModel}
@@ -137,39 +170,16 @@ export default function DashboardPage() {
                   onSelectModelRow={handleSelectModelRow}
                 />
               </div>
+            )}
 
-              {/* Right Insights Rail */}
-              <InsightsRail task={task} selectedK={selectedK} />
-            </div>
-          )}
+            {currentTab === "predict" && <PredictionDemo task={task} />}
 
-          {currentTab === "models" && (
-            <div className="space-y-6">
-              <KpiRow
-                macroF1={activeRow.test_macro_f1 || 0.989}
-                balancedAcc={activeRow.test_balanced_acc || 0.996}
-                medianLatencyMs={activeRow.median_latency_ms || 1.45}
-                modelSizeKb={activeRow.model_size_kb || 8.2}
-                modelName={activeRow.model || selectedModel}
-                k={activeRow.k || selectedK}
-              />
-              <PerformanceChart scorecardData={activeScorecard} task={task} />
-              <ModelComparisonTable
-                scorecardData={activeScorecard}
-                selectedModel={selectedModel}
-                selectedK={selectedK}
-                onSelectModelRow={handleSelectModelRow}
-              />
-            </div>
-          )}
+            {currentTab === "live" && <LiveLabView />}
 
-          {currentTab === "predict" && <PredictionDemo task={task} />}
+            {currentTab === "reports" && <ReportsView />}
 
-          {currentTab === "live" && <LiveLabView />}
-
-          {currentTab === "reports" && <ReportsView />}
-
-          {currentTab === "methodology" && <MethodologyView />}
+            {currentTab === "methodology" && <MethodologyView />}
+          </div>
         </main>
       </div>
     </div>

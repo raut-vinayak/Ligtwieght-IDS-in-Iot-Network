@@ -81,7 +81,7 @@ export default function FeatureSubsetsCard({
   const currentFeatures = featureSets[selectedK] || featureSets[10];
 
   return (
-    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all">
+    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-blue/20 gap-2">
         <div>
           <h3 className="text-sm font-bold text-ink">Nested Feature Sets (K={selectedK})</h3>
@@ -89,7 +89,7 @@ export default function FeatureSubsetsCard({
             Mutual Information ranked & Pearson correlation pruned (ρ &lt; 0.85)
           </p>
         </div>
-        <div className="flex items-center gap-1.5 bg-canvas p-1 rounded-lg border-2 border-blue/30 text-xs font-bold">
+        <div className="flex items-center gap-1.5 bg-canvas p-1 rounded-lg border-2 border-blue/30 text-xs font-bold self-start sm:self-auto shrink-0">
           {[5, 10, 15, 20].map((k) => (
             <button
               key={k}
@@ -110,18 +110,18 @@ export default function FeatureSubsetsCard({
         {currentFeatures.map((f, idx) => (
           <div
             key={f.name}
-            className="flex items-center justify-between p-2.5 rounded-lg bg-blue/5 border border-blue/30 text-xs"
+            className="flex items-center justify-between p-2.5 rounded-lg bg-blue/5 border border-blue/30 text-xs min-w-0"
           >
-            <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-blue text-white text-[10px] font-bold flex items-center justify-center">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className="w-5 h-5 rounded-full bg-blue text-white text-[10px] font-bold flex items-center justify-center shrink-0">
                 {idx + 1}
               </span>
-              <div>
-                <span className="font-bold text-ink">{f.name}</span>
-                <span className="text-[10px] text-muted ml-1.5 font-mono">({f.unit})</span>
+              <div className="truncate min-w-0">
+                <span className="font-bold text-ink truncate">{f.name}</span>
+                <span className="text-[10px] text-muted ml-1 font-mono">({f.unit})</span>
               </div>
             </div>
-            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-positive/10 border border-positive/30 text-positive flex items-center gap-1">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-positive/10 border border-positive/30 text-positive flex items-center gap-1 shrink-0 ml-1">
               <Radio className="w-2.5 h-2.5" />
               Live
             </span>

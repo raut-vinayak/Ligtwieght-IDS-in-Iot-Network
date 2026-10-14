@@ -12,7 +12,7 @@ export default function InsightsRail({ task, selectedK }: InsightsRailProps) {
   return (
     <aside className="w-full xl:w-80 shrink-0 space-y-4">
       {/* 1. Run Summary */}
-      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm transition-all">
+      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm transition-all overflow-hidden">
         <div className="flex items-center gap-2 pb-2.5 border-b-2 border-blue/20">
           <FileText className="w-4 h-4 text-blue" />
           <h4 className="text-xs font-bold text-ink uppercase tracking-wider">Run Summary</h4>
@@ -42,7 +42,7 @@ export default function InsightsRail({ task, selectedK }: InsightsRailProps) {
       </div>
 
       {/* 2. Analysis Summary */}
-      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm transition-all">
+      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm transition-all overflow-hidden">
         <div className="flex items-center gap-2 pb-2.5 border-b-2 border-blue/20">
           <CheckCircle2 className="w-4 h-4 text-positive" />
           <h4 className="text-xs font-bold text-ink uppercase tracking-wider">Analysis Summary</h4>
@@ -61,7 +61,7 @@ export default function InsightsRail({ task, selectedK }: InsightsRailProps) {
       </div>
 
       {/* 3. Detection Status */}
-      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm transition-all">
+      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm transition-all overflow-hidden">
         <div className="flex items-center gap-2 pb-2.5 border-b-2 border-blue/20">
           <ShieldAlert className="w-4 h-4 text-warning" />
           <h4 className="text-xs font-bold text-ink uppercase tracking-wider">Detection Status</h4>
@@ -78,7 +78,7 @@ export default function InsightsRail({ task, selectedK }: InsightsRailProps) {
       </div>
 
       {/* 4. Limitations */}
-      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm transition-all">
+      <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm transition-all overflow-hidden">
         <div className="flex items-center gap-2 pb-2.5 border-b-2 border-blue/20">
           <AlertCircle className="w-4 h-4 text-muted" />
           <h4 className="text-xs font-bold text-ink uppercase tracking-wider">Research Limitations</h4>
