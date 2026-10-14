@@ -22,7 +22,7 @@ export default function Header({ currentTab, task, onTaskChange, onExport }: Hea
     },
     predict: {
       title: "Client-Side Prediction Demo",
-      subtitle: "Real-time edge inference running locally in your browser via ONNX Runtime Web",
+      subtitle: "Real-time edge inference running locally in your browser with instant sound alarms",
     },
     live: {
       title: "Isolated Lab VM Traffic",
@@ -41,25 +41,25 @@ export default function Header({ currentTab, task, onTaskChange, onExport }: Hea
   const currentInfo = tabTitles[currentTab] || tabTitles.overview;
 
   return (
-    <header className="bg-surface border-b border-border px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+    <header className="bg-surface border-b-2 border-blue/30 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-xs">
       <div>
-        <div className="flex items-center gap-2 text-[11px] text-muted font-medium mb-1">
-          <span>Dashboard</span>
+        <div className="flex items-center gap-2 text-[11px] text-muted font-bold mb-1">
+          <span>DASHBOARD</span>
           <span>/</span>
-          <span className="capitalize text-ink font-semibold">{currentTab}</span>
+          <span className="capitalize text-blue font-bold tracking-wide">{currentTab.toUpperCase()}</span>
         </div>
-        <h2 className="text-xl font-bold text-ink tracking-tight">{currentInfo.title}</h2>
+        <h2 className="text-xl font-black text-ink tracking-tight">{currentInfo.title}</h2>
         <p className="text-xs text-muted mt-0.5">{currentInfo.subtitle}</p>
       </div>
 
       <div className="flex items-center gap-3 self-start md:self-auto">
         {/* Task Switcher */}
-        <div className="bg-canvas p-1 rounded-lg border border-border flex items-center text-xs font-semibold">
+        <div className="bg-blue/5 p-1 rounded-xl border-2 border-blue/40 flex items-center text-xs font-bold">
           <button
             onClick={() => onTaskChange("binary")}
-            className={`px-3 py-1.5 rounded-md transition-all ${
+            className={`px-3 py-1.5 rounded-lg transition-all ${
               task === "binary"
-                ? "bg-surface text-blue shadow-sm font-bold"
+                ? "bg-blue text-white shadow-xs font-bold"
                 : "text-muted hover:text-ink"
             }`}
           >
@@ -67,9 +67,9 @@ export default function Header({ currentTab, task, onTaskChange, onExport }: Hea
           </button>
           <button
             onClick={() => onTaskChange("multiclass")}
-            className={`px-3 py-1.5 rounded-md transition-all ${
+            className={`px-3 py-1.5 rounded-lg transition-all ${
               task === "multiclass"
-                ? "bg-surface text-blue shadow-sm font-bold"
+                ? "bg-blue text-white shadow-xs font-bold"
                 : "text-muted hover:text-ink"
             }`}
           >
@@ -78,15 +78,15 @@ export default function Header({ currentTab, task, onTaskChange, onExport }: Hea
         </div>
 
         {/* Split Chip */}
-        <div className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border bg-canvas text-xs font-medium text-ink">
+        <div className="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-xl border-2 border-blue/30 bg-blue/5 text-xs font-bold text-ink">
           <Database className="w-3.5 h-3.5 text-blue" />
-          <span>Test Split (Holdout)</span>
+          <span>Holdout Test Set</span>
         </div>
 
         {/* Export Action */}
         <button
           onClick={onExport}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-blue text-white text-xs font-medium hover:bg-indigo transition-all shadow-sm"
+          className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-blue text-white text-xs font-bold hover:bg-indigo transition-all shadow-md border-2 border-blue cursor-pointer"
         >
           <Download className="w-3.5 h-3.5" />
           <span>Export Scorecard</span>

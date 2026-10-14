@@ -26,13 +26,13 @@ export default function ClassDistributionCard({ task }: ClassDistributionProps) 
   const items = task === "binary" ? binaryDistribution : multiclassDistribution;
 
   return (
-    <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
-      <div className="flex items-center justify-between pb-3 border-b border-border">
+    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all h-full">
+      <div className="flex items-center justify-between pb-3 border-b-2 border-blue/20">
         <div>
-          <h3 className="text-sm font-semibold text-ink">Class Distribution</h3>
+          <h3 className="text-sm font-bold text-ink">Class Distribution</h3>
           <p className="text-xs text-muted mt-0.5">Authoritative ground truth split support</p>
         </div>
-        <span className="text-[11px] font-semibold px-2 py-0.5 rounded bg-canvas border border-border text-ink">
+        <span className="text-[11px] font-bold px-2 py-0.5 rounded bg-blue/10 border border-blue/30 text-blue">
           16,000 Flows
         </span>
       </div>
@@ -41,18 +41,18 @@ export default function ClassDistributionCard({ task }: ClassDistributionProps) 
         {items.map((item) => (
           <div key={item.name} className="space-y-1">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-medium text-ink flex items-center gap-1.5">
+              <span className="font-bold text-ink flex items-center gap-1.5">
                 <span
-                  className="w-2 h-2 rounded-full inline-block"
+                  className="w-2.5 h-2.5 rounded-full inline-block"
                   style={{ backgroundColor: item.color }}
                 ></span>
                 {item.name}
               </span>
-              <span className="text-muted font-medium">
+              <span className="text-muted font-mono font-semibold">
                 {item.count.toLocaleString()} ({item.pct}%)
               </span>
             </div>
-            <div className="w-full h-1.5 bg-canvas rounded-full overflow-hidden border border-border">
+            <div className="w-full h-2 bg-canvas rounded-full overflow-hidden border border-border">
               <div
                 className="h-full rounded-full transition-all duration-500"
                 style={{ width: `${item.pct}%`, backgroundColor: item.color }}

@@ -54,21 +54,21 @@ export default function KpiRow({
       {cards.map((c, i) => (
         <div
           key={i}
-          className="bg-surface border border-border rounded-xl p-4 shadow-sm hover:border-muted transition-all"
+          className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-4 shadow-sm hover:shadow-md transition-all"
         >
           <div className="flex items-center justify-between mb-2">
-            <span className="text-xs font-medium text-muted">{c.label}</span>
-            <div className="p-1.5 rounded-lg bg-canvas border border-border">
+            <span className="text-xs font-bold text-muted uppercase tracking-wider">{c.label}</span>
+            <div className="p-1.5 rounded-lg bg-blue/5 border border-blue/30">
               {c.icon}
             </div>
           </div>
           <div className="flex items-baseline gap-2">
-            <span className="text-2xl font-bold text-ink tracking-tight">{c.value}</span>
-            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-canvas text-muted border border-border">
+            <span className="text-2xl font-black text-ink tracking-tight">{c.value}</span>
+            <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-blue/10 text-blue border border-blue/30">
               {c.tag}
             </span>
           </div>
-          <p className="text-[11px] text-muted mt-1">{c.subtext}</p>
+          <p className="text-[11px] text-muted font-medium mt-1">{c.subtext}</p>
         </div>
       ))}
     </div>

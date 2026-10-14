@@ -39,88 +39,88 @@ export default function ModelComparisonTable({
   });
 
   return (
-    <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-border gap-2">
+    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-blue/20 gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-ink">Comprehensive Model Scorecard</h3>
+          <h3 className="text-sm font-bold text-ink">Comprehensive Model Scorecard</h3>
           <p className="text-xs text-muted mt-0.5">
             Click any row to sync KPI cards and active model highlights
           </p>
         </div>
-        <span className="text-[11px] font-semibold text-muted">
-          Showing {scorecardData.length} Evaluated Configurations
+        <span className="text-[11px] font-bold text-blue bg-blue/10 px-2.5 py-1 rounded-md border border-blue/30">
+          {scorecardData.length} Configurations Benchmarked
         </span>
       </div>
 
-      <div className="mt-4 overflow-x-auto">
+      <div className="mt-4 overflow-x-auto border-2 border-blue/20 rounded-xl">
         <table className="w-full text-left text-xs border-collapse">
           <thead>
-            <tr className="border-b border-border bg-canvas/60 text-muted font-semibold">
-              <th className="p-2.5">Status</th>
+            <tr className="border-b-2 border-blue/20 bg-blue/5 text-ink font-bold">
+              <th className="p-3">Status</th>
               <th
-                className="p-2.5 cursor-pointer hover:text-ink transition-colors"
+                className="p-3 cursor-pointer hover:text-blue transition-colors"
                 onClick={() => handleSort("model")}
               >
                 <div className="flex items-center gap-1">
                   <span>Model</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
               <th
-                className="p-2.5 cursor-pointer hover:text-ink transition-colors"
+                className="p-3 cursor-pointer hover:text-blue transition-colors"
                 onClick={() => handleSort("k")}
               >
                 <div className="flex items-center gap-1">
                   <span>K Features</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
               <th
-                className="p-2.5 cursor-pointer hover:text-ink transition-colors"
+                className="p-3 cursor-pointer hover:text-blue transition-colors"
                 onClick={() => handleSort("test_macro_f1")}
               >
                 <div className="flex items-center gap-1">
                   <span>Macro F1</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
               <th
-                className="p-2.5 cursor-pointer hover:text-ink transition-colors"
+                className="p-3 cursor-pointer hover:text-blue transition-colors"
                 onClick={() => handleSort("test_balanced_acc")}
               >
                 <div className="flex items-center gap-1">
                   <span>Balanced Acc</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
               <th
-                className="p-2.5 cursor-pointer hover:text-ink transition-colors"
+                className="p-3 cursor-pointer hover:text-blue transition-colors"
                 onClick={() => handleSort("median_latency_ms")}
               >
                 <div className="flex items-center gap-1">
                   <span>Median Latency</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
               <th
-                className="p-2.5 cursor-pointer hover:text-ink transition-colors"
+                className="p-3 cursor-pointer hover:text-blue transition-colors"
                 onClick={() => handleSort("p95_latency_ms")}
               >
                 <div className="flex items-center gap-1">
                   <span>P95 Latency</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
               <th
-                className="p-2.5 cursor-pointer hover:text-ink transition-colors"
+                className="p-3 cursor-pointer hover:text-blue transition-colors"
                 onClick={() => handleSort("model_size_kb")}
               >
                 <div className="flex items-center gap-1">
                   <span>Size (KB)</span>
-                  <ArrowUpDown className="w-3 h-3" />
+                  <ArrowUpDown className="w-3.5 h-3.5" />
                 </div>
               </th>
-              <th className="p-2.5">Run ID</th>
+              <th className="p-3">Run ID</th>
             </tr>
           </thead>
           <tbody>
@@ -135,34 +135,34 @@ export default function ModelComparisonTable({
                   onClick={() => onSelectModelRow(row.model, row.k)}
                   className={`border-b border-border cursor-pointer transition-colors ${
                     isSelected
-                      ? "bg-blue/10 border-blue/40 font-semibold"
-                      : "hover:bg-canvas/50"
+                      ? "bg-blue/15 border-blue font-bold"
+                      : "hover:bg-blue/5"
                   }`}
                 >
-                  <td className="p-2.5">
+                  <td className="p-3">
                     {isChampion ? (
-                      <span className="text-[10px] font-bold px-1.5 py-0.5 rounded bg-positive/10 text-positive border border-positive/30">
+                      <span className="text-[10px] font-black px-2 py-0.5 rounded bg-positive/10 text-positive border border-positive/40">
                         CHAMPION
                       </span>
                     ) : (
-                      <span className="text-[10px] text-muted">BENCH</span>
+                      <span className="text-[10px] text-muted font-bold">BENCH</span>
                     )}
                   </td>
-                  <td className="p-2.5 text-ink font-semibold flex items-center gap-1.5">
-                    {isSelected && <Check className="w-3.5 h-3.5 text-blue" />}
+                  <td className="p-3 text-ink font-bold flex items-center gap-1.5">
+                    {isSelected && <Check className="w-4 h-4 text-blue shrink-0" />}
                     <span>{row.model}</span>
                   </td>
-                  <td className="p-2.5 text-ink">K={row.k}</td>
-                  <td className="p-2.5 text-blue font-bold">
+                  <td className="p-3 text-ink font-semibold">K={row.k}</td>
+                  <td className="p-3 text-blue font-black">
                     {(row.test_macro_f1 * 100).toFixed(2)}%
                   </td>
-                  <td className="p-2.5 text-ink font-medium">
+                  <td className="p-3 text-ink font-bold">
                     {(row.test_balanced_acc * 100).toFixed(2)}%
                   </td>
-                  <td className="p-2.5 text-ink font-mono">{row.median_latency_ms.toFixed(3)} ms</td>
-                  <td className="p-2.5 text-muted font-mono">{row.p95_latency_ms.toFixed(3)} ms</td>
-                  <td className="p-2.5 text-ink font-mono">{row.model_size_kb.toFixed(1)} KB</td>
-                  <td className="p-2.5 text-muted font-mono text-[10px]">{row.run_id}</td>
+                  <td className="p-3 text-ink font-mono font-semibold">{row.median_latency_ms.toFixed(3)} ms</td>
+                  <td className="p-3 text-muted font-mono">{row.p95_latency_ms.toFixed(3)} ms</td>
+                  <td className="p-3 text-ink font-mono font-bold">{row.model_size_kb.toFixed(1)} KB</td>
+                  <td className="p-3 text-muted font-mono text-[10px]">{row.run_id}</td>
                 </tr>
               );
             })}

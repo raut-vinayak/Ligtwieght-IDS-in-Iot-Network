@@ -18,7 +18,6 @@ interface PerformanceChartProps {
 }
 
 export default function PerformanceChart({ scorecardData, task }: PerformanceChartProps) {
-  // Pivot data for Recharts: rows = K values, columns = model Macro F1
   const kValues = [5, 10, 15, 20];
   const chartData = kValues.map((k) => {
     const entry: Record<string, any> = { k: `K=${k}` };
@@ -40,17 +39,17 @@ export default function PerformanceChart({ scorecardData, task }: PerformanceCha
   const models = ["DecisionTree", "LogisticRegression", "SmallRandomForest", "ConstrainedLightGBM"];
 
   return (
-    <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border gap-2">
+    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b-2 border-blue/20 gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-ink">Model Performance by Feature Count</h3>
-          <p className="text-xs text-muted mt-0.5">
+          <h3 className="text-sm font-bold text-ink">Model Performance by Feature Count</h3>
+          <p className="text-xs text-muted mt-0.5 font-medium">
             Test Macro-F1 across nested feature subsets $K \in [5, 10, 15, 20]$ ({task.toUpperCase()} Task)
           </p>
         </div>
-        <div className="flex items-center gap-2 text-[11px] font-medium text-muted">
+        <div className="flex items-center gap-2 text-[11px] font-bold text-blue bg-blue/10 px-2.5 py-1 rounded-md border border-blue/30">
           <span className="w-2.5 h-2.5 rounded-full bg-blue inline-block"></span>
-          <span>DecisionTree is Edge Champion (K=5 / K=20)</span>
+          <span>DecisionTree is Edge Champion</span>
         </div>
       </div>
 
@@ -60,24 +59,26 @@ export default function PerformanceChart({ scorecardData, task }: PerformanceCha
             <CartesianGrid strokeDasharray="3 3" stroke="#E2E6EC" />
             <XAxis
               dataKey="k"
-              tick={{ fontSize: 12, fill: "#8C9BA5" }}
-              axisLine={{ stroke: "#CACED6" }}
+              tick={{ fontSize: 12, fill: "#8C9BA5", fontWeight: 600 }}
+              axisLine={{ stroke: "#0A24E9", strokeWidth: 1.5 }}
               tickLine={false}
             />
             <YAxis
               domain={[0.5, 1.02]}
-              tick={{ fontSize: 11, fill: "#8C9BA5" }}
-              axisLine={{ stroke: "#CACED6" }}
+              tick={{ fontSize: 11, fill: "#8C9BA5", fontWeight: 600 }}
+              axisLine={{ stroke: "#0A24E9", strokeWidth: 1.5 }}
               tickLine={false}
               tickFormatter={(val) => `${(val * 100).toFixed(0)}%`}
             />
             <Tooltip
               contentStyle={{
                 backgroundColor: "#FFFFFF",
-                borderColor: "#CACED6",
-                borderRadius: "8px",
+                borderColor: "#0A24E9",
+                borderWidth: "2px",
+                borderRadius: "10px",
                 fontSize: "12px",
-                boxShadow: "0 4px 12px rgba(0,0,0,0.06)",
+                fontWeight: "bold",
+                boxShadow: "0 4px 14px rgba(10,36,233,0.12)",
               }}
               formatter={(value: any, name: any) => [
                 `${(Number(value) * 100).toFixed(2)}%`,
@@ -85,7 +86,7 @@ export default function PerformanceChart({ scorecardData, task }: PerformanceCha
               ]}
             />
             <Legend
-              wrapperStyle={{ paddingTop: "12px", fontSize: "11px" }}
+              wrapperStyle={{ paddingTop: "12px", fontSize: "11px", fontWeight: "bold" }}
               iconType="circle"
               iconSize={8}
             />
@@ -95,9 +96,9 @@ export default function PerformanceChart({ scorecardData, task }: PerformanceCha
                 type="monotone"
                 dataKey={model}
                 stroke={modelColors[model] || "#0A24E9"}
-                strokeWidth={model === "DecisionTree" ? 3 : 2}
-                dot={{ r: 4, strokeWidth: 1.5, fill: "#FFFFFF" }}
-                activeDot={{ r: 6 }}
+                strokeWidth={model === "DecisionTree" ? 3.5 : 2}
+                dot={{ r: 4.5, strokeWidth: 2, fill: "#FFFFFF" }}
+                activeDot={{ r: 7 }}
               />
             ))}
           </LineChart>

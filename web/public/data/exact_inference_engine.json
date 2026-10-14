@@ -1,0 +1,263 @@
+{
+  "binary_tree_raw": {
+    "feature": "Number",
+    "threshold": 28.13,
+    "left": {
+      "prediction": "Benign",
+      "confidence": 100.0
+    },
+    "right": {
+      "feature": "Srate",
+      "threshold": 13.14,
+      "left": {
+        "prediction": "Benign",
+        "confidence": 100.0
+      },
+      "right": {
+        "feature": "Number",
+        "threshold": 32.6,
+        "left": {
+          "feature": "ack_count",
+          "threshold": 11.41,
+          "left": {
+            "prediction": "Attack",
+            "confidence": 100.0
+          },
+          "right": {
+            "prediction": "Benign",
+            "confidence": 100.0
+          }
+        },
+        "right": {
+          "prediction": "Attack",
+          "confidence": 100.0
+        }
+      }
+    }
+  },
+  "multiclass_tree_raw": {
+    "feature": "Number",
+    "threshold": 28.5,
+    "left": {
+      "feature": "syn_count",
+      "threshold": 8.5,
+      "left": {
+        "prediction": "Benign",
+        "confidence": 100.0
+      },
+      "right": {
+        "prediction": "Recon",
+        "confidence": 100.0
+      }
+    },
+    "right": {
+      "feature": "syn_count",
+      "threshold": 21.5,
+      "left": {
+        "feature": "AVG",
+        "threshold": 348.59,
+        "left": {
+          "feature": "syn_count",
+          "threshold": 6.5,
+          "left": {
+            "feature": "Telnet",
+            "threshold": 0.5,
+            "left": {
+              "feature": "Rate",
+              "threshold": 345.26,
+              "left": {
+                "prediction": "Spoofing",
+                "confidence": 90.7
+              },
+              "right": {
+                "prediction": "DoS",
+                "confidence": 100.0
+              }
+            },
+            "right": {
+              "feature": "SSH",
+              "threshold": 0.5,
+              "left": {
+                "prediction": "Mirai",
+                "confidence": 94.3
+              },
+              "right": {
+                "prediction": "Brute Force",
+                "confidence": 88.9
+              }
+            }
+          },
+          "right": {
+            "feature": "Rate",
+            "threshold": 480.42,
+            "left": {
+              "prediction": "Recon",
+              "confidence": 100.0
+            },
+            "right": {
+              "feature": "syn_count",
+              "threshold": 12.0,
+              "left": {
+                "prediction": "Mirai",
+                "confidence": 100.0
+              },
+              "right": {
+                "prediction": "DDoS",
+                "confidence": 100.0
+              }
+            }
+          }
+        },
+        "right": {
+          "feature": "Rate",
+          "threshold": 137.6,
+          "left": {
+            "prediction": "Web-based",
+            "confidence": 100.0
+          },
+          "right": {
+            "feature": "Number",
+            "threshold": 33.0,
+            "left": {
+              "prediction": "Benign",
+              "confidence": 100.0
+            },
+            "right": {
+              "prediction": "DoS",
+              "confidence": 100.0
+            }
+          }
+        }
+      },
+      "right": {
+        "feature": "Rate",
+        "threshold": 190.62,
+        "left": {
+          "prediction": "Recon",
+          "confidence": 100.0
+        },
+        "right": {
+          "prediction": "DDoS",
+          "confidence": 100.0
+        }
+      }
+    }
+  },
+  "binary_features": [
+    "Number",
+    "ack_count",
+    "IAT",
+    "Srate",
+    "syn_count"
+  ],
+  "multiclass_features": [
+    "Rate",
+    "syn_count",
+    "ack_count",
+    "AVG",
+    "Number",
+    "Tot sum",
+    "syn_flag_number",
+    "Drate",
+    "Variance",
+    "IAT",
+    "rst_count",
+    "ack_flag_number",
+    "rst_flag_number",
+    "Telnet",
+    "HTTPS",
+    "psh_flag_number",
+    "SSH",
+    "ARP",
+    "DHCP",
+    "ece_flag_number"
+  ],
+  "feature_means": {
+    "Rate": 601.3069402934806,
+    "Srate": 555.2062732736406,
+    "Drate": 46.81706150794637,
+    "AVG": 330.4404001433463,
+    "Tot size": 10261.992602446473,
+    "Tot sum": 10261.992602446473,
+    "Min": 130.3830188991491,
+    "Max": 543.2924131508532,
+    "Std": 91.40549225338667,
+    "Variance": 20508.97385288526,
+    "Covariance": 9333.180584706397,
+    "Magnitue": 344.38786609668637,
+    "Radius": 45.702746126693334,
+    "Weight": 35.474530831099194,
+    "Number": 35.474530831099194,
+    "flow_duration": 2.535365459774301,
+    "Duration": 2.535365459774301,
+    "IAT": 0.11583026350299931,
+    "Header_Length": 40.66094749146295,
+    "syn_count": 10.961572832886505,
+    "ack_count": 8.489722966934764,
+    "fin_count": 1.1831992850759607,
+    "rst_count": 1.0598748882931188,
+    "syn_flag_number": 0.43789097408400357,
+    "ack_flag_number": 0.7551385165326184,
+    "fin_flag_number": 0.34584450402144773,
+    "rst_flag_number": 0.18588025022341376,
+    "psh_flag_number": 0.3905272564789991,
+    "cwr_flag_number": 0.010723860589812333,
+    "ece_flag_number": 0.00804289544235925,
+    "TCP": 0.6702412868632708,
+    "UDP": 0.291331546023235,
+    "ICMP": 0.1224307417336908,
+    "Protocol Type": 5.680965147453083,
+    "ARP": 0.03753351206434316,
+    "DHCP": 0.02323503127792672,
+    "Telnet": 0.1063449508489723,
+    "SSH": 0.07238605898123325,
+    "HTTP": 0.3297587131367292,
+    "HTTPS": 0.1581769436997319,
+    "DNS": 0.21715817694369974,
+    "SMTP": 0.012511170688114389
+  },
+  "feature_scales": {
+    "Rate": 802.3461658540515,
+    "Srate": 741.9225675761237,
+    "Drate": 70.96373450604754,
+    "AVG": 351.2077418843147,
+    "Tot size": 11113.765627856828,
+    "Tot sum": 11113.765627856828,
+    "Min": 88.31876787511774,
+    "Max": 596.546226696582,
+    "Std": 110.24522592294568,
+    "Variance": 45768.223963246295,
+    "Covariance": 21695.96406663519,
+    "Magnitue": 366.6656618019069,
+    "Radius": 55.12261296147283,
+    "Weight": 14.199303439494248,
+    "Number": 14.199303439494248,
+    "flow_duration": 3.2144332594951863,
+    "Duration": 3.2144332594951863,
+    "IAT": 0.20208394984971145,
+    "Header_Length": 11.78863706251307,
+    "syn_count": 14.158282678101964,
+    "ack_count": 6.776769432753368,
+    "fin_count": 1.1333927913329178,
+    "rst_count": 1.9083065642707746,
+    "syn_flag_number": 0.4961274724299856,
+    "ack_flag_number": 0.4300050434373239,
+    "fin_flag_number": 0.47564281037308503,
+    "rst_flag_number": 0.38901000347072673,
+    "psh_flag_number": 0.48786854625604337,
+    "cwr_flag_number": 0.10299931749221741,
+    "ece_flag_number": 0.08932081098636827,
+    "TCP": 0.47012541331769925,
+    "UDP": 0.4543759196028622,
+    "ICMP": 0.32778263409190717,
+    "Protocol Type": 4.015063744213655,
+    "ARP": 0.19006511393851047,
+    "DHCP": 0.1506491440381939,
+    "Telnet": 0.30827861145058694,
+    "SSH": 0.25912606477619854,
+    "HTTP": 0.47012541331769925,
+    "HTTPS": 0.3649068349339921,
+    "DNS": 0.4123111726962883,
+    "SMTP": 0.11115143407139315
+  }
+}

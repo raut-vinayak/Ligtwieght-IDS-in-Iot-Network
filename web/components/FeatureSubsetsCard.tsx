@@ -14,7 +14,6 @@ export default function FeatureSubsetsCard({
   onSelectK,
   task,
 }: FeatureSubsetsCardProps) {
-  // Feature subsets data with schema metadata
   const featureSets: Record<
     number,
     { name: string; unit: string; type: string; live: boolean }[]
@@ -82,22 +81,22 @@ export default function FeatureSubsetsCard({
   const currentFeatures = featureSets[selectedK] || featureSets[10];
 
   return (
-    <div className="bg-surface border border-border rounded-xl p-5 shadow-sm">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-border gap-2">
+    <div className="bg-surface border-2 border-blue/40 hover:border-blue rounded-xl p-5 shadow-sm transition-all">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b-2 border-blue/20 gap-2">
         <div>
-          <h3 className="text-sm font-semibold text-ink">Nested Feature Sets (K={selectedK})</h3>
+          <h3 className="text-sm font-bold text-ink">Nested Feature Sets (K={selectedK})</h3>
           <p className="text-xs text-muted mt-0.5">
             Mutual Information ranked & Pearson correlation pruned (ρ &lt; 0.85)
           </p>
         </div>
-        <div className="flex items-center gap-1.5 bg-canvas p-1 rounded-lg border border-border text-xs font-semibold">
+        <div className="flex items-center gap-1.5 bg-canvas p-1 rounded-lg border-2 border-blue/30 text-xs font-bold">
           {[5, 10, 15, 20].map((k) => (
             <button
               key={k}
               onClick={() => onSelectK(k)}
-              className={`px-2.5 py-1 rounded transition-all ${
+              className={`px-3 py-1 rounded transition-all ${
                 selectedK === k
-                  ? "bg-surface text-blue shadow-xs font-bold"
+                  ? "bg-blue text-white shadow-xs"
                   : "text-muted hover:text-ink"
               }`}
             >
@@ -111,18 +110,18 @@ export default function FeatureSubsetsCard({
         {currentFeatures.map((f, idx) => (
           <div
             key={f.name}
-            className="flex items-center justify-between p-2 rounded-lg bg-canvas border border-border text-xs"
+            className="flex items-center justify-between p-2.5 rounded-lg bg-blue/5 border border-blue/30 text-xs"
           >
             <div className="flex items-center gap-2">
-              <span className="w-5 h-5 rounded-full bg-surface border border-border text-[10px] font-bold text-muted flex items-center justify-center">
+              <span className="w-5 h-5 rounded-full bg-blue text-white text-[10px] font-bold flex items-center justify-center">
                 {idx + 1}
               </span>
               <div>
-                <span className="font-semibold text-ink">{f.name}</span>
+                <span className="font-bold text-ink">{f.name}</span>
                 <span className="text-[10px] text-muted ml-1.5 font-mono">({f.unit})</span>
               </div>
             </div>
-            <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-surface border border-border text-positive flex items-center gap-1">
+            <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-positive/10 border border-positive/30 text-positive flex items-center gap-1">
               <Radio className="w-2.5 h-2.5" />
               Live
             </span>

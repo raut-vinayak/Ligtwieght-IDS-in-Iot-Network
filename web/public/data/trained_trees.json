@@ -1,0 +1,211 @@
+{
+  "binary_tree": {
+    "type": "split",
+    "feature": "Number",
+    "threshold": -0.51695,
+    "left": {
+      "type": "leaf",
+      "prediction": "Benign",
+      "confidence": 1.0
+    },
+    "right": {
+      "type": "split",
+      "feature": "Srate",
+      "threshold": -0.73063,
+      "left": {
+        "type": "leaf",
+        "prediction": "Benign",
+        "confidence": 1.0
+      },
+      "right": {
+        "type": "split",
+        "feature": "Number",
+        "threshold": -0.20261,
+        "left": {
+          "type": "split",
+          "feature": "ack_count",
+          "threshold": 0.43037,
+          "left": {
+            "type": "leaf",
+            "prediction": "Attack",
+            "confidence": 1.0
+          },
+          "right": {
+            "type": "leaf",
+            "prediction": "Benign",
+            "confidence": 1.0
+          }
+        },
+        "right": {
+          "type": "leaf",
+          "prediction": "Attack",
+          "confidence": 1.0
+        }
+      }
+    }
+  },
+  "multiclass_tree": {
+    "type": "split",
+    "feature": "Number",
+    "threshold": -0.49119,
+    "left": {
+      "type": "split",
+      "feature": "syn_count",
+      "threshold": -0.17386,
+      "left": {
+        "type": "leaf",
+        "prediction": "Benign",
+        "confidence": 1.0
+      },
+      "right": {
+        "type": "leaf",
+        "prediction": "Recon",
+        "confidence": 1.0
+      }
+    },
+    "right": {
+      "type": "split",
+      "feature": "syn_count",
+      "threshold": 0.74433,
+      "left": {
+        "type": "split",
+        "feature": "AVG",
+        "threshold": 0.05168,
+        "left": {
+          "type": "split",
+          "feature": "syn_count",
+          "threshold": -0.31512,
+          "left": {
+            "type": "split",
+            "feature": "Telnet",
+            "threshold": 1.27695,
+            "left": {
+              "type": "split",
+              "feature": "Rate",
+              "threshold": -0.31913,
+              "left": {
+                "type": "leaf",
+                "prediction": "Spoofing",
+                "confidence": 0.907
+              },
+              "right": {
+                "type": "leaf",
+                "prediction": "DoS",
+                "confidence": 1.0
+              }
+            },
+            "right": {
+              "type": "split",
+              "feature": "SSH",
+              "threshold": 1.65022,
+              "left": {
+                "type": "leaf",
+                "prediction": "Mirai",
+                "confidence": 0.943
+              },
+              "right": {
+                "type": "leaf",
+                "prediction": "Brute Force",
+                "confidence": 0.889
+              }
+            }
+          },
+          "right": {
+            "type": "split",
+            "feature": "Rate",
+            "threshold": -0.15066,
+            "left": {
+              "type": "leaf",
+              "prediction": "Recon",
+              "confidence": 1.0
+            },
+            "right": {
+              "type": "split",
+              "feature": "syn_count",
+              "threshold": 0.07334,
+              "left": {
+                "type": "leaf",
+                "prediction": "Mirai",
+                "confidence": 1.0
+              },
+              "right": {
+                "type": "leaf",
+                "prediction": "DDoS",
+                "confidence": 1.0
+              }
+            }
+          }
+        },
+        "right": {
+          "type": "split",
+          "feature": "Rate",
+          "threshold": -0.57794,
+          "left": {
+            "type": "leaf",
+            "prediction": "Web-based",
+            "confidence": 1.0
+          },
+          "right": {
+            "type": "split",
+            "feature": "Number",
+            "threshold": -0.17427,
+            "left": {
+              "type": "leaf",
+              "prediction": "Benign",
+              "confidence": 1.0
+            },
+            "right": {
+              "type": "leaf",
+              "prediction": "DoS",
+              "confidence": 1.0
+            }
+          }
+        }
+      },
+      "right": {
+        "type": "split",
+        "feature": "Rate",
+        "threshold": -0.51185,
+        "left": {
+          "type": "leaf",
+          "prediction": "Recon",
+          "confidence": 1.0
+        },
+        "right": {
+          "type": "leaf",
+          "prediction": "DDoS",
+          "confidence": 1.0
+        }
+      }
+    }
+  },
+  "binary_features": [
+    "Number",
+    "ack_count",
+    "IAT",
+    "Srate",
+    "syn_count"
+  ],
+  "multiclass_features": [
+    "Rate",
+    "syn_count",
+    "ack_count",
+    "AVG",
+    "Number",
+    "Tot sum",
+    "syn_flag_number",
+    "Drate",
+    "Variance",
+    "IAT",
+    "rst_count",
+    "ack_flag_number",
+    "rst_flag_number",
+    "Telnet",
+    "HTTPS",
+    "psh_flag_number",
+    "SSH",
+    "ARP",
+    "DHCP",
+    "ece_flag_number"
+  ]
+}
