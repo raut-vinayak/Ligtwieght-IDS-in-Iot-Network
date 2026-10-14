@@ -1,0 +1,278 @@
+[
+  {
+    "name": "flow_duration",
+    "type": "float",
+    "unit": "seconds",
+    "live_available": true
+  },
+  {
+    "name": "Header_Length",
+    "type": "float",
+    "unit": "bytes",
+    "live_available": true
+  },
+  {
+    "name": "Protocol Type",
+    "type": "float",
+    "unit": "IANA code",
+    "live_available": true
+  },
+  {
+    "name": "Duration",
+    "type": "float",
+    "unit": "seconds",
+    "live_available": true
+  },
+  {
+    "name": "Rate",
+    "type": "float",
+    "unit": "pkts/sec",
+    "live_available": true
+  },
+  {
+    "name": "Srate",
+    "type": "float",
+    "unit": "pkts/sec",
+    "live_available": true
+  },
+  {
+    "name": "Drate",
+    "type": "float",
+    "unit": "pkts/sec",
+    "live_available": true
+  },
+  {
+    "name": "fin_flag_number",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "syn_flag_number",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "rst_flag_number",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "psh_flag_number",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "ack_flag_number",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "ece_flag_number",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "cwr_flag_number",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "ack_count",
+    "type": "float",
+    "unit": "count",
+    "live_available": true
+  },
+  {
+    "name": "syn_count",
+    "type": "float",
+    "unit": "count",
+    "live_available": true
+  },
+  {
+    "name": "fin_count",
+    "type": "float",
+    "unit": "count",
+    "live_available": true
+  },
+  {
+    "name": "urg_count",
+    "type": "float",
+    "unit": "count",
+    "live_available": true
+  },
+  {
+    "name": "rst_count",
+    "type": "float",
+    "unit": "count",
+    "live_available": true
+  },
+  {
+    "name": "HTTP",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "HTTPS",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "DNS",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "Telnet",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "SMTP",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "SSH",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "IRC",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "TCP",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "UDP",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "DHCP",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "ARP",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "ICMP",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "IPv",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "LLC",
+    "type": "binary",
+    "unit": "indicator",
+    "live_available": true
+  },
+  {
+    "name": "Tot sum",
+    "type": "float",
+    "unit": "bytes",
+    "live_available": true
+  },
+  {
+    "name": "Min",
+    "type": "float",
+    "unit": "bytes",
+    "live_available": true
+  },
+  {
+    "name": "Max",
+    "type": "float",
+    "unit": "bytes",
+    "live_available": true
+  },
+  {
+    "name": "AVG",
+    "type": "float",
+    "unit": "bytes",
+    "live_available": true
+  },
+  {
+    "name": "Std",
+    "type": "float",
+    "unit": "bytes",
+    "live_available": true
+  },
+  {
+    "name": "Tot size",
+    "type": "float",
+    "unit": "bytes",
+    "live_available": true
+  },
+  {
+    "name": "IAT",
+    "type": "float",
+    "unit": "seconds",
+    "live_available": true
+  },
+  {
+    "name": "Number",
+    "type": "float",
+    "unit": "count",
+    "live_available": true
+  },
+  {
+    "name": "Magnitue",
+    "type": "float",
+    "unit": "euclidean norm",
+    "live_available": true
+  },
+  {
+    "name": "Radius",
+    "type": "float",
+    "unit": "bytes",
+    "live_available": true
+  },
+  {
+    "name": "Covariance",
+    "type": "float",
+    "unit": "variance",
+    "live_available": true
+  },
+  {
+    "name": "Variance",
+    "type": "float",
+    "unit": "bytes^2",
+    "live_available": true
+  },
+  {
+    "name": "Weight",
+    "type": "float",
+    "unit": "coefficient",
+    "live_available": true
+  }
+]

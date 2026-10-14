@@ -1,0 +1,44 @@
+{
+  "model_name": "DecisionTree",
+  "task": "binary",
+  "k": 5,
+  "model_version": "1.0.0",
+  "onnx_file": "ids_binary_model.onnx",
+  "features": [
+    "Number",
+    "ack_count",
+    "IAT",
+    "Srate",
+    "syn_count"
+  ],
+  "classes": [
+    "0",
+    "1"
+  ],
+  "scaler": {
+    "means": {
+      "Number": 595.6329881023121,
+      "ack_count": 550.5107971827256,
+      "IAT": 47.6314447000813,
+      "Srate": 322.67629528328723,
+      "syn_count": 10143.294801197142
+    },
+    "scales": {
+      "Number": 801.7780297053295,
+      "ack_count": 741.5065306148309,
+      "IAT": 71.14321430127875,
+      "Srate": 343.26671026103566,
+      "syn_count": 11194.012482412589
+    }
+  },
+  "parity_verified": true,
+  "parity_test_samples": 25,
+  "sample_input_fixture": {
+    "Number": 0.4967,
+    "ack_count": -0.1383,
+    "IAT": 0.6477,
+    "Srate": 1.523,
+    "syn_count": -0.2342
+  },
+  "sample_expected_prediction": "1"
+}
