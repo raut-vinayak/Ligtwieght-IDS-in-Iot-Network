@@ -151,41 +151,41 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
   };
 
   return (
-    <div className="space-y-5">
+    <div className="space-y-6">
       {/* 1. Header Banner */}
-      <div className="bg-[#0B0F19] border border-slate-800 rounded-xl p-5 text-white shadow-card">
+      <div className="bg-[#0B0F19] border border-slate-800 rounded-2xl p-6 text-white shadow-card">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-lg bg-blue-600/10 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0">
-              <Bot className="w-5 h-5 text-blue-400" />
+          <div className="flex items-start gap-4">
+            <div className="w-12 h-12 rounded-xl bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0">
+              <Bot className="w-6 h-6 text-blue-400" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-                <span className="text-[11px] font-mono font-medium text-slate-400 tracking-wider uppercase">
+                <span className="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
+                <span className="text-xs font-mono font-medium text-slate-400 tracking-wider uppercase">
                   Sentinel AI Intelligence
                 </span>
                 <span className="text-slate-600 font-mono text-xs">•</span>
-                <span className="text-[10px] font-mono text-blue-400 bg-blue-500/10 px-1.5 py-0.2 rounded border border-blue-500/20">
+                <span className="text-xs font-mono text-blue-400 bg-blue-500/10 px-2 py-0.5 rounded-md border border-blue-500/20">
                   Telemetry Explainer
                 </span>
               </div>
-              <h3 className="text-base font-semibold text-white mt-1">
+              <h3 className="text-lg font-bold text-white mt-1">
                 Security Analyst & Threat Diagnosis
               </h3>
-              <p className="text-xs text-slate-400 mt-0.5">
+              <p className="text-xs sm:text-sm text-slate-400 mt-0.5 max-w-2xl">
                 Translates complex edge telemetry and ML classification trees into plain, actionable human language.
               </p>
             </div>
           </div>
 
           {/* Language Switcher */}
-          <div className="inline-flex bg-slate-900 p-0.5 rounded-lg border border-slate-800 text-xs self-start md:self-auto shrink-0 font-mono">
+          <div className="inline-flex bg-slate-900 p-1 rounded-xl border border-slate-800 text-xs sm:text-sm self-start md:self-auto shrink-0 font-mono shadow-inner">
             <button
               onClick={() => setLanguage("hinglish")}
-              className={`px-3 py-1 rounded-md text-xs font-medium transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                 language === "hinglish"
-                  ? "bg-slate-800 text-white shadow-xs font-semibold"
+                  ? "bg-slate-800 text-white shadow-sm font-semibold"
                   : "text-slate-400 hover:text-white"
               }`}
             >
@@ -193,9 +193,9 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
             </button>
             <button
               onClick={() => setLanguage("english")}
-              className={`px-3 py-1 rounded-md text-xs font-medium transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                 language === "english"
-                  ? "bg-slate-800 text-white shadow-xs font-semibold"
+                  ? "bg-slate-800 text-white shadow-sm font-semibold"
                   : "text-slate-400 hover:text-white"
               }`}
             >
@@ -206,54 +206,54 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
       </div>
 
       {/* 2. Active Flow Telemetry Breakdown */}
-      <div className="bg-white border border-border rounded-xl p-5 shadow-card space-y-4">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-border gap-2">
-          <div className="flex items-center gap-2">
-            <Activity className="w-4 h-4 text-blue" />
-            <h4 className="text-sm font-semibold text-ink">Active Telemetry Diagnostic</h4>
+      <div className="bg-white border border-border rounded-2xl p-6 shadow-card space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border gap-2">
+          <div className="flex items-center gap-2.5">
+            <Activity className="w-5 h-5 text-blue" />
+            <h4 className="text-base font-bold text-ink">Active Telemetry Diagnostic</h4>
           </div>
           <div className="flex items-center gap-2">
             <span
-              className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${
+              className={`text-xs font-mono font-semibold px-2.5 py-1 rounded-md border shadow-xs ${
                 isAttack
-                  ? "bg-rose-100 text-rose-700 border-rose-200"
-                  : "bg-emerald-100 text-emerald-700 border-emerald-200"
+                  ? "bg-rose-100 text-rose-800 border-rose-200"
+                  : "bg-emerald-100 text-emerald-800 border-emerald-200"
               }`}
             >
               {isAttack ? `THREAT: ${activePred.toUpperCase()}` : "CLEAN: BENIGN TELEMETRY"}
             </span>
-            <span className="text-xs text-muted font-mono">K=10 Features</span>
+            <span className="text-xs sm:text-sm text-slate-500 font-mono">K=10 Features</span>
           </div>
         </div>
 
         {/* Structured 3-Part Assessment Box */}
-        <div className="space-y-3">
+        <div className="space-y-3.5">
           {/* Section 1: Observation */}
-          <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
-            <div className="text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider mb-1">
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+            <div className="text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
               Observation (Kya Hua):
             </div>
-            <p className="text-xs text-slate-800 leading-relaxed font-medium">
+            <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium">
               {humanBreakdown.summary}
             </p>
           </div>
 
           {/* Section 2: Two-column grid (Impact + Defensive Action) */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
-              <div className="text-[11px] font-mono font-semibold text-rose-700 uppercase tracking-wider mb-1">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div className="text-xs font-mono font-semibold text-rose-700 uppercase tracking-wider mb-1.5">
                 Hardware & Network Impact (Khatra):
               </div>
-              <p className="text-xs text-slate-700 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                 {humanBreakdown.impact}
               </p>
             </div>
 
-            <div className="p-3.5 rounded-lg bg-slate-50 border border-slate-200">
-              <div className="text-[11px] font-mono font-semibold text-emerald-700 uppercase tracking-wider mb-1">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200">
+              <div className="text-xs font-mono font-semibold text-emerald-700 uppercase tracking-wider mb-1.5">
                 Recommended Defense Action (Kya Karein):
               </div>
-              <p className="text-xs text-slate-700 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
                 {humanBreakdown.action}
               </p>
             </div>
@@ -262,21 +262,21 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
       </div>
 
       {/* 3. Interactive Copilot Console */}
-      <div className="bg-white border border-border rounded-xl p-5 shadow-card space-y-4">
-        <div className="flex items-center justify-between pb-3.5 border-b border-border">
-          <div className="flex items-center gap-2">
-            <MessageSquare className="w-4 h-4 text-blue" />
-            <h4 className="text-sm font-semibold text-ink">Interactive Security Copilot</h4>
+      <div className="bg-white border border-border rounded-2xl p-6 shadow-card space-y-5">
+        <div className="flex items-center justify-between pb-4 border-b border-border">
+          <div className="flex items-center gap-2.5">
+            <MessageSquare className="w-5 h-5 text-blue" />
+            <h4 className="text-base font-bold text-ink">Interactive Security Copilot</h4>
           </div>
-          <span className="text-[10px] font-mono text-muted">Client-Side Diagnostic Engine</span>
+          <span className="text-xs font-mono text-slate-500">Client-Side Diagnostic Engine</span>
         </div>
 
         {/* Prompt Chips */}
         <div>
-          <div className="text-[11px] font-mono font-semibold text-slate-500 uppercase tracking-wider mb-2">
-            Suggested Analysis Queries:
+          <div className="text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider mb-2.5">
+            Suggested Queries (Click to Ask):
           </div>
-          <div className="flex flex-wrap gap-1.5">
+          <div className="flex flex-wrap gap-2">
             {[
               "Is alert ko simple aasan bhasha me samjhao",
               "Is attack ko block karne ke 3 steps kya hain?",
@@ -287,7 +287,7 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
               <button
                 key={q}
                 onClick={() => handleAskQuestion(q)}
-                className="px-2.5 py-1 rounded-md bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs font-mono transition-colors text-left cursor-pointer"
+                className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs sm:text-sm font-mono transition-colors text-left cursor-pointer shadow-xs"
               >
                 {q}
               </button>
@@ -296,7 +296,7 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
         </div>
 
         {/* Message History */}
-        <div className="p-4 rounded-lg bg-slate-50/70 border border-slate-200 max-h-72 overflow-y-auto space-y-3">
+        <div className="p-4 sm:p-5 rounded-xl bg-slate-50/70 border border-slate-200 max-h-80 overflow-y-auto space-y-3.5">
           {messages.map((m, idx) => (
             <div
               key={idx}
@@ -304,13 +304,13 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
                 m.sender === "user" ? "items-end" : "items-start"
               }`}
             >
-              <div className="text-[10px] font-mono text-slate-400 mb-0.5 px-1">
+              <div className="text-xs font-mono text-slate-400 mb-1 px-1">
                 {m.sender === "user" ? "Security Admin" : "Sentinel AI"} • {m.time}
               </div>
               <div
-                className={`max-w-[85%] p-3 rounded-lg text-xs leading-relaxed ${
+                className={`max-w-[85%] p-3.5 sm:p-4 rounded-xl text-xs sm:text-sm leading-relaxed ${
                   m.sender === "user"
-                    ? "bg-slate-900 text-white"
+                    ? "bg-slate-900 text-white font-medium"
                     : "bg-white text-slate-800 border border-slate-200 shadow-xs"
                 }`}
               >
@@ -321,7 +321,7 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
         </div>
 
         {/* Input Bar */}
-        <div className="flex items-center gap-2 pt-1">
+        <div className="flex items-center gap-2.5 pt-1">
           <input
             type="text"
             value={inputQuestion}
@@ -334,14 +334,14 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
                 ? "Kuch bhi poochiye (e.g. 'is attack ko kaise prevent karein?')..."
                 : "Ask Sentinel AI about this flow, features, or firewall rules..."
             }
-            className="flex-1 text-xs font-mono px-3.5 py-2.5 rounded-lg border border-slate-200 bg-white text-ink focus:outline-hidden focus:border-blue focus:ring-1 focus:ring-blue/30 transition-colors"
+            className="flex-1 text-xs sm:text-sm font-mono px-4 py-3 rounded-xl border border-slate-200 bg-white text-ink focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20 transition-all shadow-xs"
           />
           <button
             onClick={() => handleAskQuestion(inputQuestion)}
-            className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-lg bg-slate-900 hover:bg-slate-800 text-white text-xs font-medium transition-colors shadow-xs border border-slate-900 cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold transition-colors shadow-sm border border-slate-900 cursor-pointer"
           >
             <span>Ask</span>
-            <Send className="w-3.5 h-3.5" />
+            <Send className="w-4 h-4" />
           </button>
         </div>
       </div>

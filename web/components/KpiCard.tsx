@@ -31,7 +31,7 @@ export default function KpiRow({
     {
       label: "Balanced Accuracy",
       value: (balancedAcc * 100).toFixed(1) + "%",
-      subtext: "Class skew compensated",
+      subtext: "Compensates class skew",
       icon: CheckCircle2,
       tag: "Verified",
       tagColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
@@ -61,37 +61,37 @@ export default function KpiRow({
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((c, i) => {
         const Icon = c.icon;
         return (
           <div
             key={i}
-            className="bg-white border border-border rounded-xl p-4 shadow-card hover:border-slate-300 transition-colors flex flex-col justify-between"
+            className="bg-white border border-border rounded-2xl p-5 shadow-card hover:shadow-lifted hover:border-slate-300 transition-all flex flex-col justify-between"
           >
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] font-mono font-medium text-slate-500 uppercase tracking-wider">
+              <div className="flex items-center justify-between mb-3">
+                <span className="text-xs font-mono font-medium text-slate-500 uppercase tracking-wider">
                   {c.label}
                 </span>
-                <div className="p-1.5 rounded-lg bg-slate-50 border border-slate-200/80">
-                  <Icon className={`w-3.5 h-3.5 ${c.iconColor}`} />
+                <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/90 shadow-xs">
+                  <Icon className={`w-4 h-4 ${c.iconColor}`} />
                 </div>
               </div>
 
-              <div className="flex items-baseline gap-2">
-                <span className="text-2xl font-mono font-semibold text-ink tracking-tight">
+              <div className="flex items-baseline gap-2.5">
+                <span className="text-3xl font-mono font-bold text-slate-900 tracking-tight">
                   {c.value}
                 </span>
                 <span
-                  className={`text-[9px] font-mono font-medium px-1.5 py-0.2 rounded border ${c.tagColor}`}
+                  className={`text-xs font-mono font-semibold px-2 py-0.5 rounded-md border shadow-xs ${c.tagColor}`}
                 >
                   {c.tag}
                 </span>
               </div>
             </div>
 
-            <p className="text-[11px] text-muted font-mono mt-2 pt-2 border-t border-slate-100">
+            <p className="text-xs text-slate-500 font-mono mt-3 pt-3 border-t border-slate-100">
               {c.subtext}
             </p>
           </div>

@@ -72,35 +72,35 @@ export default function ConfusionMatrixCard({ task }: ConfusionMatrixProps) {
   };
 
   return (
-    <div className="bg-white border border-border rounded-xl p-5 shadow-card overflow-hidden">
-      <div className="flex items-center justify-between pb-3.5 border-b border-border">
+    <div className="bg-white border border-border rounded-2xl p-6 shadow-card overflow-hidden">
+      <div className="flex items-center justify-between pb-4 border-b border-border">
         <div>
           <div className="flex items-center gap-2">
             <Grid className="w-4 h-4 text-blue" />
-            <h3 className="text-sm font-semibold text-ink">Confusion Matrix Heatmap</h3>
+            <h3 className="text-base font-bold text-ink">Confusion Matrix Heatmap</h3>
           </div>
-          <p className="text-xs text-muted mt-0.5">
+          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">
             Decision Tree evaluation on stratified holdout test split
           </p>
         </div>
 
-        <div className="inline-flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
+        <div className="inline-flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs sm:text-sm shadow-inner">
           <button
             onClick={() => setNormalized(true)}
-            className={`px-2 py-0.8 rounded text-xs font-medium transition-all ${
+            className={`px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-all ${
               normalized
-                ? "bg-white text-ink shadow-xs font-semibold"
-                : "text-muted hover:text-ink"
+                ? "bg-white text-ink shadow-sm font-semibold"
+                : "text-slate-600 hover:text-ink"
             }`}
           >
             Norm (%)
           </button>
           <button
             onClick={() => setNormalized(false)}
-            className={`px-2 py-0.8 rounded text-xs font-medium transition-all ${
+            className={`px-3 py-1 rounded-lg text-xs sm:text-sm font-medium transition-all ${
               !normalized
-                ? "bg-white text-ink shadow-xs font-semibold"
-                : "text-muted hover:text-ink"
+                ? "bg-white text-ink shadow-sm font-semibold"
+                : "text-slate-600 hover:text-ink"
             }`}
           >
             Counts
@@ -109,29 +109,29 @@ export default function ConfusionMatrixCard({ task }: ConfusionMatrixProps) {
       </div>
 
       <div className="mt-4 overflow-x-auto">
-        <div className="min-w-[280px]">
-          <div className="flex text-[10px] text-muted font-mono mb-1.5 ml-14">
-            <span className="font-semibold text-slate-700">Predicted Class →</span>
+        <div className="min-w-[300px]">
+          <div className="flex text-xs text-slate-500 font-mono mb-2 ml-16">
+            <span className="font-semibold text-slate-800">Predicted Class →</span>
           </div>
 
           <div className="flex">
             {/* Y-axis label */}
-            <div className="w-14 flex items-center justify-center">
-              <span className="text-[10px] font-mono font-semibold text-slate-700 -rotate-90">
+            <div className="w-16 flex items-center justify-center">
+              <span className="text-xs font-mono font-semibold text-slate-800 -rotate-90">
                 True Class
               </span>
             </div>
 
             {/* Matrix Table */}
             <div className="flex-1">
-              <table className="w-full text-xs font-mono border-collapse border border-slate-200">
+              <table className="w-full text-xs sm:text-sm font-mono border-collapse border border-slate-200">
                 <thead>
                   <tr>
-                    <th className="p-1.5 text-[10px] text-slate-400 bg-slate-50 border border-slate-200"></th>
+                    <th className="p-2 text-xs text-slate-400 bg-slate-50 border border-slate-200"></th>
                     {classes.map((c) => (
                       <th
                         key={c}
-                        className="p-1.5 text-[10px] text-slate-600 bg-slate-50 border border-slate-200 truncate max-w-[65px]"
+                        className="p-2 text-xs text-slate-700 bg-slate-50 border border-slate-200 truncate max-w-[75px]"
                         title={c}
                       >
                         {c}
@@ -142,13 +142,13 @@ export default function ConfusionMatrixCard({ task }: ConfusionMatrixProps) {
                 <tbody>
                   {currentMatrix.map((row, rIdx) => (
                     <tr key={rIdx}>
-                      <td className="p-1.5 text-[10px] text-slate-600 bg-slate-50 border border-slate-200 truncate max-w-[65px] font-semibold">
+                      <td className="p-2 text-xs text-slate-700 bg-slate-50 border border-slate-200 truncate max-w-[75px] font-semibold">
                         {classes[rIdx]}
                       </td>
                       {row.map((val, cIdx) => (
                         <td
                           key={cIdx}
-                          className="p-1.5 text-center border border-slate-200 text-[11px] font-semibold transition-colors"
+                          className="p-2.5 text-center border border-slate-200 text-xs sm:text-sm font-semibold transition-colors"
                           style={{
                             backgroundColor: getCellBg(val),
                             color: getTextColor(val),

@@ -9,9 +9,9 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        canvas: "#F8FAFC",
+        canvas: "#F1F5F9", // Slate-100: provides crisp, distinct contrast behind white cards
         surface: "#FFFFFF",
-        "surface-subtle": "#F1F5F9",
+        "surface-subtle": "#F8FAFC",
         border: "#E2E8F0",
         "border-strong": "#CBD5E1",
         ink: "#0F172A",
@@ -31,9 +31,10 @@ const config: Config = {
         mono: ["JetBrains Mono", "SF Mono", "Menlo", "Consolas", "monospace"],
       },
       boxShadow: {
-        subtle: "0 1px 2px 0 rgba(0, 0, 0, 0.04)",
-        card: "0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05)",
-        float: "0 10px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04)",
+        subtle: "0 1px 3px 0 rgba(15, 23, 42, 0.05)",
+        card: "0 1px 3px 0 rgba(15, 23, 42, 0.06), 0 1px 2px -1px rgba(15, 23, 42, 0.04)",
+        lifted: "0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.04)",
+        float: "0 20px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.06)",
       },
     },
   },

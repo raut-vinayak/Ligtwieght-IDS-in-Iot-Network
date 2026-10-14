@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --canvas: #f8fafc;
+  --canvas: #f1f5f9; /* Slate 100 provides natural boundary behind pure white cards */
   --surface: #ffffff;
-  --surface-subtle: #f1f5f9;
+  --surface-subtle: #f8fafc;
   --border: #e2e8f0;
   --border-strong: #cbd5e1;
   --ink: #0f172a;
@@ -31,8 +31,8 @@ body {
 
 /* Polished Minimalist Scrollbars */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;

@@ -588,78 +588,80 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
 
   return (
     <div className="space-y-6">
-      {/* 1. In-Page Telemetry HUD Card (Clean Enterprise Status) */}
+      {/* 1. Distinct In-Page Telemetry HUD Card (Clear Soft Tint & Shadow) */}
       <div
-        className={`p-4 sm:p-5 rounded-xl border bg-white transition-all shadow-subtle ${
+        className={`p-5 sm:p-6 rounded-2xl border transition-all shadow-card ${
           liveVerdict.isAttack
-            ? "border-rose-200 bg-rose-50/20"
-            : "border-slate-200 bg-white"
+            ? "border-rose-200/90 bg-rose-50/70"
+            : "border-emerald-200/90 bg-emerald-50/70"
         }`}
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           {/* Status Left */}
-          <div className="flex items-start sm:items-center gap-3.5">
+          <div className="flex items-start sm:items-center gap-4">
             <div
-              className={`w-10 h-10 rounded-lg flex items-center justify-center shrink-0 border ${
+              className={`w-12 h-12 rounded-xl flex items-center justify-center shrink-0 border shadow-xs ${
                 liveVerdict.isAttack
-                  ? "bg-rose-500 text-white border-rose-600 shadow-xs"
-                  : "bg-emerald-500 text-white border-emerald-600 shadow-xs"
+                  ? "bg-rose-500 text-white border-rose-600"
+                  : "bg-emerald-500 text-white border-emerald-600"
               }`}
             >
               {liveVerdict.isAttack ? (
-                <ShieldAlert className="w-5 h-5 text-white" />
+                <ShieldAlert className="w-6 h-6 text-white" />
               ) : (
-                <ShieldCheck className="w-5 h-5 text-white" />
+                <ShieldCheck className="w-6 h-6 text-white" />
               )}
             </div>
 
             <div>
-              <div className="flex items-center gap-2 flex-wrap">
+              <div className="flex items-center gap-2.5 flex-wrap">
                 <span
-                  className={`text-[10px] font-mono font-semibold px-2 py-0.5 rounded border ${
+                  className={`text-xs font-mono font-semibold px-2.5 py-0.5 rounded-md border shadow-xs ${
                     liveVerdict.riskLevel === "CRITICAL"
-                      ? "bg-rose-100 text-rose-700 border-rose-200"
+                      ? "bg-rose-100 text-rose-800 border-rose-200"
                       : liveVerdict.riskLevel === "HIGH"
-                      ? "bg-rose-50 text-rose-700 border-rose-200"
+                      ? "bg-rose-100/80 text-rose-800 border-rose-200"
                       : liveVerdict.riskLevel === "ELEVATED"
                       ? "bg-amber-100 text-amber-800 border-amber-200"
-                      : "bg-emerald-100 text-emerald-700 border-emerald-200"
+                      : "bg-emerald-100 text-emerald-800 border-emerald-200"
                   }`}
                 >
                   STATUS: {liveVerdict.riskLevel}
                 </span>
 
-                <span className="text-xs font-mono text-muted">•</span>
+                <span className="text-slate-300">•</span>
 
-                <span className="text-xs font-mono text-slate-500">
-                  Latency: <strong className="text-slate-800 font-medium">{liveVerdict.latencyMs} ms</strong>
+                <span className="text-xs sm:text-sm font-mono text-slate-600">
+                  Latency: <strong className="text-slate-900 font-semibold">{liveVerdict.latencyMs} ms</strong>
                 </span>
 
-                <span className="text-xs font-mono text-slate-500">
-                  Confidence: <strong className="text-slate-800 font-medium">{liveVerdict.confidence}%</strong>
+                <span className="text-slate-300">•</span>
+
+                <span className="text-xs sm:text-sm font-mono text-slate-600">
+                  Confidence: <strong className="text-slate-900 font-semibold">{liveVerdict.confidence}%</strong>
                 </span>
               </div>
 
-              <h3 className="text-sm sm:text-base font-semibold text-ink mt-1">
+              <h3 className="text-base sm:text-lg font-bold text-ink mt-1">
                 {liveVerdict.isAttack ? (
-                  <span className="text-rose-700">Threat Detected: {liveVerdict.prediction}</span>
+                  <span className="text-rose-800">Threat Detected: {liveVerdict.prediction}</span>
                 ) : (
-                  <span className="text-emerald-700">Clean Flow: {liveVerdict.prediction}</span>
+                  <span className="text-emerald-800">Clean Flow: {liveVerdict.prediction}</span>
                 )}
               </h3>
             </div>
           </div>
 
-          {/* AI Quick Insight & Action Button */}
-          <div className="flex items-center gap-2.5 self-start md:self-auto shrink-0">
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2.5 self-start md:self-auto shrink-0 flex-wrap">
             {onOpenAiAssistant && (
               <button
                 onClick={() =>
                   onOpenAiAssistant({ ...liveVerdict, inputs: manualInputs })
                 }
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-300 bg-white text-slate-700 hover:bg-slate-50 text-xs font-medium transition-colors shadow-xs cursor-pointer"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 text-xs sm:text-sm font-medium transition-colors shadow-xs cursor-pointer"
               >
-                <Bot className="w-3.5 h-3.5 text-blue" />
+                <Bot className="w-4 h-4 text-blue" />
                 <span>Explain in Sentinel AI</span>
               </button>
             )}
@@ -669,79 +671,85 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                 setModalResult(liveVerdict);
                 setShowModal(true);
               }}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-xs font-medium transition-colors shadow-xs cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-xs sm:text-sm font-medium transition-colors shadow-sm cursor-pointer"
             >
-              <Info className="w-3.5 h-3.5" />
+              <Info className="w-4 h-4" />
               <span>View Incident Details</span>
             </button>
           </div>
         </div>
 
         {/* Human Language Summary Bar */}
-        <div className="mt-3.5 pt-3 border-t border-slate-200/70 text-xs text-slate-600 flex items-start gap-2">
+        <div className="mt-4 pt-3.5 border-t border-slate-200/90 text-xs sm:text-sm text-slate-700 flex items-start gap-2.5">
           <Bot className="w-4 h-4 text-blue shrink-0 mt-0.5" />
           <p className="leading-relaxed">
-            <strong className="text-slate-800 font-medium">Sentinel AI Analysis: </strong>
+            <strong className="text-slate-900 font-semibold">Sentinel AI Analysis: </strong>
             {liveVerdict.humanExplanationHinglish}
           </p>
         </div>
       </div>
 
-      {/* 2. Main Edge Telemetry Matrix Card */}
-      <div className="bg-surface border border-border rounded-xl p-5 shadow-card space-y-5">
+      {/* 2. Main Edge Telemetry Matrix Card (Pure White with Crisp Shadow) */}
+      <div className="bg-white border border-border rounded-2xl p-6 shadow-card space-y-6">
         {/* Top Controls: Preset selector + Mode tabs + Audio toggle */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-border gap-3">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-border gap-4">
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-ink tracking-tight">
+            <div className="flex items-center gap-2.5">
+              <span className="text-sm sm:text-base font-bold text-ink tracking-tight">
                 Edge Flow Telemetry Matrix
               </span>
-              <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-slate-100 text-slate-700 border border-slate-200 font-medium">
+              <span className="px-2.5 py-0.5 rounded-md text-xs font-mono bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
                 K = 10 Features
               </span>
             </div>
-            <p className="text-xs text-muted mt-0.5">
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
               Deterministic inference evaluated directly against unscaled Decision Tree rules.
             </p>
           </div>
 
-          <div className="flex items-center gap-2 flex-wrap">
+          <div className="flex items-center gap-2.5 flex-wrap">
             {/* Audio Toggle */}
             <button
               onClick={() => setSoundEnabled(!soundEnabled)}
-              className={`p-1.5 rounded-lg border text-xs font-medium flex items-center gap-1.5 transition-colors cursor-pointer ${
+              className={`p-2 rounded-xl border text-xs sm:text-sm font-medium flex items-center gap-2 transition-colors cursor-pointer ${
                 soundEnabled
-                  ? "bg-slate-100 border-slate-300 text-slate-700"
+                  ? "bg-slate-100 border-slate-300 text-slate-800 shadow-xs"
                   : "bg-white border-slate-200 text-slate-400"
               }`}
               title={soundEnabled ? "Audio chime enabled" : "Audio muted"}
               aria-label="Toggle audio alarms"
             >
               {soundEnabled ? (
-                <Volume2 className="w-4 h-4 text-blue" />
+                <>
+                  <Volume2 className="w-4 h-4 text-blue" />
+                  <span className="hidden sm:inline text-xs font-mono">Sound ON</span>
+                </>
               ) : (
-                <VolumeX className="w-4 h-4 text-slate-400" />
+                <>
+                  <VolumeX className="w-4 h-4 text-slate-400" />
+                  <span className="hidden sm:inline text-xs font-mono">Muted</span>
+                </>
               )}
             </button>
 
             {/* Manual vs CSV Tab */}
-            <div className="inline-flex bg-slate-100 p-0.5 rounded-lg border border-slate-200 text-xs">
+            <div className="inline-flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs sm:text-sm shadow-inner">
               <button
                 onClick={() => setActiveTab("manual")}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                   activeTab === "manual"
-                    ? "bg-white text-ink shadow-xs font-semibold"
-                    : "text-muted hover:text-ink"
+                    ? "bg-white text-ink shadow-sm font-semibold"
+                    : "text-slate-600 hover:text-ink"
                 }`}
               >
                 Manual Flow
               </button>
               <button
                 onClick={() => setActiveTab("csv")}
-                className={`px-2.5 py-1 rounded-md text-xs font-medium transition-all cursor-pointer ${
+                className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                   activeTab === "csv"
-                    ? "bg-white text-ink shadow-xs font-semibold"
-                    : "text-muted hover:text-ink"
+                    ? "bg-white text-ink shadow-sm font-semibold"
+                    : "text-slate-600 hover:text-ink"
                 }`}
               >
                 CSV Batch
@@ -752,19 +760,19 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
 
         {/* Validation Errors */}
         {validationError && (
-          <div className="p-3 rounded-lg bg-rose-50 border border-rose-200 text-rose-700 text-xs flex items-center gap-2">
+          <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs sm:text-sm flex items-center gap-2.5">
             <AlertTriangle className="w-4 h-4 shrink-0" />
-            <span>{validationError}</span>
+            <span className="font-medium">{validationError}</span>
           </div>
         )}
 
         {/* Scenario Presets Bar */}
         {activeTab === "manual" && (
           <div>
-            <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider font-mono mb-2">
-              Realistic Test Scenarios:
+            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono mb-2.5">
+              Test Presets (Click to Load):
             </div>
-            <div className="flex items-center gap-1.5 flex-wrap">
+            <div className="flex items-center gap-2 flex-wrap">
               {[
                 { key: "benign", label: "Baseline Normal" },
                 { key: "cam", label: "Camera Stream" },
@@ -778,10 +786,10 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                   <button
                     key={p.key}
                     onClick={() => applyPreset(p.key as any)}
-                    className={`px-2.5 py-1.2 rounded-lg text-xs font-medium transition-colors border cursor-pointer ${
+                    className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all border shadow-xs cursor-pointer ${
                       isSelected
-                        ? "bg-slate-900 text-white border-slate-900 shadow-xs"
-                        : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100"
+                        ? "bg-slate-900 text-white border-slate-900 font-semibold"
+                        : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900"
                     }`}
                   >
                     {p.label}
@@ -792,10 +800,10 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
           </div>
         )}
 
-        {/* Tab 1: Manual 10-Feature Inputs (Grid of 5x2 or 2x5) */}
+        {/* Tab 1: Manual 10-Feature Inputs (Distinct Interactive Cards) */}
         {activeTab === "manual" && (
-          <div className="space-y-5">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3.5">
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
               {activeFeatures.map((feat) => {
                 const meta = FEATURE_METADATA[feat] || {
                   label: feat,
@@ -809,22 +817,22 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                 return (
                   <div
                     key={feat}
-                    className="p-3 rounded-lg border border-slate-200 bg-slate-50/50 hover:bg-white hover:border-slate-300 transition-colors flex flex-col justify-between"
+                    className="p-3.5 rounded-xl border border-slate-200/90 bg-white hover:border-slate-300 hover:shadow-sm transition-all flex flex-col justify-between"
                   >
-                    <div className="flex items-center justify-between mb-1.5">
+                    <div className="flex items-center justify-between mb-2">
                       <label
                         htmlFor={`input-${feat}`}
-                        className="text-xs font-medium text-slate-700 truncate"
+                        className="text-xs sm:text-sm font-medium text-slate-800 truncate"
                         title={meta.desc}
                       >
                         {meta.label}
                       </label>
-                      <span className="text-[10px] font-mono text-slate-400 bg-slate-100 px-1 py-0.2 rounded border border-slate-200">
+                      <span className="text-[11px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
                         {meta.unit}
                       </span>
                     </div>
 
-                    <div className="relative">
+                    <div className="relative mt-1">
                       <input
                         id={`input-${feat}`}
                         type="number"
@@ -832,13 +840,13 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                         min={meta.min}
                         value={val}
                         onChange={(e) => handleInputChange(feat, e.target.value)}
-                        className="w-full px-2.5 py-1.5 text-xs font-mono font-semibold bg-white border border-slate-200 rounded-md text-ink focus:outline-hidden focus:border-blue focus:ring-1 focus:ring-blue/30"
+                        className="w-full px-3 py-2 text-sm font-mono font-bold bg-slate-50/70 border border-slate-200 rounded-lg text-slate-900 focus:bg-white focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20 transition-all"
                       />
                     </div>
 
-                    <div className="mt-1.5 flex items-center justify-between text-[10px] text-slate-400 font-mono">
+                    <div className="mt-2 flex items-center justify-between text-xs text-slate-400 font-mono">
                       <span>{feat}</span>
-                      <span>step: {meta.step}</span>
+                      <span>±{meta.step}</span>
                     </div>
                   </div>
                 );
@@ -846,28 +854,26 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
             </div>
 
             {/* Action Bar */}
-            <div className="flex items-center justify-between pt-3 border-t border-slate-200 flex-wrap gap-3">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-200 flex-wrap gap-3">
               <button
                 onClick={() => {
                   setManualInputs(defaultBenignValues);
                   setActivePresetName("Normal Telemetry");
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-slate-200 bg-white text-slate-600 hover:text-slate-900 text-xs font-medium transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-slate-900 text-xs sm:text-sm font-medium transition-colors shadow-xs cursor-pointer"
               >
-                <RotateCcw className="w-3.5 h-3.5" />
-                <span>Reset to Defaults</span>
+                <RotateCcw className="w-4 h-4" />
+                <span>Reset Defaults</span>
               </button>
 
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handleClassify}
-                  disabled={loading}
-                  className="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg bg-blue text-white hover:bg-blue/90 text-xs font-medium transition-colors shadow-xs border border-blue cursor-pointer disabled:opacity-50"
-                >
-                  <Play className="w-3.5 h-3.5 fill-current" />
-                  <span>{loading ? "Evaluating Flow..." : "Classify Flow Sample"}</span>
-                </button>
-              </div>
+              <button
+                onClick={handleClassify}
+                disabled={loading}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue text-white hover:bg-blue/90 text-sm font-semibold transition-all shadow-sm border border-blue cursor-pointer disabled:opacity-50"
+              >
+                <Play className="w-4 h-4 fill-current" />
+                <span>{loading ? "Evaluating Flow..." : "Classify Flow Sample"}</span>
+              </button>
             </div>
           </div>
         )}
@@ -875,52 +881,52 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
         {/* Tab 2: Batch CSV Upload */}
         {activeTab === "csv" && (
           <div className="space-y-4">
-            <div className="p-6 border-2 border-dashed border-slate-200 rounded-xl text-center bg-slate-50/50 hover:bg-slate-50 transition-colors">
-              <Upload className="w-8 h-8 text-slate-400 mx-auto mb-2" />
-              <div className="text-xs font-medium text-slate-700">
+            <div className="p-8 border-2 border-dashed border-slate-200 rounded-2xl text-center bg-slate-50/60 hover:bg-slate-50 transition-colors">
+              <Upload className="w-10 h-10 text-slate-400 mx-auto mb-3" />
+              <div className="text-sm font-semibold text-slate-800">
                 Upload CSV File with 10 Monitored Features
               </div>
-              <p className="text-[11px] text-muted mt-0.5">
-                Evaluates first 25 network flows using the lightweight decision tree engine.
+              <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+                Evaluates first 25 network flows through the lightweight decision tree engine in client-side memory.
               </p>
               <input
                 type="file"
                 accept=".csv"
                 onChange={handleCsvUpload}
-                className="mt-3 text-xs text-slate-500 file:mr-3 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-medium file:bg-slate-900 file:text-white hover:file:bg-slate-800 cursor-pointer"
+                className="mt-4 text-xs sm:text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white hover:file:bg-slate-800 cursor-pointer"
               />
             </div>
 
             {csvResults.length > 0 && (
-              <div className="border border-slate-200 rounded-lg overflow-x-auto">
-                <table className="w-full text-xs text-left">
-                  <thead className="bg-slate-50 border-b border-slate-200 font-mono text-[11px] text-slate-500">
+              <div className="border border-slate-200 rounded-xl overflow-x-auto shadow-xs">
+                <table className="w-full text-xs sm:text-sm text-left">
+                  <thead className="bg-slate-50 border-b border-slate-200 font-mono text-xs text-slate-600">
                     <tr>
-                      <th className="px-3 py-2">Row #</th>
-                      <th className="px-3 py-2">Feature Snapshot</th>
-                      <th className="px-3 py-2">Verdict</th>
-                      <th className="px-3 py-2">Confidence</th>
-                      <th className="px-3 py-2">Latency</th>
+                      <th className="px-4 py-3">Row #</th>
+                      <th className="px-4 py-3">Feature Snapshot</th>
+                      <th className="px-4 py-3">Verdict</th>
+                      <th className="px-4 py-3">Confidence</th>
+                      <th className="px-4 py-3">Latency</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100 font-mono">
                     {csvResults.map((r) => (
-                      <tr key={r.rowIdx} className="hover:bg-slate-50/60">
-                        <td className="px-3 py-2 text-slate-500">{r.rowIdx}</td>
-                        <td className="px-3 py-2 text-slate-700">{r.featuresSample}</td>
-                        <td className="px-3 py-2">
+                      <tr key={r.rowIdx} className="hover:bg-slate-50/70">
+                        <td className="px-4 py-3 text-slate-500">{r.rowIdx}</td>
+                        <td className="px-4 py-3 text-slate-800">{r.featuresSample}</td>
+                        <td className="px-4 py-3">
                           <span
-                            className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
+                            className={`px-2 py-0.5 rounded text-xs font-semibold ${
                               r.isAttack
-                                ? "bg-rose-100 text-rose-700 border border-rose-200"
-                                : "bg-emerald-100 text-emerald-700 border border-emerald-200"
+                                ? "bg-rose-100 text-rose-800 border border-rose-200"
+                                : "bg-emerald-100 text-emerald-800 border border-emerald-200"
                             }`}
                           >
                             {r.predicted}
                           </span>
                         </td>
-                        <td className="px-3 py-2 text-slate-600">{r.confidence}%</td>
-                        <td className="px-3 py-2 text-slate-600">{r.latencyMs} ms</td>
+                        <td className="px-4 py-3 text-slate-700">{r.confidence}%</td>
+                        <td className="px-4 py-3 text-slate-700">{r.latencyMs} ms</td>
                       </tr>
                     ))}
                   </tbody>
@@ -931,55 +937,55 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
         )}
       </div>
 
-      {/* 3. Professional Incident Modal Dialog */}
+      {/* 3. Professional Incident Modal Dialog (Clear Elevation & Readable Text) */}
       {showModal && modalResult && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-slate-950/60 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-slate-950/65 backdrop-blur-xs transition-opacity"
             onClick={() => setShowModal(false)}
           />
 
           {/* Modal Container */}
-          <div className="relative bg-white rounded-xl shadow-float border border-slate-200 max-w-lg w-full p-5 sm:p-6 z-10 space-y-4">
+          <div className="relative bg-white rounded-2xl shadow-float border border-slate-200 max-w-lg w-full p-6 z-10 space-y-4">
             {/* Header with Close */}
-            <div className="flex items-start justify-between gap-3 pb-3 border-b border-slate-100">
-              <div className="flex items-center gap-3">
+            <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-100">
+              <div className="flex items-center gap-3.5">
                 <div
-                  className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 border ${
+                  className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border shadow-xs ${
                     modalResult.isAttack
                       ? "bg-rose-500 text-white border-rose-600"
                       : "bg-emerald-500 text-white border-emerald-600"
                   }`}
                 >
                   {modalResult.isAttack ? (
-                    <ShieldAlert className="w-5 h-5 text-white" />
+                    <ShieldAlert className="w-6 h-6 text-white" />
                   ) : (
-                    <ShieldCheck className="w-5 h-5 text-white" />
+                    <ShieldCheck className="w-6 h-6 text-white" />
                   )}
                 </div>
 
                 <div>
                   <div className="flex items-center gap-2">
                     <span
-                      className={`text-[9px] font-mono font-semibold px-1.5 py-0.2 rounded border ${
+                      className={`text-xs font-mono font-semibold px-2 py-0.5 rounded border shadow-xs ${
                         modalResult.riskLevel === "CRITICAL"
-                          ? "bg-rose-100 text-rose-700 border-rose-200"
+                          ? "bg-rose-100 text-rose-800 border-rose-200"
                           : modalResult.riskLevel === "HIGH"
-                          ? "bg-rose-50 text-rose-700 border-rose-200"
+                          ? "bg-rose-100/80 text-rose-800 border-rose-200"
                           : modalResult.riskLevel === "ELEVATED"
                           ? "bg-amber-100 text-amber-800 border-amber-200"
-                          : "bg-emerald-100 text-emerald-700 border-emerald-200"
+                          : "bg-emerald-100 text-emerald-800 border-emerald-200"
                       }`}
                     >
                       {modalResult.riskLevel}
                     </span>
-                    <span className="text-[11px] font-mono text-slate-400">
+                    <span className="text-xs font-mono text-slate-500">
                       {modalResult.latencyMs} ms • {modalResult.confidence}% confidence
                     </span>
                   </div>
 
-                  <h3 className="text-sm sm:text-base font-semibold text-ink mt-0.5">
+                  <h3 className="text-base sm:text-lg font-bold text-ink mt-1">
                     {modalResult.isAttack
                       ? `Incident Alert: ${modalResult.prediction}`
                       : "Verified Clean Telemetry"}
@@ -989,67 +995,67 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
 
               <button
                 onClick={() => setShowModal(false)}
-                className="p-1 rounded-md text-slate-400 hover:text-slate-600 hover:bg-slate-100"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
                 aria-label="Close dialog"
               >
-                <X className="w-4 h-4" />
+                <X className="w-5 h-5" />
               </button>
             </div>
 
             {/* Technical Behavior Assessment */}
-            <div className="space-y-1.5 text-xs">
-              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider font-mono">
+            <div className="space-y-1.5">
+              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono">
                 Technical Behavior Assessment
               </div>
-              <p className="text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-200">
+              <p className="text-xs sm:text-sm text-slate-800 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200 font-medium">
                 {modalResult.description}
               </p>
             </div>
 
             {/* Sentinel AI Plain Language Diagnosis */}
-            <div className="space-y-1.5 text-xs">
+            <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider font-mono flex items-center gap-1.5">
-                  <Bot className="w-3.5 h-3.5 text-blue" />
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono flex items-center gap-2">
+                  <Bot className="w-4 h-4 text-blue" />
                   <span>Sentinel AI Diagnosis (Aasan Bhasha)</span>
                 </span>
-                <span className="text-[10px] font-mono text-blue font-medium">
+                <span className="text-xs font-mono text-blue font-semibold">
                   Plain Language
                 </span>
               </div>
-              <div className="p-3 rounded-lg bg-blue-50/60 border border-blue-200 text-slate-800 leading-relaxed">
+              <div className="p-3.5 rounded-xl bg-blue-50/80 border border-blue-200 text-slate-800 text-xs sm:text-sm leading-relaxed font-medium">
                 {modalResult.humanExplanationHinglish}
               </div>
             </div>
 
             {/* Recommended Defensive Protocol */}
-            <div className="space-y-1.5 text-xs">
-              <div className="text-[11px] font-semibold text-slate-500 uppercase tracking-wider font-mono">
+            <div className="space-y-1.5">
+              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono">
                 Recommended Defense Action
               </div>
-              <p className="text-slate-600 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-200 font-mono text-[11px]">
+              <p className="text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200 font-mono text-xs">
                 {modalResult.actionAdvice}
               </p>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
               {onOpenAiAssistant && (
                 <button
                   onClick={() => {
                     setShowModal(false);
                     onOpenAiAssistant({ ...modalResult, inputs: manualInputs });
                   }}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue text-blue hover:bg-blue-50 text-xs font-medium transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-blue text-blue hover:bg-blue-50 text-xs sm:text-sm font-medium transition-colors cursor-pointer"
                 >
-                  <Bot className="w-3.5 h-3.5" />
+                  <Bot className="w-4 h-4" />
                   <span>Open in AI Assistant</span>
                 </button>
               )}
 
               <button
                 onClick={() => setShowModal(false)}
-                className="px-4 py-1.5 rounded-lg bg-slate-900 text-white hover:bg-slate-800 text-xs font-medium transition-colors shadow-xs cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-xs sm:text-sm font-medium transition-colors shadow-sm cursor-pointer"
               >
                 Acknowledge & Close
               </button>

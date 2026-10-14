@@ -54,28 +54,28 @@ export default function Sidebar({
       label: "Sentinel AI Analyst",
       description: "Threat Explainer",
       icon: Bot,
-      badge: "AI Copilot",
+      badge: "Copilot",
     },
   ];
 
   const content = (
-    <div className="flex flex-col h-full bg-[#0B0F19] text-slate-300 border-r border-slate-800/80">
+    <div className="flex flex-col h-full bg-[#0B0F19] text-slate-300 border-r border-slate-800/90 shadow-lg">
       {/* Brand Header */}
-      <div className="px-5 py-4 border-b border-slate-800/80 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-lg bg-blue-600/10 border border-blue-500/30 flex items-center justify-center text-blue-400">
-            <Shield className="w-4 h-4 text-blue-400" />
+      <div className="px-5 py-5 border-b border-slate-800/90 flex items-center justify-between">
+        <div className="flex items-center gap-3.5">
+          <div className="w-9 h-9 rounded-xl bg-blue-600/15 border border-blue-500/30 flex items-center justify-center text-blue-400 shrink-0">
+            <Shield className="w-5 h-5 text-blue-400" />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold tracking-tight text-white">
+              <span className="text-sm font-semibold tracking-tight text-white">
                 Lightweight IDS
               </span>
-              <span className="px-1.5 py-0.2 rounded text-[9px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 v2.1
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 font-mono">CICIoT2023 Engine</p>
+            <p className="text-xs text-slate-400 font-mono mt-0.5">CICIoT2023 Engine</p>
           </div>
         </div>
 
@@ -83,7 +83,7 @@ export default function Sidebar({
         {onCloseMobile && (
           <button
             onClick={onCloseMobile}
-            className="lg:hidden p-1.5 text-slate-400 hover:text-white rounded-md hover:bg-slate-800"
+            className="lg:hidden p-2 text-slate-400 hover:text-white rounded-lg hover:bg-slate-800 transition-colors"
             aria-label="Close navigation"
           >
             <X className="w-5 h-5" />
@@ -92,12 +92,12 @@ export default function Sidebar({
       </div>
 
       {/* Main Navigation */}
-      <div className="flex-1 px-3 py-4 space-y-6 overflow-y-auto">
+      <div className="flex-1 px-3.5 py-5 space-y-6 overflow-y-auto">
         <div>
-          <div className="px-3 pb-2 text-[10px] font-semibold text-slate-500 uppercase tracking-wider font-mono">
+          <div className="px-3 pb-2.5 text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono">
             Security Operations
           </div>
-          <nav className="space-y-1">
+          <nav className="space-y-1.5">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = currentTab === item.id;
@@ -108,32 +108,32 @@ export default function Sidebar({
                     onSelectTab(item.id);
                     if (onCloseMobile) onCloseMobile();
                   }}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-left transition-all group ${
+                  className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-left transition-all group ${
                     isActive
-                      ? "bg-slate-800/90 text-white font-medium shadow-sm border border-slate-700/60"
-                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/40"
+                      ? "bg-slate-800 text-white font-medium shadow-md border border-slate-700/80"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
                   }`}
                 >
-                  <div className="flex items-center gap-3 min-w-0">
+                  <div className="flex items-center gap-3.5 min-w-0">
                     <Icon
-                      className={`w-4 h-4 shrink-0 transition-colors ${
+                      className={`w-5 h-5 shrink-0 transition-colors ${
                         isActive
                           ? "text-blue-400"
                           : "text-slate-400 group-hover:text-slate-200"
                       }`}
                     />
                     <div className="truncate">
-                      <div className="text-xs leading-none">{item.label}</div>
-                      <div className="text-[10px] text-slate-400 mt-1 leading-none font-mono">
+                      <div className="text-sm leading-tight font-medium">{item.label}</div>
+                      <div className="text-xs text-slate-400 mt-1 leading-tight font-mono">
                         {item.description}
                       </div>
                     </div>
                   </div>
                   {item.badge && (
                     <span
-                      className={`text-[9px] font-mono px-1.5 py-0.5 rounded border leading-none ${
+                      className={`text-[10px] font-mono px-2 py-0.5 rounded border leading-none ${
                         isActive
-                          ? "bg-blue-500/10 text-blue-300 border-blue-500/30"
+                          ? "bg-blue-500/15 text-blue-300 border-blue-500/30 font-semibold"
                           : "bg-slate-800/80 text-slate-400 border-slate-700/60"
                       }`}
                     >
@@ -147,24 +147,24 @@ export default function Sidebar({
         </div>
 
         {/* Telemetry Architecture Specs */}
-        <div className="px-3 pt-4 border-t border-slate-800/60">
-          <div className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider font-mono mb-2.5">
-            Edge Constraint Budget
+        <div className="px-3 pt-5 border-t border-slate-800/70">
+          <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider font-mono mb-3">
+            Edge Budget
           </div>
-          <div className="space-y-2 text-xs">
-            <div className="flex items-center justify-between text-[11px] py-1 border-b border-slate-800/40">
+          <div className="space-y-2.5 text-xs">
+            <div className="flex items-center justify-between py-1 border-b border-slate-800/50">
               <span className="text-slate-400">Feature Cap:</span>
               <span className="font-mono text-slate-200 font-semibold">K = 10 Max</span>
             </div>
-            <div className="flex items-center justify-between text-[11px] py-1 border-b border-slate-800/40">
+            <div className="flex items-center justify-between py-1 border-b border-slate-800/50">
               <span className="text-slate-400">Inference Budget:</span>
               <span className="font-mono text-emerald-400 font-semibold">&lt; 1.5 ms</span>
             </div>
-            <div className="flex items-center justify-between text-[11px] py-1 border-b border-slate-800/40">
-              <span className="text-slate-400">RAM Ceiling:</span>
-              <span className="font-mono text-slate-200 font-semibold">&lt; 500 KB</span>
+            <div className="flex items-center justify-between py-1 border-b border-slate-800/50">
+              <span className="text-slate-400">Memory Footprint:</span>
+              <span className="font-mono text-slate-200 font-semibold">5.22 KB</span>
             </div>
-            <div className="flex items-center justify-between text-[11px] py-1">
+            <div className="flex items-center justify-between py-1">
               <span className="text-slate-400">Runtime Target:</span>
               <span className="font-mono text-blue-400 font-semibold">MicroPython / C</span>
             </div>
@@ -173,15 +173,15 @@ export default function Sidebar({
       </div>
 
       {/* Edge Status Footer */}
-      <div className="p-3 border-t border-slate-800/80 bg-slate-900/60">
-        <div className="flex items-center gap-2.5 px-2 py-1.5 rounded-md bg-slate-800/40 border border-slate-800">
-          <div className="w-2 h-2 rounded-full bg-emerald-500 shrink-0"></div>
+      <div className="p-3.5 border-t border-slate-800/90 bg-slate-900/70">
+        <div className="flex items-center gap-3 px-2.5 py-2 rounded-lg bg-slate-800/50 border border-slate-800">
+          <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></div>
           <div className="min-w-0">
-            <div className="text-[11px] font-medium text-slate-300 leading-none truncate">
+            <div className="text-xs font-medium text-slate-200 leading-tight truncate">
               Local Inference Engine
             </div>
-            <div className="text-[9px] text-slate-400 font-mono mt-0.5 leading-none">
-              Client-Side Tree (0 Server Calls)
+            <div className="text-[11px] text-slate-400 font-mono mt-0.5 leading-tight">
+              Deterministic Tree (0 Remote Calls)
             </div>
           </div>
         </div>
@@ -192,7 +192,7 @@ export default function Sidebar({
   return (
     <>
       {/* Desktop Sidebar (Permanent) */}
-      <aside className="hidden lg:block w-60 shrink-0 h-screen">
+      <aside className="hidden lg:block w-64 shrink-0 h-screen">
         {content}
       </aside>
 
