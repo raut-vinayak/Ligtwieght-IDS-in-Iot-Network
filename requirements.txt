@@ -1,0 +1,10 @@
+# Lightweight IoT IDS Requirements
+numpy==2.5.2
+pandas==3.0.6
+scikit-learn==1.9.1
+matplotlib==3.11.2
+seaborn==0.13.2
+streamlit==1.64.0
+joblib==1.6.0
+scapy==2.7.0
+fastapi==0.117.1

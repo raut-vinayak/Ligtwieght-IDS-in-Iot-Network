@@ -1,0 +1,42 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+.venv/
+venv/
+ENV/
+ml_env/
+
+# Data (strictly local only)
+data/raw/*
+!data/raw/.gitkeep
+data/processed/*
+!data/processed/.gitkeep
+
+# Models (local training outputs)
+models/*
+!models/.gitkeep
+!models/inference_metadata.json
+!models/*.onnx
+
+# Results and logs
+results/runs/*
+!results/runs/.gitkeep
+results/live_predictions.jsonl
+
+# Web frontend
+web/node_modules/
+web/.next/
+web/out/
+web/.env*.local
+
+# IDE and OS
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
