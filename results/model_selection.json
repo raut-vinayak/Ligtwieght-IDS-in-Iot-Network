@@ -1,0 +1,31 @@
+{
+  "selection_rule": "Maximize Validation Macro-F1 subject to Size <= 50.0 KB and Median Latency <= 3.0 ms",
+  "binary_champion": {
+    "task": "binary",
+    "selected_model": "DecisionTree",
+    "selected_k": 5,
+    "val_macro_f1": 1.0,
+    "test_macro_f1": 0.9908,
+    "test_balanced_acc": 0.9936,
+    "test_accuracy": 0.9917,
+    "median_latency_ms": 1.338,
+    "p95_latency_ms": 2.483,
+    "model_size_kb": 4.95,
+    "artifact_path": "benchmark_run_01_binary_DecisionTree_k5.joblib",
+    "run_id": "benchmark_run_01"
+  },
+  "multiclass_champion": {
+    "task": "multiclass",
+    "selected_model": "DecisionTree",
+    "selected_k": 20,
+    "val_macro_f1": 0.9732,
+    "test_macro_f1": 0.989,
+    "test_balanced_acc": 0.9963,
+    "test_accuracy": 0.9917,
+    "median_latency_ms": 1.4523,
+    "p95_latency_ms": 9.8506,
+    "model_size_kb": 8.22,
+    "artifact_path": "benchmark_run_01_multiclass_DecisionTree_k20.joblib",
+    "run_id": "benchmark_run_01"
+  }
+}

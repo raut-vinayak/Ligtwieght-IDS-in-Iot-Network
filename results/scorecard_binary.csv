@@ -1,0 +1,17 @@
+run_id,task,model,k,dataset_hash,val_macro_f1,val_balanced_acc,val_accuracy,test_macro_f1,test_balanced_acc,test_accuracy,test_precision_macro,test_recall_macro,test_weighted_f1,test_roc_auc,test_pr_auc,median_latency_ms,p95_latency_ms,model_size_kb,train_time_sec,artifact_path
+benchmark_run_01,binary,DecisionTree,5,5bbaeae9ce86,1.0,1.0,1.0,0.9908,0.9936,0.9917,0.9882,0.9936,0.9917,0.9936,0.9956,1.338,2.483,4.95,0.016,benchmark_run_01_binary_DecisionTree_k5.joblib
+benchmark_run_01,binary,SmallRandomForest,5,5bbaeae9ce86,1.0,1.0,1.0,0.9908,0.9936,0.9917,0.9882,0.9936,0.9917,0.9999,0.9999,23.4301,27.1374,26.59,0.097,benchmark_run_01_binary_SmallRandomForest_k5.joblib
+benchmark_run_01,binary,ConstrainedLightGBM,5,5bbaeae9ce86,0.9954,0.994,0.9959,0.9862,0.9876,0.9875,0.9849,0.9876,0.9875,0.9998,0.9999,3.0834,4.1123,41.8,0.051,benchmark_run_01_binary_ConstrainedLightGBM_k5.joblib
+benchmark_run_01,binary,LogisticRegression,5,5bbaeae9ce86,0.9954,0.9968,0.9959,0.9954,0.9968,0.9958,0.994,0.9968,0.9958,1.0,1.0,1.5672,2.2962,3.91,0.027,benchmark_run_01_binary_LogisticRegression_k5.joblib
+benchmark_run_01,binary,ConstrainedLightGBM,10,5bbaeae9ce86,0.9954,0.994,0.9959,0.9862,0.9876,0.9875,0.9849,0.9876,0.9875,0.9998,0.9999,2.6381,3.4633,42.33,0.02,benchmark_run_01_binary_ConstrainedLightGBM_k10.joblib
+benchmark_run_01,binary,DecisionTree,10,5bbaeae9ce86,0.9954,0.994,0.9959,0.9817,0.9844,0.9833,0.9791,0.9844,0.9834,0.9844,0.9871,1.0636,1.7137,5.22,0.007,benchmark_run_01_binary_DecisionTree_k10.joblib
+benchmark_run_01,binary,LogisticRegression,10,5bbaeae9ce86,0.9954,0.9968,0.9959,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.216,2.0174,4.06,0.013,benchmark_run_01_binary_LogisticRegression_k10.joblib
+benchmark_run_01,binary,SmallRandomForest,10,5bbaeae9ce86,0.9954,0.994,0.9959,0.9862,0.9876,0.9875,0.9849,0.9876,0.9875,0.9998,0.9999,25.1806,32.839,32.17,0.069,benchmark_run_01_binary_SmallRandomForest_k10.joblib
+benchmark_run_01,binary,ConstrainedLightGBM,15,5bbaeae9ce86,0.9954,0.994,0.9959,0.9862,0.9876,0.9875,0.9849,0.9876,0.9875,0.9998,0.9999,3.178,4.5314,42.88,0.03,benchmark_run_01_binary_ConstrainedLightGBM_k15.joblib
+benchmark_run_01,binary,DecisionTree,15,5bbaeae9ce86,0.9954,0.994,0.9959,0.9862,0.9876,0.9875,0.9849,0.9876,0.9875,0.9876,0.9893,5.0366,9.5155,5.34,0.01,benchmark_run_01_binary_DecisionTree_k15.joblib
+benchmark_run_01,binary,LogisticRegression,15,5bbaeae9ce86,0.9954,0.9968,0.9959,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,5.0172,9.6791,4.22,0.031,benchmark_run_01_binary_LogisticRegression_k15.joblib
+benchmark_run_01,binary,SmallRandomForest,15,5bbaeae9ce86,0.9954,0.994,0.9959,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,27.4337,34.0967,44.17,0.221,benchmark_run_01_binary_SmallRandomForest_k15.joblib
+benchmark_run_01,binary,SmallRandomForest,20,5bbaeae9ce86,1.0,1.0,1.0,0.9862,0.9876,0.9875,0.9849,0.9876,0.9875,0.9998,0.9999,28.2252,45.6357,39.28,0.085,benchmark_run_01_binary_SmallRandomForest_k20.joblib
+benchmark_run_01,binary,ConstrainedLightGBM,20,5bbaeae9ce86,0.9954,0.994,0.9959,0.9862,0.9876,0.9875,0.9849,0.9876,0.9875,0.9998,0.9999,4.7765,8.3138,43.16,0.045,benchmark_run_01_binary_ConstrainedLightGBM_k20.joblib
+benchmark_run_01,binary,DecisionTree,20,5bbaeae9ce86,0.9954,0.994,0.9959,0.9862,0.9876,0.9875,0.9849,0.9876,0.9875,0.9876,0.9893,2.3598,12.3129,5.47,0.013,benchmark_run_01_binary_DecisionTree_k20.joblib
+benchmark_run_01,binary,LogisticRegression,20,5bbaeae9ce86,0.9954,0.9968,0.9959,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.7777,2.2853,4.38,0.015,benchmark_run_01_binary_LogisticRegression_k20.joblib
