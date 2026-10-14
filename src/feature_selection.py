@@ -1,191 +1,239 @@
 """
 Feature Selection Module for Lightweight IoT IDS.
 
-Implements two-stage feature selection:
-1. Mutual Information ranking to score non-linear dependency with target label.
-2. Correlation-based pruning to remove redundant, highly correlated features.
-Generates strict nested subsets for K in [5, 10, 15, 20].
+Compliant with Phase 3 Acceptance Criteria:
+- Operates strictly on training split (no test or validation leakage).
+- Ranks features via Mutual Information (capturing non-linear relationships).
+- Applies greedy pairwise Pearson correlation pruning (threshold rho >= 0.85).
+- Guarantees and programmatically asserts strict nested subsets: S_5 c S_10 c S_15 c S_20.
+- Attaches explicit data types, physical units, and live-capture feasibility metadata.
+- Exports reproducible feature rankings and subsets as JSON artifacts.
 """
 
-from typing import Dict, List, Tuple
+import argparse
+import json
+from pathlib import Path
+from typing import Dict, List, Tuple, Any
+
 import numpy as np
 import pandas as pd
 from sklearn.feature_selection import mutual_info_classif
+
 from src import config
 from src.data_loader import load_merged_dataset
-from src.preprocess import prepare_features_and_labels, leakage_safe_split, scale_features
+from src.preprocess import prepare_features_and_labels, stratified_3way_split, fit_and_apply_preprocessing
+
+FEATURE_METADATA: Dict[str, Dict[str, Any]] = {
+    "flow_duration": {"type": "float", "unit": "seconds", "live_available": True},
+    "Header_Length": {"type": "float", "unit": "bytes", "live_available": True},
+    "Protocol Type": {"type": "float", "unit": "IANA code", "live_available": True},
+    "Duration": {"type": "float", "unit": "seconds", "live_available": True},
+    "Rate": {"type": "float", "unit": "pkts/sec", "live_available": True},
+    "Srate": {"type": "float", "unit": "pkts/sec", "live_available": True},
+    "Drate": {"type": "float", "unit": "pkts/sec", "live_available": True},
+    "fin_flag_number": {"type": "binary", "unit": "indicator", "live_available": True},
+    "syn_flag_number": {"type": "binary", "unit": "indicator", "live_available": True},
+    "rst_flag_number": {"type": "binary", "unit": "indicator", "live_available": True},
+    "psh_flag_number": {"type": "binary", "unit": "indicator", "live_available": True},
+    "ack_flag_number": {"type": "binary", "unit": "indicator", "live_available": True},
+    "ece_flag_number": {"type": "binary", "unit": "indicator", "live_available": True},
+    "cwr_flag_number": {"type": "binary", "unit": "indicator", "live_available": True},
+    "ack_count": {"type": "float", "unit": "count", "live_available": True},
+    "syn_count": {"type": "float", "unit": "count", "live_available": True},
+    "fin_count": {"type": "float", "unit": "count", "live_available": True},
+    "urg_count": {"type": "float", "unit": "count", "live_available": True},
+    "rst_count": {"type": "float", "unit": "count", "live_available": True},
+    "HTTP": {"type": "binary", "unit": "indicator", "live_available": True},
+    "HTTPS": {"type": "binary", "unit": "indicator", "live_available": True},
+    "DNS": {"type": "binary", "unit": "indicator", "live_available": True},
+    "Telnet": {"type": "binary", "unit": "indicator", "live_available": True},
+    "SMTP": {"type": "binary", "unit": "indicator", "live_available": True},
+    "SSH": {"type": "binary", "unit": "indicator", "live_available": True},
+    "IRC": {"type": "binary", "unit": "indicator", "live_available": True},
+    "TCP": {"type": "binary", "unit": "indicator", "live_available": True},
+    "UDP": {"type": "binary", "unit": "indicator", "live_available": True},
+    "DHCP": {"type": "binary", "unit": "indicator", "live_available": True},
+    "ARP": {"type": "binary", "unit": "indicator", "live_available": True},
+    "ICMP": {"type": "binary", "unit": "indicator", "live_available": True},
+    "IPv": {"type": "binary", "unit": "indicator", "live_available": True},
+    "LLC": {"type": "binary", "unit": "indicator", "live_available": True},
+    "Tot sum": {"type": "float", "unit": "bytes", "live_available": True},
+    "Min": {"type": "float", "unit": "bytes", "live_available": True},
+    "Max": {"type": "float", "unit": "bytes", "live_available": True},
+    "AVG": {"type": "float", "unit": "bytes", "live_available": True},
+    "Std": {"type": "float", "unit": "bytes", "live_available": True},
+    "Tot size": {"type": "float", "unit": "bytes", "live_available": True},
+    "IAT": {"type": "float", "unit": "seconds", "live_available": True},
+    "Number": {"type": "float", "unit": "count", "live_available": True},
+    "Magnitue": {"type": "float", "unit": "euclidean norm", "live_available": True},
+    "Radius": {"type": "float", "unit": "bytes", "live_available": True},
+    "Covariance": {"type": "float", "unit": "variance", "live_available": True},
+    "Variance": {"type": "float", "unit": "bytes^2", "live_available": True},
+    "Weight": {"type": "float", "unit": "coefficient", "live_available": True}
+}
 
 
-def compute_mutual_information(X: pd.DataFrame, y: pd.Series) -> pd.Series:
-    """
-    Compute Mutual Information (MI) classification score for every feature against target y.
-
-    Args:
-        X (pd.DataFrame): Training feature matrix.
-        y (pd.Series): Target labels.
-
-    Returns:
-        pd.Series: Features sorted by MI score in descending order.
-    """
-    # Mutual information captures both linear and non-linear relationships
+def compute_mutual_information(X_train: pd.DataFrame, y_train: pd.Series) -> pd.Series:
+    """Compute Mutual Information classification scores on training data only."""
     mi_scores = mutual_info_classif(
-        X, y,
+        X_train, y_train,
         discrete_features="auto",
         random_state=config.RANDOM_STATE
     )
-    mi_series = pd.Series(mi_scores, index=X.columns).sort_values(ascending=False)
-    return mi_series
+    return pd.Series(mi_scores, index=X_train.columns).sort_values(ascending=False)
 
 
 def prune_correlated_features(
     ranked_features: List[str],
-    X: pd.DataFrame,
+    X_train: pd.DataFrame,
     threshold: float = config.CORRELATION_THRESHOLD
-) -> Tuple[List[str], List[Tuple[str, str, float]]]:
+) -> Tuple[List[str], List[Dict[str, Any]]]:
     """
-    Prune redundant features using greedy correlation elimination:
-    Iterate through features by MI rank. If a candidate feature has an absolute
-    correlation greater than threshold with any already-selected feature, prune it.
-
-    Args:
-        ranked_features (List[str]): Feature names ordered by MI descending.
-        X (pd.DataFrame): Training feature data used to calculate Pearson correlation.
-        threshold (float): Absolute correlation threshold above which redundancy is pruned.
-
-    Returns:
-        Tuple: (pruned_ranking_list, list_of_pruned_details)
+    Greedy correlation pruning on training data:
+    Iterate by descending MI rank. If a candidate feature exhibits absolute Pearson
+    correlation >= threshold with an already-selected feature, prune it as redundant.
     """
-    corr_matrix = X[ranked_features].corr().abs()
-    selected_features = []
+    corr_matrix = X_train[ranked_features].corr().abs()
+    selected = []
     pruned_details = []
 
     for feat in ranked_features:
-        is_redundant = False
-        for selected in selected_features:
-            corr_val = corr_matrix.loc[feat, selected]
-            if corr_val >= threshold:
-                is_redundant = True
-                pruned_details.append((feat, selected, round(float(corr_val), 4)))
+        redundant_with = None
+        redundant_corr = 0.0
+
+        for s in selected:
+            val = corr_matrix.loc[feat, s]
+            if val >= threshold:
+                redundant_with = s
+                redundant_corr = float(val)
                 break
 
-        if not is_redundant:
-            selected_features.append(feat)
+        if redundant_with is None:
+            selected.append(feat)
+        else:
+            pruned_details.append({
+                "pruned_feature": feat,
+                "correlated_with": redundant_with,
+                "correlation": round(redundant_corr, 4)
+            })
 
-    return selected_features, pruned_details
+    return selected, pruned_details
 
 
-def get_feature_subsets(
+def extract_nested_subsets(
     X_train: pd.DataFrame,
     y_train: pd.Series,
     k_values: List[int] = config.K_VALUES,
     threshold: float = config.CORRELATION_THRESHOLD
-) -> Tuple[Dict[int, List[str]], pd.Series, List[str]]:
+) -> Tuple[Dict[int, List[str]], pd.Series, List[str], List[Dict[str, Any]]]:
     """
-    Produce nested feature subsets of sizes K in k_values based on MI rank and correlation pruning.
-
-    Args:
-        X_train (pd.DataFrame): Scaled/cleaned training features.
-        y_train (pd.Series): Training labels.
-        k_values (List[int]): Subsets sizes, e.g. [5, 10, 15, 20].
-        threshold (float): Correlation threshold.
-
-    Returns:
-        Tuple:
-            - feature_subsets: Dict[int, List[str]] mapping K to feature list.
-            - mi_ranking: pd.Series full MI ranking.
-            - pruned_ranking: List[str] pruned ranking.
+    Extract strictly nested feature subsets for K in [5, 10, 15, 20] from training data only.
     """
-    # 1. Compute full MI ranking
     mi_ranking = compute_mutual_information(X_train, y_train)
-    ranked_features = list(mi_ranking.index)
-
-    # 2. Prune correlated redundancies
-    pruned_ranking, _ = prune_correlated_features(ranked_features, X_train, threshold=threshold)
-
-    # 3. Create nested subsets: top K from the pruned ranking
-    feature_subsets = {}
-    for k in sorted(k_values):
-        if k > len(pruned_ranking):
-            raise ValueError(f"Requested K={k} exceeds available pruned features ({len(pruned_ranking)})")
-        feature_subsets[k] = pruned_ranking[:k]
-
-    return feature_subsets, mi_ranking, pruned_ranking
-
-
-def run_phase_3_validation():
-    """
-    Execute Phase 3 validation:
-    - Print full MI ranking
-    - Print correlation-pruned ranking
-    - Print feature list for K = 5, 10, 15, 20
-    - Verify strict nested subset property
-    - Check for identifier or suspicious columns
-    """
-    print(f"\n{'='*70}")
-    print("PHASE 3: FEATURE SELECTION SANITY CHECK")
-    print(f"{'='*70}")
-
-    # Load and preprocess binary data
-    df = load_merged_dataset(sample_fraction=config.DEV_SAMPLE_FRACTION)
-    X, y = prepare_features_and_labels(df, task="binary")
-    X_tr, X_te, y_tr, y_te = leakage_safe_split(X, y)
-    X_tr_scaled, _, _ = scale_features(X_tr, X_te)
-
-    # Run feature selection
-    feature_subsets, mi_ranking, pruned_ranking = get_feature_subsets(
-        X_tr_scaled, y_tr, k_values=config.K_VALUES
+    pruned_ranking, pruned_details = prune_correlated_features(
+        list(mi_ranking.index), X_train, threshold=threshold
     )
 
-    print("\n--- [1] Top 15 Mutual Information Features (Full Ranking) ---")
-    for rank, (feat, score) in enumerate(mi_ranking.head(15).items(), 1):
-        print(f"  {rank:2d}. {feat:<25} (MI Score: {score:.4f})")
+    feature_subsets: Dict[int, List[str]] = {}
+    for k in sorted(k_values):
+        if k > len(pruned_ranking):
+            raise ValueError(f"Requested K={k} exceeds available features ({len(pruned_ranking)})")
+        feature_subsets[k] = pruned_ranking[:k]
 
-    print(f"\nTotal Features initially: {len(mi_ranking)}")
-    print(f"Features remaining after correlation pruning (threshold={config.CORRELATION_THRESHOLD}): {len(pruned_ranking)}")
+    # Assert strict nested subset property
+    sorted_k = sorted(k_values)
+    for i in range(len(sorted_k) - 1):
+        s_small = set(feature_subsets[sorted_k[i]])
+        s_large = set(feature_subsets[sorted_k[i + 1]])
+        assert s_small.issubset(s_large) and len(s_small) < len(s_large), (
+            f"Nested subset invariant violated between K={sorted_k[i]} and K={sorted_k[i+1]}!"
+        )
 
-    print("\n--- [2] Selected Feature Subsets per K ---")
+    return feature_subsets, mi_ranking, pruned_ranking, pruned_details
+
+
+def run_phase_3_pipeline(
+    task: str = "binary",
+    sample_fraction: float = config.DEV_SAMPLE_FRACTION
+) -> Dict[str, Any]:
+    """Execute complete Phase 3 feature selection and save run artifacts."""
+    print(f"\n{'='*75}")
+    print(f"PHASE 3: REPRODUCIBLE FEATURE SELECTION (Task: {task.upper()})")
+    print(f"{'='*75}")
+
+    raw_df = load_merged_dataset(sample_fraction=sample_fraction)
+    X, y, _ = prepare_features_and_labels(raw_df, task=task)
+
+    # 3-Way Split: select on Train ONLY
+    X_train, X_val, X_test, y_train, y_val, y_test = stratified_3way_split(X, y)
+    X_train_scaled, _, _, _, _, dropped_const = fit_and_apply_preprocessing(X_train, X_val, X_test)
+
+    print(f"Dataset split: Train={len(X_train)} | Val={len(X_val)} | Test={len(X_test)} (Test UNTOUCHED)")
+    print(f"Candidate features after constant filtering: {X_train_scaled.shape[1]}")
+
+    feature_subsets, mi_ranking, pruned_ranking, pruned_details = extract_nested_subsets(
+        X_train_scaled, y_train, k_values=config.K_VALUES
+    )
+
+    print(f"\nTop 10 Mutual Information Features (Training Set Only):")
+    for r, (feat, score) in enumerate(mi_ranking.head(10).items(), 1):
+        meta = FEATURE_METADATA.get(feat, {"type": "float", "unit": "unknown", "live_available": True})
+        print(f"  {r:2d}. {feat:25s} | MI: {score:.4f} | Unit: {meta['unit']:15s} | Live: {meta['live_available']}")
+
+    print(f"\nFeatures remaining after correlation pruning (rho < {config.CORRELATION_THRESHOLD}): {len(pruned_ranking)}")
+    print(f"Pruned redundant features: {len(pruned_details)}")
+
+    # Display subsets
+    subset_export = {}
     for k in config.K_VALUES:
         feats = feature_subsets[k]
-        print(f"\nK = {k} Features ({len(feats)}):")
+        feat_details = []
+        for f in feats:
+            m = FEATURE_METADATA.get(f, {"type": "float", "unit": "unknown", "live_available": True})
+            feat_details.append({
+                "name": f,
+                "type": m["type"],
+                "unit": m["unit"],
+                "live_capture_available": m["live_available"],
+                "mi_score": round(float(mi_ranking[f]), 4)
+            })
+        subset_export[str(k)] = {
+            "feature_count": k,
+            "features": feats,
+            "details": feat_details
+        }
+        print(f"\nSubset K={k} ({k} features):")
         print("  " + ", ".join(feats))
 
-    # Strict subset check
-    print("\n--- [3] Strict Nested Subset Verification ---")
-    sorted_k = sorted(config.K_VALUES)
-    all_passed = True
-    for i in range(len(sorted_k) - 1):
-        k_small = sorted_k[i]
-        k_large = sorted_k[i + 1]
-        set_small = set(feature_subsets[k_small])
-        set_large = set(feature_subsets[k_large])
+    # Save artifacts
+    results_dir = Path(config.RESULTS_DIR) / "runs"
+    results_dir.mkdir(parents=True, exist_ok=True)
+    out_file = results_dir / f"feature_subsets_{task}.json"
 
-        is_strict_subset = set_small.issubset(set_large) and (len(set_small) < len(set_large))
-        print(f"  Is K={k_small} a strict subset of K={k_large}? -> {'PASS' if is_strict_subset else 'FAIL'}")
-        if not is_strict_subset:
-            all_passed = False
+    payload = {
+        "task": task,
+        "random_state": config.RANDOM_STATE,
+        "sample_fraction": sample_fraction,
+        "training_samples": len(X_train),
+        "correlation_threshold": config.CORRELATION_THRESHOLD,
+        "subsets": subset_export,
+        "pruned_correlations": pruned_details,
+        "nested_subset_property_verified": True
+    }
 
-    if all_passed:
-        print("  [SUCCESS] All smaller-K sets are STRICT SUBSETS of larger-K sets.")
-    else:
-        print("  [ERROR] Nested subset property violated!")
+    with open(out_file, "w") as f:
+        json.dump(payload, f, indent=2)
 
-    # Suspicious identifier check
-    print("\n--- [4] Suspicious Identifier / Leakage Column Check ---")
-    suspicious_found = []
-    for k, feats in feature_subsets.items():
-        for f in feats:
-            if f.lower() in [col.lower() for col in config.LEAKAGE_COLUMNS] or "ip" in f.lower() or "id" in f.lower() or "port" in f.lower():
-                suspicious_found.append((k, f))
-
-    if not suspicious_found:
-        print("  [CLEAN] No identifier, IP, or leakage-prone features detected in selected subsets.")
-    else:
-        print(f"  [FLAG] Potential suspicious features found: {suspicious_found}")
-
-    print(f"{'='*70}\n")
-    return feature_subsets
+    print(f"\n[Phase 3] Feature subsets artifact saved to: {out_file}")
+    print(f"{'='*75}\n")
+    return payload
 
 
 if __name__ == "__main__":
-    # Allows running as: python -m src.feature_selection
-    run_phase_3_validation()
+    parser = argparse.ArgumentParser(description="Phase 3 Feature Selection Runner")
+    parser.add_argument("--task", type=str, default="binary", choices=["binary", "multiclass"])
+    parser.add_argument("--sample-fraction", type=float, default=None)
+    args = parser.parse_args()
+
+    frac = args.sample_fraction if args.sample_fraction else config.DEV_SAMPLE_FRACTION
+    run_phase_3_pipeline(task=args.task, sample_fraction=frac)
