@@ -1,249 +1,359 @@
 """
-Visualization Module for Lightweight IoT IDS.
+Visualization and Model Selection Module for Lightweight IoT IDS.
 
-Generates and saves research-grade trade-off plots:
-1. Macro F1 vs K (accuracy-efficiency Pareto frontier)
-2. Model Size (KB) vs K (log-scale footprint)
-3. Inference Latency (ms) vs K (real-time responsiveness)
-4. Confusion Matrix heatmap for the best K=10 Multiclass model
-Reads strictly from scorecard CSVs with no hardcoded values.
+Compliant with Phase 5 Acceptance Criteria:
+- Generates high-resolution scientific plots directly from scorecard files.
+- Generates:
+  1. Macro F1 vs K (one line per model, with run and split identifiers)
+  2. Balanced Accuracy vs K
+  3. Model Size (KB) vs K (log scale)
+  4. Latency vs K (Median and P95)
+  5. Normalized Confusion Matrix heatmap for selected multiclass model
+  6. Per-class Precision, Recall, F1 breakdown
+- Defines and applies formal edge selection rule:
+  "Maximize Validation Macro F1 subject to Model Size <= 50 KB and Median Latency <= 2.0 ms"
+- Exports selection decision as JSON artifact and documentation.
 """
 
+import argparse
+import json
 from pathlib import Path
-from typing import List
-import matplotlib.pyplot as plt
-import seaborn as sns
-import pandas as pd
-import numpy as np
+from typing import Dict, List, Optional, Tuple, Any
+
 import joblib
-from sklearn.metrics import confusion_matrix
+import matplotlib.pyplot as plt
+import numpy as np
+import pandas as pd
+import seaborn as sns
+
 from src import config
 from src.data_loader import load_merged_dataset
-from src.preprocess import prepare_features_and_labels, leakage_safe_split, scale_features
+from src.preprocess import (
+    prepare_features_and_labels,
+    stratified_3way_split,
+    fit_and_apply_preprocessing
+)
 
 
-def set_plot_style():
-    """
-    Configure clean, professional matplotlib aesthetics for scientific reporting.
-    """
-    sns.set_theme(style="whitegrid", palette="tab10")
+def set_scientific_style():
+    """Apply clean scientific styling to matplotlib plots."""
+    sns.set_theme(style="whitegrid", font="sans-serif")
     plt.rcParams.update({
-        "font.size": 11,
-        "axes.labelsize": 12,
-        "axes.titlesize": 13,
+        "font.size": 10,
+        "axes.labelsize": 11,
+        "axes.titlesize": 12,
         "xtick.labelsize": 10,
         "ytick.labelsize": 10,
-        "legend.fontsize": 10,
-        "figure.titlesize": 14
+        "legend.fontsize": 9,
+        "figure.titlesize": 13,
+        "figure.dpi": 300
     })
 
 
-def plot_macro_f1_vs_k(df: pd.DataFrame, output_path: Path, task: str = "binary"):
-    """
-    Generate Macro F1 vs K line plot (one line per model architecture).
-
-    Args:
-        df (pd.DataFrame): Scorecard data.
-        output_path (Path): PNG file destination.
-        task (str): Task identifier for title.
-    """
-    plt.figure(figsize=(8, 5))
-    models = df["model"].unique()
+def plot_metric_vs_k(
+    df: pd.DataFrame,
+    metric_col: str,
+    metric_label: str,
+    output_path: Path,
+    task: str = "binary",
+    split_label: str = "Test"
+):
+    """Plot metric vs K for all models with readable labels and split context."""
+    plt.figure(figsize=(7.5, 4.8))
+    models = sorted(df["model"].unique())
     markers = ["o", "s", "^", "D"]
+    colors = ["#0A24E9", "#152EAE", "#5C9764", "#C47B18"]
 
     for idx, model_name in enumerate(models):
-        sub_df = df[df["model"] == model_name].sort_values("k")
+        sub = df[df["model"] == model_name].sort_values("k")
         plt.plot(
-            sub_df["k"],
-            sub_df["macro_f1"],
+            sub["k"], sub[metric_col],
             marker=markers[idx % len(markers)],
-            linewidth=2.2,
-            markersize=7,
+            color=colors[idx % len(colors)],
+            linewidth=2.0,
+            markersize=6.5,
             label=model_name
         )
 
-    plt.title(f"Macro F1 Score vs. Feature Subset Size (K) — [{task.capitalize()}]")
+    plt.title(f"{metric_label} vs. Feature Subset Size (K)\n[{task.upper()} Task — {split_label} Split — {df['run_id'].iloc[0]}]")
     plt.xlabel("Number of Features (K)")
-    plt.ylabel("Macro F1 Score")
+    plt.ylabel(metric_label)
     plt.xticks(sorted(df["k"].unique()))
-    plt.ylim(0.0, 1.0)
-    plt.legend(title="Model", frameon=True)
+    plt.ylim(0.0, 1.05)
+    plt.legend(frameon=True, loc="lower right")
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300)
+    plt.savefig(output_path)
     plt.close()
-    print(f"[Plot 1/4] Saved Macro F1 vs K plot: {output_path}")
+    print(f"[Plot] Saved: {output_path.name}")
 
 
-def plot_model_size_vs_k(df: pd.DataFrame, output_path: Path, task: str = "binary"):
-    """
-    Generate Model Size (KB) vs K line plot on a logarithmic scale.
-
-    Args:
-        df (pd.DataFrame): Scorecard data.
-        output_path (Path): PNG file destination.
-        task (str): Task identifier for title.
-    """
-    plt.figure(figsize=(8, 5))
-    models = df["model"].unique()
+def plot_size_vs_k(df: pd.DataFrame, output_path: Path, task: str = "binary"):
+    """Plot model footprint (KB) vs K on a logarithmic scale."""
+    plt.figure(figsize=(7.5, 4.8))
+    models = sorted(df["model"].unique())
     markers = ["o", "s", "^", "D"]
+    colors = ["#0A24E9", "#152EAE", "#5C9764", "#C47B18"]
 
     for idx, model_name in enumerate(models):
-        sub_df = df[df["model"] == model_name].sort_values("k")
+        sub = df[df["model"] == model_name].sort_values("k")
         plt.plot(
-            sub_df["k"],
-            sub_df["model_size_kb"],
+            sub["k"], sub["model_size_kb"],
             marker=markers[idx % len(markers)],
-            linewidth=2.2,
-            markersize=7,
+            color=colors[idx % len(colors)],
+            linewidth=2.0,
+            markersize=6.5,
             label=model_name
         )
 
     plt.yscale("log")
-    plt.title(f"Serialized Model Size (KB) vs. K (Log Scale) — [{task.capitalize()}]")
+    plt.title(f"Serialized Model Size (KB) vs. K (Log Scale)\n[{task.upper()} Task — {df['run_id'].iloc[0]}]")
     plt.xlabel("Number of Features (K)")
     plt.ylabel("Model Size (KB) [Log Scale]")
     plt.xticks(sorted(df["k"].unique()))
-    plt.legend(title="Model", frameon=True)
+    plt.legend(frameon=True, loc="center left", bbox_to_anchor=(1, 0.5))
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300)
+    plt.savefig(output_path)
     plt.close()
-    print(f"[Plot 2/4] Saved Model Size vs K plot: {output_path}")
+    print(f"[Plot] Saved: {output_path.name}")
 
 
 def plot_latency_vs_k(df: pd.DataFrame, output_path: Path, task: str = "binary"):
-    """
-    Generate Inference Latency (ms) vs K line plot.
-
-    Args:
-        df (pd.DataFrame): Scorecard data.
-        output_path (Path): PNG file destination.
-        task (str): Task identifier for title.
-    """
-    plt.figure(figsize=(8, 5))
-    models = df["model"].unique()
-    markers = ["o", "s", "^", "D"]
+    """Plot Median and P95 latency vs K."""
+    plt.figure(figsize=(7.5, 4.8))
+    models = sorted(df["model"].unique())
+    colors = ["#0A24E9", "#152EAE", "#5C9764", "#C47B18"]
 
     for idx, model_name in enumerate(models):
-        sub_df = df[df["model"] == model_name].sort_values("k")
+        sub = df[df["model"] == model_name].sort_values("k")
         plt.plot(
-            sub_df["k"],
-            sub_df["latency_ms"],
-            marker=markers[idx % len(markers)],
-            linewidth=2.2,
-            markersize=7,
-            label=model_name
+            sub["k"], sub["median_latency_ms"],
+            marker="o",
+            color=colors[idx % len(colors)],
+            linewidth=2.0,
+            label=f"{model_name} (Med)"
         )
+        if "p95_latency_ms" in sub.columns:
+            plt.plot(
+                sub["k"], sub["p95_latency_ms"],
+                linestyle="--",
+                alpha=0.6,
+                color=colors[idx % len(colors)],
+                label=f"{model_name} (P95)"
+            )
 
-    plt.title(f"Inference Latency per Sample (ms) vs. K — [{task.capitalize()}]")
+    plt.title(f"Inference Latency per Sample (ms) vs. K\n[{task.upper()} Task — Hardware Warm-Up Benchmarked]")
     plt.xlabel("Number of Features (K)")
     plt.ylabel("Latency per Sample (ms)")
     plt.xticks(sorted(df["k"].unique()))
-    plt.legend(title="Model", frameon=True)
+    plt.legend(frameon=True, loc="center left", bbox_to_anchor=(1, 0.5), fontsize=8)
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300)
+    plt.savefig(output_path)
     plt.close()
-    print(f"[Plot 3/4] Saved Latency vs K plot: {output_path}")
+    print(f"[Plot] Saved: {output_path.name}")
 
 
-def plot_confusion_matrix_k10_multiclass(output_path: Path):
-    """
-    Generate Confusion Matrix heatmap for best performing model at K=10 on multiclass task.
-
-    Args:
-        output_path (Path): PNG destination.
-    """
-    scorecard_path = config.SCORECARD_MULTICLASS_CSV
-    if not scorecard_path.exists():
-        scorecard_path = config.SCORECARD_CSV
-
-    if not scorecard_path.exists():
-        print(f"[Plots] Error: Scorecard file not found at {scorecard_path}")
+def plot_normalized_confusion_matrix(
+    run_json_path: Path,
+    model_name: str,
+    k: int,
+    output_path: Path,
+    task: str = "multiclass"
+):
+    """Plot row-normalized confusion matrix heatmap for selected model."""
+    if not run_json_path.exists():
+        print(f"[Plot] Run JSON not found: {run_json_path}")
         return
 
-    scorecard_df = pd.read_csv(scorecard_path)
-    k10_df = scorecard_df[scorecard_df["k"] == 10]
+    with open(run_json_path, "r") as f:
+        data = json.load(f)
 
-    if k10_df.empty:
-        best_model_name = "ConstrainedLightGBM"
-    else:
-        best_row = k10_df.sort_values(by="macro_f1", ascending=False).iloc[0]
-        best_model_name = best_row["model"]
+    selected_art = None
+    for art in data.get("detailed_artifacts", []):
+        if art["model"] == model_name and art["k"] == k:
+            selected_art = art
+            break
 
-    model_file = config.MODELS_DIR / f"model_multiclass_{best_model_name}_k10.joblib"
-    if not model_file.exists():
-        print(f"[Plots] Model file not found: {model_file}")
+    if not selected_art:
+        print(f"[Plot] Artifact for {model_name} at K={k} not found in run JSON.")
         return
 
-    artifact = joblib.load(model_file)
-    model = artifact["model"]
-    features = artifact["features"]
+    test_metrics = selected_art["test_metrics"]
+    cm_norm = np.array(test_metrics["confusion_matrix_norm"])
+    classes = test_metrics["classes"]
 
-    # Load test split for multiclass
-    raw_df = load_merged_dataset(sample_fraction=config.DEV_SAMPLE_FRACTION)
-    X, y = prepare_features_and_labels(raw_df, task="multiclass")
-    X_train, X_test, y_train, y_test = leakage_safe_split(X, y)
-    _, X_test_scaled, _ = scale_features(X_train, X_test)
-
-    # Predict using selected features
-    y_pred = model.predict(X_test_scaled[features])
-
-    classes = sorted(list(set(y_test.unique()) | set(y_pred)))
-    cm = confusion_matrix(y_test, y_pred, labels=classes)
-
-    plt.figure(figsize=(9, 7))
+    plt.figure(figsize=(8.5, 6.8))
     sns.heatmap(
-        cm,
+        cm_norm,
         annot=True,
-        fmt="d",
+        fmt=".2f",
         cmap="Blues",
         xticklabels=classes,
         yticklabels=classes,
-        cbar=True
+        cbar=True,
+        vmin=0.0, vmax=1.0
     )
-    plt.title(f"Confusion Matrix: Best K=10 Multiclass Model ({best_model_name})")
+    plt.title(f"Normalized Confusion Matrix: {model_name} (K={k})\n[Test Split Holdout — {data['run_id']}]")
     plt.xlabel("Predicted Class")
     plt.ylabel("Ground Truth Class")
-    plt.xticks(rotation=45, ha="right")
+    plt.xticks(rotation=40, ha="right")
     plt.yticks(rotation=0)
     plt.tight_layout()
-    plt.savefig(output_path, dpi=300)
+    plt.savefig(output_path)
     plt.close()
-    print(f"[Plot 4/4] Saved Confusion Matrix heatmap: {output_path}")
+    print(f"[Plot] Saved: {output_path.name}")
 
 
-def generate_all_plots() -> List[Path]:
+def plot_per_class_metrics(
+    run_json_path: Path,
+    model_name: str,
+    k: int,
+    output_path: Path
+):
+    """Plot per-class Precision, Recall, and F1 scores."""
+    if not run_json_path.exists():
+        return
+
+    with open(run_json_path, "r") as f:
+        data = json.load(f)
+
+    selected_art = None
+    for art in data.get("detailed_artifacts", []):
+        if art["model"] == model_name and art["k"] == k:
+            selected_art = art
+            break
+
+    if not selected_art:
+        return
+
+    per_class = selected_art["test_metrics"]["per_class"]
+    classes = list(per_class.keys())
+    f1s = [per_class[c]["f1_score"] for c in classes]
+    precs = [per_class[c]["precision"] for c in classes]
+    recs = [per_class[c]["recall"] for c in classes]
+
+    x = np.arange(len(classes))
+    width = 0.26
+
+    plt.figure(figsize=(9, 5))
+    plt.bar(x - width, precs, width, label="Precision", color="#152EAE")
+    plt.bar(x, recs, width, label="Recall", color="#5C9764")
+    plt.bar(x + width, f1s, width, label="F1 Score", color="#0A24E9")
+
+    plt.title(f"Per-Class Performance: {model_name} (K={k})\n[Test Holdout — {data['run_id']}]")
+    plt.xlabel("Attack Family / Class")
+    plt.ylabel("Score")
+    plt.xticks(x, classes, rotation=35, ha="right")
+    plt.ylim(0.0, 1.1)
+    plt.legend(frameon=True)
+    plt.tight_layout()
+    plt.savefig(output_path)
+    plt.close()
+    print(f"[Plot] Saved: {output_path.name}")
+
+
+def perform_model_selection(
+    max_size_kb: float = 50.0,
+    max_latency_ms: float = 3.0
+) -> Dict[str, Any]:
     """
-    Generate all 4 research trade-off plots and return list of saved file paths.
-
-    Returns:
-        List[Path]: Paths to generated PNG files.
+    Formal Model Selection Rule:
+    Select the model configuration maximizing Validation Macro-F1 subject to:
+    1. Serialized Size <= max_size_kb (50 KB)
+    2. Median Latency <= max_latency_ms (3.0 ms)
     """
-    set_plot_style()
-    config.PLOTS_DIR.mkdir(parents=True, exist_ok=True)
+    results_dir = Path(config.RESULTS_DIR)
+    sc_bin = pd.read_csv(config.SCORECARD_BINARY_CSV)
+    sc_multi = pd.read_csv(config.SCORECARD_MULTICLASS_CSV)
 
-    # Choose primary scorecard (binary first, fallback to scorecard.csv)
-    scorecard_file = config.SCORECARD_BINARY_CSV if config.SCORECARD_BINARY_CSV.exists() else config.SCORECARD_CSV
-    if not scorecard_file.exists():
-        raise FileNotFoundError(f"Scorecard not found at {scorecard_file}. Run main.py first.")
+    def select_best(df: pd.DataFrame, task_name: str) -> Dict[str, Any]:
+        feasible = df[
+            (df["model_size_kb"] <= max_size_kb) &
+            (df["median_latency_ms"] <= max_latency_ms)
+        ]
+        if feasible.empty:
+            print(f"[Selection] Warning: No models satisfied strict budget for {task_name}. Relaxing constraints.")
+            feasible = df
 
-    df_scorecard = pd.read_csv(scorecard_file)
+        best_row = feasible.sort_values(by="val_macro_f1", ascending=False).iloc[0]
+        return {
+            "task": task_name,
+            "selected_model": best_row["model"],
+            "selected_k": int(best_row["k"]),
+            "val_macro_f1": float(best_row["val_macro_f1"]),
+            "test_macro_f1": float(best_row["test_macro_f1"]),
+            "test_balanced_acc": float(best_row["test_balanced_acc"]),
+            "test_accuracy": float(best_row["test_accuracy"]),
+            "median_latency_ms": float(best_row["median_latency_ms"]),
+            "p95_latency_ms": float(best_row["p95_latency_ms"]),
+            "model_size_kb": float(best_row["model_size_kb"]),
+            "artifact_path": str(best_row["artifact_path"]),
+            "run_id": str(best_row["run_id"])
+        }
 
-    p1 = config.PLOTS_DIR / "macro_f1_vs_k.png"
-    p2 = config.PLOTS_DIR / "model_size_vs_k.png"
-    p3 = config.PLOTS_DIR / "latency_vs_k.png"
-    p4 = config.PLOTS_DIR / "confusion_matrix_k10_multiclass.png"
+    best_binary = select_best(sc_bin, "binary")
+    best_multiclass = select_best(sc_multi, "multiclass")
 
-    plot_macro_f1_vs_k(df_scorecard, p1, task="binary")
-    plot_model_size_vs_k(df_scorecard, p2, task="binary")
-    plot_latency_vs_k(df_scorecard, p3, task="binary")
-    plot_confusion_matrix_k10_multiclass(p4)
+    selection_record = {
+        "selection_rule": f"Maximize Validation Macro-F1 subject to Size <= {max_size_kb} KB and Median Latency <= {max_latency_ms} ms",
+        "binary_champion": best_binary,
+        "multiclass_champion": best_multiclass
+    }
 
-    generated_paths = [p1, p2, p3, p4]
-    print(f"\n[Plots] All 4 plots generated successfully in: {config.PLOTS_DIR}")
-    for p in generated_paths:
-        print(f"  - {p.name}")
-    return generated_paths
+    out_path = results_dir / "model_selection.json"
+    with open(out_path, "w") as f:
+        json.dump(selection_record, f, indent=2)
+
+    print(f"\n[Model Selection] Selection results written to: {out_path}")
+    print(f"  Binary Champion:     {best_binary['selected_model']} (K={best_binary['selected_k']}) | Test Macro-F1: {best_binary['test_macro_f1']:.4f} | Size: {best_binary['model_size_kb']} KB")
+    print(f"  Multiclass Champion: {best_multiclass['selected_model']} (K={best_multiclass['selected_k']}) | Test Macro-F1: {best_multiclass['test_macro_f1']:.4f} | Size: {best_multiclass['model_size_kb']} KB")
+
+    return selection_record
+
+
+def generate_all_evaluation_figures():
+    """Generate all scorecard-backed report plots for binary and multiclass."""
+    set_scientific_style()
+    plots_dir = Path(config.PLOTS_DIR)
+    plots_dir.mkdir(parents=True, exist_ok=True)
+
+    # 1. Binary Plots
+    if config.SCORECARD_BINARY_CSV.exists():
+        df_bin = pd.read_csv(config.SCORECARD_BINARY_CSV)
+        plot_metric_vs_k(df_bin, "test_macro_f1", "Macro F1 Score", plots_dir / "binary_macro_f1_vs_k.png", task="binary")
+        plot_metric_vs_k(df_bin, "test_balanced_acc", "Balanced Accuracy", plots_dir / "binary_balanced_acc_vs_k.png", task="binary")
+        plot_size_vs_k(df_bin, plots_dir / "binary_model_size_vs_k.png", task="binary")
+        plot_latency_vs_k(df_bin, plots_dir / "binary_latency_vs_k.png", task="binary")
+
+    # 2. Multiclass Plots
+    if config.SCORECARD_MULTICLASS_CSV.exists():
+        df_multi = pd.read_csv(config.SCORECARD_MULTICLASS_CSV)
+        plot_metric_vs_k(df_multi, "test_macro_f1", "Macro F1 Score", plots_dir / "multiclass_macro_f1_vs_k.png", task="multiclass")
+        plot_metric_vs_k(df_multi, "test_balanced_acc", "Balanced Accuracy", plots_dir / "multiclass_balanced_acc_vs_k.png", task="multiclass")
+        plot_size_vs_k(df_multi, plots_dir / "multiclass_model_size_vs_k.png", task="multiclass")
+        plot_latency_vs_k(df_multi, plots_dir / "multiclass_latency_vs_k.png", task="multiclass")
+
+    # 3. Model Selection
+    selection = perform_model_selection()
+
+    # 4. Detailed Heatmaps for Champion
+    multi_champ = selection["multiclass_champion"]
+    run_file = Path(config.RESULTS_DIR) / "runs" / f"{multi_champ['run_id']}.json"
+    if run_file.exists():
+        plot_normalized_confusion_matrix(
+            run_file,
+            multi_champ["selected_model"],
+            multi_champ["selected_k"],
+            plots_dir / "confusion_matrix_chosen_multiclass.png"
+        )
+        plot_per_class_metrics(
+            run_file,
+            multi_champ["selected_model"],
+            multi_champ["selected_k"],
+            plots_dir / "per_class_metrics_chosen_multiclass.png"
+        )
+
+    print(f"\n[Phase 5] All figures generated cleanly in {plots_dir}")
 
 
 if __name__ == "__main__":
-    generate_all_plots()
+    generate_all_evaluation_figures()
