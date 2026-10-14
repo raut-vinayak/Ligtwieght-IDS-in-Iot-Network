@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Download, Database, Sparkles } from "lucide-react";
+import { Download, Database, Sparkles, Bot, ShieldAlert, BarChart3 } from "lucide-react";
 
 interface HeaderProps {
   currentTab: string;
@@ -12,33 +12,21 @@ interface HeaderProps {
 
 export default function Header({ currentTab, task, onTaskChange, onExport }: HeaderProps) {
   const tabTitles: Record<string, { title: string; subtitle: string }> = {
-    overview: {
-      title: "IDS Overview",
-      subtitle: "Verified trade-off benchmarks between Macro F1, inference latency, and memory footprint",
-    },
-    models: {
-      title: "Model Benchmark Results",
-      subtitle: "Comparative evaluation across Decision Tree, Logistic Regression, Random Forest & LightGBM",
-    },
     predict: {
-      title: "Client-Side Prediction Demo",
-      subtitle: "Real-time edge inference running locally in your browser with instant sound alarms",
+      title: "Live Edge Detection Simulator (K=10 Features)",
+      subtitle: "Instant sub-millisecond edge classification with cybersecurity siren alarms and AI explanation",
     },
-    live: {
-      title: "Isolated Lab VM Traffic",
-      subtitle: "5-tuple flow aggregation and live packet inspection replay from IDS sensor",
+    scores: {
+      title: "Model Benchmark Scores & Evaluation",
+      subtitle: "Verified trade-off scorecards between Macro F1, inference latency, and memory footprint",
     },
-    reports: {
-      title: "Reports & Generated Figures",
-      subtitle: "Downloadable scorecards, Pareto curves, confusion matrices, and run manifests",
-    },
-    methodology: {
-      title: "Methodology & Limitations",
-      subtitle: "CICIoT2023 taxonomy mapping, leakage-safe splitting, and edge deployment constraints",
+    assistant: {
+      title: "Sentinel AI Security Analyst",
+      subtitle: "Plain human language threat diagnosis, root cause explanation, and defense advice",
     },
   };
 
-  const currentInfo = tabTitles[currentTab] || tabTitles.overview;
+  const currentInfo = tabTitles[currentTab] || tabTitles.predict;
 
   return (
     <header className="relative bg-surface border-b-2 border-blue/30 px-6 py-4 flex flex-col md:flex-row md:items-center justify-between gap-4 shadow-sm shrink-0">

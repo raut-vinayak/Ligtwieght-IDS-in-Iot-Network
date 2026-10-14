@@ -3,15 +3,13 @@
 import React from "react";
 import {
   ShieldAlert,
-  BarChart3,
   Cpu,
-  Radio,
-  FileText,
-  BookOpen,
-  Sparkles
+  Bot,
+  Sparkles,
+  BarChart3
 } from "lucide-react";
 
-export type TabId = "overview" | "models" | "predict" | "live" | "reports" | "methodology";
+export type TabId = "predict" | "scores" | "assistant";
 
 interface SidebarProps {
   currentTab: TabId;
@@ -20,12 +18,9 @@ interface SidebarProps {
 
 export default function Sidebar({ currentTab, onSelectTab }: SidebarProps) {
   const navItems: { id: TabId; label: string; icon: React.ReactNode; badge?: string }[] = [
-    { id: "overview", label: "Overview", icon: <BarChart3 className="w-4 h-4" /> },
-    { id: "models", label: "Model Results", icon: <Cpu className="w-4 h-4" /> },
-    { id: "predict", label: "Prediction Demo", icon: <ShieldAlert className="w-4 h-4" />, badge: "K=10" },
-    { id: "live", label: "Live Lab Replay", icon: <Radio className="w-4 h-4" /> },
-    { id: "reports", label: "Reports & Artifacts", icon: <FileText className="w-4 h-4" /> },
-    { id: "methodology", label: "Methodology", icon: <BookOpen className="w-4 h-4" /> },
+    { id: "predict", label: "Live Edge Detection", icon: <ShieldAlert className="w-4 h-4" />, badge: "K=10" },
+    { id: "scores", label: "Model Scores & Benchmark", icon: <BarChart3 className="w-4 h-4" />, badge: "Scorecard" },
+    { id: "assistant", label: "AI Security Analyst", icon: <Bot className="w-4 h-4" />, badge: "Sentinel AI" },
   ];
 
   return (
@@ -43,15 +38,15 @@ export default function Sidebar({ currentTab, onSelectTab }: SidebarProps) {
             </div>
             <p className="text-[11px] text-blue-300 font-bold leading-tight mt-0.5 flex items-center gap-1">
               <Sparkles className="w-3 h-3 text-blue-400" />
-              <span>IoT Defense Hub</span>
+              <span>IoT Threat Hub</span>
             </p>
           </div>
         </div>
 
-        {/* Navigation Items */}
-        <nav className="p-3.5 space-y-1.5">
+        {/* Navigation Items (Streamlined to 3 Essential Centers) */}
+        <nav className="p-3.5 space-y-2">
           <div className="px-3 py-2 text-[10px] font-black tracking-wider text-muted uppercase">
-            Operations Menu
+            Essential Operations
           </div>
           {navItems.map((item) => {
             const active = currentTab === item.id;
@@ -59,7 +54,7 @@ export default function Sidebar({ currentTab, onSelectTab }: SidebarProps) {
               <button
                 key={item.id}
                 onClick={() => onSelectTab(item.id)}
-                className={`w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-bold transition-all border-2 cursor-pointer ${
+                className={`w-full flex items-center justify-between px-3.5 py-3.5 rounded-xl text-xs font-bold transition-all border-2 cursor-pointer ${
                   active
                     ? "bg-gradient-to-r from-blue to-indigo text-white border-blue shadow-lg scale-[1.02]"
                     : "border-transparent text-gray-300 hover:bg-[#343E73]/70 hover:text-white hover:border-blue/30"
@@ -67,7 +62,7 @@ export default function Sidebar({ currentTab, onSelectTab }: SidebarProps) {
               >
                 <div className="flex items-center gap-3">
                   <span className={active ? "text-white" : "text-gray-400"}>{item.icon}</span>
-                  <span>{item.label}</span>
+                  <span className="font-bold">{item.label}</span>
                 </div>
                 {item.badge && (
                   <span
@@ -86,15 +81,15 @@ export default function Sidebar({ currentTab, onSelectTab }: SidebarProps) {
         </nav>
       </div>
 
-      {/* Environment Status Badge */}
+      {/* AI Assistance & Edge Ready Badge */}
       <div className="p-4 border-t-2 border-blue/30 bg-[#1E2445]/90">
         <div className="bg-gradient-to-br from-[#152EAE]/30 to-blue/10 rounded-xl p-3 border-2 border-blue/40 shadow-inner">
           <div className="flex items-center gap-2 mb-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-positive animate-pulse"></span>
-            <span className="text-[11px] font-black tracking-wide text-white uppercase">Client-Side Engine</span>
+            <span className="text-[11px] font-black tracking-wide text-white uppercase">AI ANALYST ON DUTY</span>
           </div>
           <p className="text-[11px] text-gray-300 leading-relaxed font-medium">
-            Zero-server client evaluation. Browser-native inference with sub-millisecond response.
+            Natural human language explanations for every detected threat and flow anomaly.
           </p>
         </div>
       </div>

@@ -3,26 +3,48 @@
 import React, { useState, useEffect } from "react";
 import Sidebar, { TabId } from "../components/Sidebar";
 import Header from "../components/Header";
-import KpiRow from "../components/KpiCard";
-import PerformanceChart from "../components/PerformanceChart";
-import ClassDistributionCard from "../components/ClassDistributionCard";
-import ConfusionMatrixCard from "../components/ConfusionMatrixCard";
-import FeatureSubsetsCard from "../components/FeatureSubsetsCard";
-import InsightsRail from "../components/InsightsRail";
-import ModelComparisonTable from "../components/ModelComparisonTable";
 import PredictionDemo from "../components/PredictionDemo";
-import LiveLabView from "../components/LiveLabView";
-import ReportsView from "../components/ReportsView";
-import MethodologyView from "../components/MethodologyView";
+import ScoresView from "../components/ScoresView";
+import AiAssistant from "../components/AiAssistant";
 
 export default function DashboardPage() {
-  const [currentTab, setCurrentTab] = useState<TabId>("overview");
+  const [currentTab, setCurrentTab] = useState<TabId>("predict");
   const [task, setTask] = useState<"binary" | "multiclass">("multiclass");
-  const [selectedK, setSelectedK] = useState<number>(20);
+  const [selectedK, setSelectedK] = useState<number>(10);
   const [selectedModel, setSelectedModel] = useState<string>("DecisionTree");
 
   const [summaryData, setSummaryData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  // Active Flow diagnosed by AI Assistant
+  const [recentFlow, setRecentFlow] = useState<{
+    prediction: string;
+    isAttack: boolean;
+    confidence: number;
+    latencyMs: number;
+    riskLevel: string;
+    description: string;
+    inputs: Record<string, number>;
+  }>({
+    prediction: "Benign Traffic",
+    isAttack: false,
+    confidence: 100.0,
+    latencyMs: 0.18,
+    riskLevel: "SAFE",
+    description: "Flow parameters strictly conform to standard IoT telemetry. Packet rate and flag ratios are normal.",
+    inputs: {
+      Rate: 22.0,
+      syn_count: 2,
+      ack_count: 14,
+      AVG: 140.0,
+      Number: 16,
+      "Tot sum": 2240.0,
+      syn_flag_number: 0,
+      Drate: 2.0,
+      Variance: 45.0,
+      IAT: 0.085,
+    },
+  });
 
   useEffect(() => {
     fetch("/data/scorecard_summary.json")
@@ -51,11 +73,11 @@ export default function DashboardPage() {
     ) ||
     activeScorecard[0] || {
       model: "DecisionTree",
-      k: 20,
-      test_macro_f1: 0.989,
-      test_balanced_acc: 0.9963,
-      median_latency_ms: 1.452,
-      model_size_kb: 8.22,
+      k: 10,
+      test_macro_f1: 0.9817,
+      test_balanced_acc: 0.9844,
+      median_latency_ms: 1.06,
+      model_size_kb: 5.22,
     };
 
   const handleExport = () => {
@@ -76,7 +98,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex h-screen w-full overflow-hidden bg-canvas">
-      {/* 1. Left Sidebar */}
+      {/* 1. Left Sidebar (Streamlined Operations Menu) */}
       <Sidebar currentTab={currentTab} onSelectTab={setCurrentTab} />
 
       {/* 2. Main Content Canvas */}
@@ -86,99 +108,41 @@ export default function DashboardPage() {
           task={task}
           onTaskChange={(t) => {
             setTask(t);
-            setSelectedK(t === "binary" ? 5 : 20);
+            setSelectedK(10);
           }}
           onExport={handleExport}
         />
 
         <main className="flex-1 p-4 sm:p-5 md:p-6 lg:p-7 overflow-y-auto min-w-0 scroll-smooth">
-          <div className="max-w-[1600px] mx-auto w-full space-y-6">
-            {currentTab === "overview" && (
-              <div className="flex flex-col xl:flex-row gap-6 items-start">
-                {/* Center Workspace */}
-                <div className="flex-1 space-y-6 min-w-0 w-full">
-                  {/* KPI Row */}
-                  <KpiRow
-                    macroF1={activeRow.test_macro_f1 || 0.989}
-                    balancedAcc={activeRow.test_balanced_acc || 0.996}
-                    medianLatencyMs={activeRow.median_latency_ms || 1.45}
-                    modelSizeKb={activeRow.model_size_kb || 8.2}
-                    modelName={activeRow.model || selectedModel}
-                    k={activeRow.k || selectedK}
-                  />
-
-                  {/* Main Performance Chart & Class Distribution */}
-                  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-stretch">
-                    <div className="lg:col-span-2 min-w-0">
-                      <PerformanceChart
-                        scorecardData={activeScorecard}
-                        task={task}
-                      />
-                    </div>
-                    <div className="min-w-0">
-                      <ClassDistributionCard task={task} />
-                    </div>
-                  </div>
-
-                  {/* Confusion Matrix & Feature Subsets */}
-                  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-                    <div className="min-w-0">
-                      <ConfusionMatrixCard task={task} />
-                    </div>
-                    <div className="min-w-0">
-                      <FeatureSubsetsCard
-                        selectedK={selectedK}
-                        onSelectK={setSelectedK}
-                        task={task}
-                      />
-                    </div>
-                  </div>
-
-                  {/* Model Comparison Table */}
-                  <div className="min-w-0">
-                    <ModelComparisonTable
-                      scorecardData={activeScorecard}
-                      selectedModel={selectedModel}
-                      selectedK={selectedK}
-                      onSelectModelRow={handleSelectModelRow}
-                    />
-                  </div>
-                </div>
-
-                {/* Right Insights Rail */}
-                <div className="w-full xl:w-80 shrink-0 min-w-0">
-                  <InsightsRail task={task} selectedK={selectedK} />
-                </div>
-              </div>
+          <div className="max-w-[1500px] mx-auto w-full space-y-6">
+            {/* Center 1: Live Detection Simulator (K=10 Features + Alerts) */}
+            {currentTab === "predict" && (
+              <PredictionDemo
+                task={task}
+                onOpenAiAssistant={(flow) => {
+                  setRecentFlow(flow);
+                  setCurrentTab("assistant");
+                }}
+              />
             )}
 
-            {currentTab === "models" && (
-              <div className="space-y-6">
-                <KpiRow
-                  macroF1={activeRow.test_macro_f1 || 0.989}
-                  balancedAcc={activeRow.test_balanced_acc || 0.996}
-                  medianLatencyMs={activeRow.median_latency_ms || 1.45}
-                  modelSizeKb={activeRow.model_size_kb || 8.2}
-                  modelName={activeRow.model || selectedModel}
-                  k={activeRow.k || selectedK}
-                />
-                <PerformanceChart scorecardData={activeScorecard} task={task} />
-                <ModelComparisonTable
-                  scorecardData={activeScorecard}
-                  selectedModel={selectedModel}
-                  selectedK={selectedK}
-                  onSelectModelRow={handleSelectModelRow}
-                />
-              </div>
+            {/* Center 2: Model Benchmark Scores & Evaluation */}
+            {currentTab === "scores" && (
+              <ScoresView
+                task={task}
+                selectedK={selectedK}
+                onSelectK={setSelectedK}
+                selectedModel={selectedModel}
+                onSelectModelRow={handleSelectModelRow}
+                activeScorecard={activeScorecard}
+                activeRow={activeRow}
+              />
             )}
 
-            {currentTab === "predict" && <PredictionDemo task={task} />}
-
-            {currentTab === "live" && <LiveLabView />}
-
-            {currentTab === "reports" && <ReportsView />}
-
-            {currentTab === "methodology" && <MethodologyView />}
+            {/* Center 3: Sentinel AI Cybersecurity Assistant */}
+            {currentTab === "assistant" && (
+              <AiAssistant currentFlow={recentFlow} />
+            )}
           </div>
         </main>
       </div>

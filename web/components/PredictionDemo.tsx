@@ -16,12 +16,13 @@ import {
   AlertTriangle,
   Sliders,
   Sparkles,
-  Layers,
-  ArrowRight
+  ArrowRight,
+  Bot
 } from "lucide-react";
 
 interface PredictionDemoProps {
   task: "binary" | "multiclass";
+  onOpenAiAssistant?: (flow: any) => void;
 }
 
 // Synthesize authentic IDS alarm and chime using Web Audio API
@@ -113,7 +114,7 @@ function evaluateTree(
   }
 }
 
-export default function PredictionDemo({ task }: PredictionDemoProps) {
+export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDemoProps) {
   const [activeTab, setActiveTab] = useState<"manual" | "csv">("manual");
   const [engineData, setEngineData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
@@ -663,13 +664,23 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
             </div>
           </div>
 
-          <div className="flex items-center gap-3 self-end sm:self-auto shrink-0">
-            <div className="text-right">
+          <div className="flex items-center gap-2.5 self-end sm:self-auto shrink-0 flex-wrap">
+            <div className="text-right mr-1">
               <span className="text-[10px] text-muted font-bold block uppercase tracking-wider">Edge Inference</span>
               <span className="text-xs font-mono font-bold text-ink">
                 {liveVerdict.latencyMs} ms &bull; {liveVerdict.confidence}% Conf
               </span>
             </div>
+            {onOpenAiAssistant && (
+              <button
+                onClick={() => onOpenAiAssistant({ ...liveVerdict, inputs: manualInputs })}
+                className="px-3.5 py-2 rounded-xl bg-blue/10 border-2 border-blue/40 text-blue hover:bg-blue hover:text-white text-xs font-bold transition-all shadow-xs cursor-pointer flex items-center gap-1.5"
+                title="Explain this flow in simple human language with Sentinel AI"
+              >
+                <Bot className="w-4 h-4 text-blue" />
+                <span>Explain with AI</span>
+              </button>
+            )}
             <button
               onClick={() => {
                 setModalResult(liveVerdict);
@@ -1000,6 +1011,24 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
               </div>
             </div>
 
+            {/* Sentinel AI Human Language Breakdown */}
+            <div className="p-4 rounded-2xl bg-gradient-to-r from-blue/10 via-indigo/10 to-blue/5 border-2 border-blue/30 mb-4 space-y-1.5">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black text-ink uppercase tracking-wider flex items-center gap-1.5">
+                  <Bot className="w-4 h-4 text-blue" />
+                  Sentinel AI (Human Language Breakdown):
+                </span>
+                <span className="text-[10px] font-black text-blue bg-blue/15 px-2 py-0.5 rounded border border-blue/30">
+                  Aasan Bhasha
+                </span>
+              </div>
+              <p className="text-xs text-ink font-semibold leading-relaxed">
+                {modalResult.isAttack
+                  ? `Bhai dekho: ${modalResult.prediction} attack detect hua hai! Attacker flow me abnormal packets bhej kar connection buffers ko jam karne ki koshish kar raha hai. Turant edge switch par rate-limiting lagao aur IP block karo.`
+                  : `Bhai tension mat lo: Yeh flow 100% SAFE hai! Standard IoT device telemetry hai jisme packet rate normal hai aur SYN ke badle ACK barabar mil rahe hain.`}
+              </p>
+            </div>
+
             {/* Action Advice Box */}
             <div className="p-3.5 rounded-2xl bg-canvas border-2 border-border mb-5">
               <span className="text-[11px] font-black text-ink uppercase tracking-wider block mb-1">
@@ -1011,7 +1040,7 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-3">
+            <div className="flex items-center justify-end gap-2.5 flex-wrap">
               <button
                 onClick={() => {
                   if (soundEnabled) playIdsSound(modalResult.isAttack);
@@ -1019,8 +1048,21 @@ export default function PredictionDemo({ task }: PredictionDemoProps) {
                 className="px-3.5 py-2 rounded-xl border-2 border-border bg-canvas text-ink text-xs font-bold hover:bg-border transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
               >
                 <Volume2 className="w-3.5 h-3.5 text-blue" />
-                <span>Replay Siren Audio</span>
+                <span>Replay Siren</span>
               </button>
+
+              {onOpenAiAssistant && (
+                <button
+                  onClick={() => {
+                    setShowModal(false);
+                    onOpenAiAssistant({ ...modalResult, inputs: manualInputs });
+                  }}
+                  className="px-4 py-2 rounded-xl bg-blue/10 border-2 border-blue text-blue hover:bg-blue hover:text-white text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                >
+                  <Bot className="w-3.5 h-3.5" />
+                  <span>Chat with AI</span>
+                </button>
+              )}
 
               <button
                 onClick={() => setShowModal(false)}
