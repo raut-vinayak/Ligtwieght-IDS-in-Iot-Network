@@ -72,7 +72,7 @@ export default function ConfusionMatrixCard({ task }: ConfusionMatrixProps) {
   };
 
   return (
-    <div className="bg-white border border-border rounded-2xl p-6 shadow-card overflow-hidden">
+    <div className="bg-white border border-border rounded-2xl p-6 shadow-card hover:shadow-lifted hover:-translate-y-0.5 hover:border-slate-300 transition-all duration-200 ease-out overflow-hidden">
       <div className="flex items-center justify-between pb-4 border-b border-border">
         <div>
           <div className="flex items-center gap-2">

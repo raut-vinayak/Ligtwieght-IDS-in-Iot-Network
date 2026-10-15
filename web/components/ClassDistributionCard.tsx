@@ -27,7 +27,7 @@ export default function ClassDistributionCard({ task }: ClassDistributionProps) 
   const items = task === "binary" ? binaryDistribution : multiclassDistribution;
 
   return (
-    <div className="bg-white border border-border rounded-2xl p-6 shadow-card h-full flex flex-col justify-between">
+    <div className="bg-white border border-border rounded-2xl p-6 shadow-card hover:shadow-lifted hover:-translate-y-0.5 hover:border-slate-300 transition-all duration-200 ease-out h-full flex flex-col justify-between">
       <div className="flex items-center justify-between pb-4 border-b border-border shrink-0">
         <div>
           <div className="flex items-center gap-2">

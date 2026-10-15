@@ -82,7 +82,7 @@ export default function FeatureSubsetsCard({
   const activeList = featureSets[selectedK] || featureSets[10];
 
   return (
-    <div className="bg-white border border-border rounded-2xl p-6 shadow-card overflow-hidden">
+    <div className="bg-white border border-border rounded-2xl p-6 shadow-card hover:shadow-lifted hover:-translate-y-0.5 hover:border-slate-300 transition-all duration-200 ease-out overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border gap-2">
         <div>
           <div className="flex items-center gap-2">
@@ -116,7 +116,7 @@ export default function FeatureSubsetsCard({
         {activeList.map((feat, idx) => (
           <div
             key={feat.name}
-            className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50/70 border border-slate-200/90 hover:bg-white hover:border-slate-300 transition-all text-xs sm:text-sm font-mono"
+            className="flex items-center justify-between p-2.5 rounded-xl bg-slate-50/70 border border-slate-200/90 hover:bg-white hover:border-blue-300 hover:shadow-xs transition-all duration-150 text-xs sm:text-sm font-mono cursor-default"
           >
             <div className="flex items-center gap-2.5 min-w-0">
               <span className="text-xs text-slate-400 w-6">#{idx + 1}</span>

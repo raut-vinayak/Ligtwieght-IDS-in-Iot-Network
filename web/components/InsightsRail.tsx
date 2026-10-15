@@ -12,7 +12,7 @@ export default function InsightsRail({ task, selectedK }: InsightsRailProps) {
   return (
     <aside className="w-full xl:w-80 shrink-0 space-y-4">
       {/* 1. Evaluation Specs */}
-      <div className="bg-white border border-border rounded-2xl p-5 shadow-card">
+      <div className="bg-white border border-border rounded-2xl p-5 shadow-card hover:shadow-lifted hover:-translate-y-1 hover:border-slate-300 transition-all duration-200 ease-out">
         <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
           <Layers className="w-4 h-4 text-blue" />
           <h4 className="text-xs sm:text-sm font-semibold text-ink font-mono uppercase tracking-wider">
@@ -40,7 +40,7 @@ export default function InsightsRail({ task, selectedK }: InsightsRailProps) {
       </div>
 
       {/* 2. Pareto Efficiency Verdict */}
-      <div className="bg-white border border-border rounded-2xl p-5 shadow-card">
+      <div className="bg-white border border-border rounded-2xl p-5 shadow-card hover:shadow-lifted hover:-translate-y-1 hover:border-slate-300 transition-all duration-200 ease-out">
         <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
           <CheckCircle2 className="w-4 h-4 text-emerald-500" />
           <h4 className="text-xs sm:text-sm font-semibold text-ink font-mono uppercase tracking-wider">
@@ -60,7 +60,7 @@ export default function InsightsRail({ task, selectedK }: InsightsRailProps) {
       </div>
 
       {/* 3. Hardware Deployment Compatibility */}
-      <div className="bg-white border border-border rounded-2xl p-5 shadow-card">
+      <div className="bg-white border border-border rounded-2xl p-5 shadow-card hover:shadow-lifted hover:-translate-y-1 hover:border-slate-300 transition-all duration-200 ease-out">
         <div className="flex items-center gap-2.5 pb-3 border-b border-slate-100">
           <Cpu className="w-4 h-4 text-slate-600" />
           <h4 className="text-xs sm:text-sm font-semibold text-ink font-mono uppercase tracking-wider">

@@ -40,7 +40,7 @@ export default function PerformanceChart({ scorecardData, task }: PerformanceCha
   const models = ["DecisionTree", "SmallRandomForest", "ConstrainedLightGBM", "LogisticRegression"];
 
   return (
-    <div className="bg-white border border-border rounded-xl p-5 shadow-card h-full flex flex-col justify-between">
+    <div className="bg-white border border-border rounded-2xl p-6 shadow-card hover:shadow-lifted hover:-translate-y-0.5 hover:border-slate-300 transition-all duration-200 ease-out h-full flex flex-col justify-between">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3.5 border-b border-border gap-2 shrink-0">
         <div>
           <div className="flex items-center gap-2">

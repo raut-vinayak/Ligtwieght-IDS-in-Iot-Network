@@ -590,7 +590,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
     <div className="space-y-6">
       {/* 1. Distinct In-Page Telemetry HUD Card (Clear Soft Tint & Shadow) */}
       <div
-        className={`p-5 sm:p-6 rounded-2xl border transition-all shadow-card ${
+        className={`p-5 sm:p-6 rounded-2xl border transition-all duration-200 ease-out shadow-card hover:-translate-y-0.5 hover:shadow-lifted ${
           liveVerdict.isAttack
             ? "border-rose-200/90 bg-rose-50/70"
             : "border-emerald-200/90 bg-emerald-50/70"
@@ -690,7 +690,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
       </div>
 
       {/* 2. Main Edge Telemetry Matrix Card (Pure White with Crisp Shadow) */}
-      <div className="bg-white border border-border rounded-2xl p-6 shadow-card space-y-6">
+      <div className="bg-white border border-border rounded-2xl p-6 shadow-card hover:shadow-lifted transition-all duration-200 ease-out space-y-6">
         {/* Top Controls: Preset selector + Mode tabs + Audio toggle */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-border gap-4">
           <div>
@@ -817,7 +817,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                 return (
                   <div
                     key={feat}
-                    className="p-3.5 rounded-xl border border-slate-200/90 bg-white hover:border-slate-300 hover:shadow-sm transition-all flex flex-col justify-between"
+                    className="p-3.5 rounded-xl border border-slate-200/90 bg-white hover:border-blue-400 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out flex flex-col justify-between group"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <label
