@@ -590,10 +590,10 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
     <div className="space-y-6">
       {/* 1. Distinct In-Page Telemetry HUD Card (Clear Soft Tint & Shadow) */}
       <div
-        className={`p-5 sm:p-6 rounded-2xl border transition-all duration-200 ease-out shadow-card hover:-translate-y-0.5 hover:shadow-lifted ${
+        className={`p-5 sm:p-6 rounded-2xl border-2 transition-all duration-300 ease-out shadow-sm hover:-translate-y-1 hover:shadow-xl ${
           liveVerdict.isAttack
-            ? "border-rose-200/90 bg-rose-50/70"
-            : "border-emerald-200/90 bg-emerald-50/70"
+            ? "border-rose-300 bg-rose-50/70 hover:border-rose-400"
+            : "border-emerald-300 bg-emerald-50/70 hover:border-emerald-400"
         }`}
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -690,7 +690,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
       </div>
 
       {/* 2. Main Edge Telemetry Matrix Card (Pure White with Crisp Shadow) */}
-      <div className="bg-white border border-border rounded-2xl p-6 shadow-card hover:shadow-lifted transition-all duration-200 ease-out space-y-6">
+      <div className="bg-white border border-slate-200/90 hover:border-blue-400/80 hover:shadow-xl rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out space-y-6">
         {/* Top Controls: Preset selector + Mode tabs + Audio toggle */}
         <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-border gap-4">
           <div>
@@ -817,7 +817,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                 return (
                   <div
                     key={feat}
-                    className="p-3.5 rounded-xl border border-slate-200/90 bg-white hover:border-blue-400 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 ease-out flex flex-col justify-between group"
+                    className="p-3.5 rounded-xl border border-slate-200/90 bg-white hover:border-blue-500 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col justify-between group"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <label

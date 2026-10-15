@@ -206,7 +206,7 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
       </div>
 
       {/* 2. Active Flow Telemetry Breakdown */}
-      <div className="bg-white border border-border rounded-2xl p-6 shadow-card hover:shadow-lifted hover:-translate-y-0.5 hover:border-slate-300 transition-all duration-200 ease-out space-y-5">
+      <div className="bg-white border border-slate-200/90 hover:border-blue-400 hover:shadow-xl hover:-translate-y-1 rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out space-y-5">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border gap-2">
           <div className="flex items-center gap-2.5">
             <Activity className="w-5 h-5 text-blue" />
@@ -229,7 +229,7 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
         {/* Structured 3-Part Assessment Box */}
         <div className="space-y-3.5">
           {/* Section 1: Observation */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 hover:shadow-xs transition-all duration-150">
+          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-300 hover:shadow-xs transition-all duration-200">
             <div className="text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
               Observation (Kya Hua):
             </div>
@@ -240,7 +240,7 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
 
           {/* Section 2: Two-column grid (Impact + Defensive Action) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 hover:shadow-xs transition-all duration-150">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-300 hover:shadow-xs transition-all duration-200">
               <div className="text-xs font-mono font-semibold text-rose-700 uppercase tracking-wider mb-1.5">
                 Hardware & Network Impact (Khatra):
               </div>
@@ -249,7 +249,7 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 hover:shadow-xs transition-all duration-150">
+            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-300 hover:shadow-xs transition-all duration-200">
               <div className="text-xs font-mono font-semibold text-emerald-700 uppercase tracking-wider mb-1.5">
                 Recommended Defense Action (Kya Karein):
               </div>
@@ -262,7 +262,7 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
       </div>
 
       {/* 3. Interactive Copilot Console */}
-      <div className="bg-white border border-border rounded-2xl p-6 shadow-card hover:shadow-lifted hover:-translate-y-0.5 hover:border-slate-300 transition-all duration-200 ease-out space-y-5">
+      <div className="bg-white border border-slate-200/90 hover:border-blue-400 hover:shadow-xl hover:-translate-y-1 rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out space-y-5">
         <div className="flex items-center justify-between pb-4 border-b border-border">
           <div className="flex items-center gap-2.5">
             <MessageSquare className="w-5 h-5 text-blue" />

@@ -39,7 +39,7 @@ export default function ModelComparisonTable({
   });
 
   return (
-    <div className="bg-white border border-border rounded-2xl p-6 shadow-card hover:shadow-lifted hover:-translate-y-0.5 hover:border-slate-300 transition-all duration-200 ease-out overflow-hidden">
+    <div className="bg-white border border-slate-200/90 hover:border-blue-400 hover:shadow-xl hover:-translate-y-1 rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out overflow-hidden">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border gap-2">
         <div>
           <h3 className="text-base sm:text-lg font-bold text-ink">Model Architecture Scorecard</h3>

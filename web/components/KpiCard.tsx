@@ -67,7 +67,7 @@ export default function KpiRow({
         return (
           <div
             key={i}
-            className="bg-white border border-border rounded-2xl p-5 shadow-card hover:-translate-y-1 hover:shadow-lg hover:border-slate-300 transition-all duration-200 ease-out flex flex-col justify-between cursor-default"
+            className="bg-white border border-slate-200/90 hover:border-blue-400 hover:shadow-xl hover:-translate-y-1.5 rounded-2xl p-5.5 shadow-sm transition-all duration-300 ease-out flex flex-col justify-between cursor-default group"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
