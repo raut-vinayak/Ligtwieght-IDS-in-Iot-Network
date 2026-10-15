@@ -25,8 +25,8 @@ export default function KpiRow({
       subtext: `${modelName} (K=${k})`,
       icon: Target,
       tag: "Holdout",
-      tagColor: "bg-blue-50 text-blue-700 border-blue-200",
-      iconColor: "text-blue",
+      tagColor: "bg-blue-50 dark:bg-blue-950/60 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800",
+      iconColor: "text-blue dark:text-blue-400",
     },
     {
       label: "Balanced Accuracy",
@@ -34,8 +34,8 @@ export default function KpiRow({
       subtext: "Compensates class skew",
       icon: CheckCircle2,
       tag: "Verified",
-      tagColor: "bg-emerald-50 text-emerald-700 border-emerald-200",
-      iconColor: "text-emerald-500",
+      tagColor: "bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-300 border-emerald-200 dark:border-emerald-800",
+      iconColor: "text-emerald-500 dark:text-emerald-400",
     },
     {
       label: "Median Latency",
@@ -43,8 +43,8 @@ export default function KpiRow({
       subtext: "Single flow inference",
       icon: Zap,
       tag: "Edge Cap",
-      tagColor: "bg-amber-50 text-amber-700 border-amber-200",
-      iconColor: "text-amber-500",
+      tagColor: "bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800",
+      iconColor: "text-amber-500 dark:text-amber-400",
     },
     {
       label: "Memory Footprint",
@@ -55,8 +55,8 @@ export default function KpiRow({
       subtext: "Flash/RAM storage cost",
       icon: HardDrive,
       tag: "Embedded",
-      tagColor: "bg-slate-100 text-slate-700 border-slate-200",
-      iconColor: "text-slate-600",
+      tagColor: "bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700",
+      iconColor: "text-slate-600 dark:text-slate-400",
     },
   ];
 
@@ -67,20 +67,20 @@ export default function KpiRow({
         return (
           <div
             key={i}
-            className="bg-white border border-slate-200/90 hover:border-blue-400 hover:shadow-xl hover:-translate-y-1.5 rounded-2xl p-5.5 shadow-sm transition-all duration-300 ease-out flex flex-col justify-between cursor-default group"
+            className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-xl hover:-translate-y-1.5 rounded-2xl p-5.5 shadow-sm transition-all duration-300 ease-out flex flex-col justify-between cursor-default group"
           >
             <div>
               <div className="flex items-center justify-between mb-3">
-                <span className="text-xs font-mono font-medium text-slate-500 uppercase tracking-wider">
+                <span className="text-xs font-mono font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">
                   {c.label}
                 </span>
-                <div className="p-2 rounded-xl bg-slate-50 border border-slate-200/90 shadow-xs">
+                <div className="p-2 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-200/90 dark:border-slate-700 shadow-xs">
                   <Icon className={`w-4 h-4 ${c.iconColor}`} />
                 </div>
               </div>
 
               <div className="flex items-baseline gap-2.5">
-                <span className="text-3xl font-mono font-bold text-slate-900 tracking-tight">
+                <span className="text-3xl font-mono font-bold text-slate-900 dark:text-white tracking-tight">
                   {c.value}
                 </span>
                 <span
@@ -91,7 +91,7 @@ export default function KpiRow({
               </div>
             </div>
 
-            <p className="text-xs text-slate-500 font-mono mt-3 pt-3 border-t border-slate-100">
+            <p className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-3 pt-3 border-t border-slate-100 dark:border-slate-800">
               {c.subtext}
             </p>
           </div>

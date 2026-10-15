@@ -206,54 +206,54 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
       </div>
 
       {/* 2. Active Flow Telemetry Breakdown */}
-      <div className="bg-white border border-slate-200/90 hover:border-blue-400 hover:shadow-xl hover:-translate-y-1 rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out space-y-5">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border gap-2">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-xl hover:-translate-y-1 rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out space-y-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-border dark:border-slate-800 gap-2">
           <div className="flex items-center gap-2.5">
-            <Activity className="w-5 h-5 text-blue" />
-            <h4 className="text-base font-bold text-ink">Active Telemetry Diagnostic</h4>
+            <Activity className="w-5 h-5 text-blue dark:text-blue-400" />
+            <h4 className="text-base font-bold text-ink dark:text-white">Active Telemetry Diagnostic</h4>
           </div>
           <div className="flex items-center gap-2">
             <span
               className={`text-xs font-mono font-semibold px-2.5 py-1 rounded-md border shadow-xs ${
                 isAttack
-                  ? "bg-rose-100 text-rose-800 border-rose-200"
-                  : "bg-emerald-100 text-emerald-800 border-emerald-200"
+                  ? "bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-200 border-rose-200 dark:border-rose-800"
+                  : "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800"
               }`}
             >
               {isAttack ? `THREAT: ${activePred.toUpperCase()}` : "CLEAN: BENIGN TELEMETRY"}
             </span>
-            <span className="text-xs sm:text-sm text-slate-500 font-mono">K=10 Features</span>
+            <span className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-mono">K=10 Features</span>
           </div>
         </div>
 
         {/* Structured 3-Part Assessment Box */}
         <div className="space-y-3.5">
           {/* Section 1: Observation */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-300 hover:shadow-xs transition-all duration-200">
-            <div className="text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+          <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-xs transition-all duration-200">
+            <div className="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-1.5">
               Observation (Kya Hua):
             </div>
-            <p className="text-xs sm:text-sm text-slate-800 leading-relaxed font-medium">
+            <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed font-medium">
               {humanBreakdown.summary}
             </p>
           </div>
 
           {/* Section 2: Two-column grid (Impact + Defensive Action) */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-300 hover:shadow-xs transition-all duration-200">
-              <div className="text-xs font-mono font-semibold text-rose-700 uppercase tracking-wider mb-1.5">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-xs transition-all duration-200">
+              <div className="text-xs font-mono font-semibold text-rose-700 dark:text-rose-400 uppercase tracking-wider mb-1.5">
                 Hardware & Network Impact (Khatra):
               </div>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                 {humanBreakdown.impact}
               </p>
             </div>
 
-            <div className="p-4 rounded-xl bg-slate-50 border border-slate-200 hover:border-blue-300 hover:shadow-xs transition-all duration-200">
-              <div className="text-xs font-mono font-semibold text-emerald-700 uppercase tracking-wider mb-1.5">
+            <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-500 hover:shadow-xs transition-all duration-200">
+              <div className="text-xs font-mono font-semibold text-emerald-700 dark:text-emerald-400 uppercase tracking-wider mb-1.5">
                 Recommended Defense Action (Kya Karein):
               </div>
-              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              <p className="text-xs sm:text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
                 {humanBreakdown.action}
               </p>
             </div>
@@ -262,18 +262,18 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
       </div>
 
       {/* 3. Interactive Copilot Console */}
-      <div className="bg-white border border-slate-200/90 hover:border-blue-400 hover:shadow-xl hover:-translate-y-1 rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out space-y-5">
-        <div className="flex items-center justify-between pb-4 border-b border-border">
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-xl hover:-translate-y-1 rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out space-y-5">
+        <div className="flex items-center justify-between pb-4 border-b border-border dark:border-slate-800">
           <div className="flex items-center gap-2.5">
-            <MessageSquare className="w-5 h-5 text-blue" />
-            <h4 className="text-base font-bold text-ink">Interactive Security Copilot</h4>
+            <MessageSquare className="w-5 h-5 text-blue dark:text-blue-400" />
+            <h4 className="text-base font-bold text-ink dark:text-white">Interactive Security Copilot</h4>
           </div>
-          <span className="text-xs font-mono text-slate-500">Client-Side Diagnostic Engine</span>
+          <span className="text-xs font-mono text-slate-500 dark:text-slate-400">Client-Side Diagnostic Engine</span>
         </div>
 
         {/* Prompt Chips */}
         <div>
-          <div className="text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider mb-2.5">
+          <div className="text-xs font-mono font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider mb-2.5">
             Suggested Queries (Click to Ask):
           </div>
           <div className="flex flex-wrap gap-2">
@@ -287,7 +287,7 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
               <button
                 key={q}
                 onClick={() => handleAskQuestion(q)}
-                className="px-3 py-1.5 rounded-lg bg-slate-50 hover:bg-slate-100 border border-slate-200 text-slate-700 text-xs sm:text-sm font-mono transition-colors text-left cursor-pointer shadow-xs"
+                className="px-3 py-1.5 rounded-lg bg-slate-50 dark:bg-slate-800/60 hover:bg-slate-100 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-xs sm:text-sm font-mono transition-colors text-left cursor-pointer shadow-xs"
               >
                 {q}
               </button>
@@ -296,7 +296,7 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
         </div>
 
         {/* Message History */}
-        <div className="p-4 sm:p-5 rounded-xl bg-slate-50/70 border border-slate-200 max-h-80 overflow-y-auto space-y-3.5">
+        <div className="p-4 sm:p-5 rounded-xl bg-slate-50/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 max-h-80 overflow-y-auto space-y-3.5">
           {messages.map((m, idx) => (
             <div
               key={idx}
@@ -304,14 +304,14 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
                 m.sender === "user" ? "items-end" : "items-start"
               }`}
             >
-              <div className="text-xs font-mono text-slate-400 mb-1 px-1">
+              <div className="text-xs font-mono text-slate-400 dark:text-slate-500 mb-1 px-1">
                 {m.sender === "user" ? "Security Admin" : "Sentinel AI"} • {m.time}
               </div>
               <div
                 className={`max-w-[85%] p-3.5 sm:p-4 rounded-xl text-xs sm:text-sm leading-relaxed ${
                   m.sender === "user"
-                    ? "bg-slate-900 text-white font-medium"
-                    : "bg-white text-slate-800 border border-slate-200 shadow-xs"
+                    ? "bg-slate-900 dark:bg-blue-600 text-white font-medium"
+                    : "bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 shadow-xs"
                 }`}
               >
                 {m.text}
@@ -334,11 +334,11 @@ export default function AiAssistant({ currentFlow }: AiAssistantProps) {
                 ? "Kuch bhi poochiye (e.g. 'is attack ko kaise prevent karein?')..."
                 : "Ask Sentinel AI about this flow, features, or firewall rules..."
             }
-            className="flex-1 text-xs sm:text-sm font-mono px-4 py-3 rounded-xl border border-slate-200 bg-white text-ink focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20 transition-all shadow-xs"
+            className="flex-1 text-xs sm:text-sm font-mono px-4 py-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800/90 text-ink dark:text-white focus:outline-none focus:border-blue dark:focus:border-blue-400 focus:ring-2 focus:ring-blue/20 transition-all shadow-xs"
           />
           <button
             onClick={() => handleAskQuestion(inputQuestion)}
-            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs sm:text-sm font-semibold transition-colors shadow-sm border border-slate-900 cursor-pointer"
+            className="inline-flex items-center gap-2 px-5 py-3 rounded-xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-800 dark:hover:bg-blue-500 text-white text-xs sm:text-sm font-semibold transition-colors shadow-sm border border-slate-900 dark:border-blue-600 cursor-pointer"
           >
             <span>Ask</span>
             <Send className="w-4 h-4" />

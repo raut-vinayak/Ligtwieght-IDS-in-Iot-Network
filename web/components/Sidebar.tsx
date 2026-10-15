@@ -11,6 +11,8 @@ import {
   Sliders,
   CheckCircle,
   Layers,
+  Sun,
+  Moon,
 } from "lucide-react";
 
 export type TabId = "predict" | "scores" | "assistant";
@@ -20,6 +22,8 @@ interface SidebarProps {
   onSelectTab: (tab: TabId) => void;
   mobileOpen?: boolean;
   onCloseMobile?: () => void;
+  theme?: "light" | "dark";
+  onToggleTheme?: () => void;
 }
 
 export default function Sidebar({
@@ -27,6 +31,8 @@ export default function Sidebar({
   onSelectTab,
   mobileOpen = false,
   onCloseMobile,
+  theme = "light",
+  onToggleTheme,
 }: SidebarProps) {
   const navItems: {
     id: TabId;
@@ -172,8 +178,8 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Edge Status Footer */}
-      <div className="p-3.5 border-t border-slate-800/90 bg-slate-900/70">
+      {/* Edge Status & Theme Footer */}
+      <div className="p-3.5 border-t border-slate-800/90 bg-slate-900/70 space-y-2">
         <div className="flex items-center gap-3 px-2.5 py-2 rounded-lg bg-slate-800/50 border border-slate-800">
           <div className="w-2.5 h-2.5 rounded-full bg-emerald-500 shrink-0"></div>
           <div className="min-w-0">
@@ -185,6 +191,26 @@ export default function Sidebar({
             </div>
           </div>
         </div>
+
+        {onToggleTheme && (
+          <button
+            onClick={onToggleTheme}
+            className="w-full flex items-center justify-between px-2.5 py-2 rounded-lg bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 text-xs font-mono text-slate-300 transition-colors cursor-pointer"
+            title="Toggle Dashboard Theme"
+          >
+            <div className="flex items-center gap-2">
+              {theme === "dark" ? (
+                <Sun className="w-3.5 h-3.5 text-amber-400" />
+              ) : (
+                <Moon className="w-3.5 h-3.5 text-indigo-400" />
+              )}
+              <span className="text-[11px]">Theme: {theme === "dark" ? "Night / Dark" : "Light Mode"}</span>
+            </div>
+            <span className="text-[10px] text-slate-400 font-semibold px-1.5 py-0.5 bg-slate-700/50 rounded">
+              Switch
+            </span>
+          </button>
+        )}
       </div>
     </div>
   );

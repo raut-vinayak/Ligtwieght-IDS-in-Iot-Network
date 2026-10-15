@@ -592,8 +592,8 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
       <div
         className={`p-5 sm:p-6 rounded-2xl border-2 transition-all duration-300 ease-out shadow-sm hover:-translate-y-1 hover:shadow-xl ${
           liveVerdict.isAttack
-            ? "border-rose-300 bg-rose-50/70 hover:border-rose-400"
-            : "border-emerald-300 bg-emerald-50/70 hover:border-emerald-400"
+            ? "border-rose-300 dark:border-rose-900/60 bg-rose-50/70 dark:bg-rose-950/25 hover:border-rose-400 dark:hover:border-rose-700"
+            : "border-emerald-300 dark:border-emerald-900/60 bg-emerald-50/70 dark:bg-emerald-950/25 hover:border-emerald-400 dark:hover:border-emerald-700"
         }`}
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -618,35 +618,35 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                 <span
                   className={`text-xs font-mono font-semibold px-2.5 py-0.5 rounded-md border shadow-xs ${
                     liveVerdict.riskLevel === "CRITICAL"
-                      ? "bg-rose-100 text-rose-800 border-rose-200"
+                      ? "bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-200 border-rose-200 dark:border-rose-800"
                       : liveVerdict.riskLevel === "HIGH"
-                      ? "bg-rose-100/80 text-rose-800 border-rose-200"
+                      ? "bg-rose-100/80 dark:bg-rose-950/80 text-rose-800 dark:text-rose-200 border-rose-200 dark:border-rose-800"
                       : liveVerdict.riskLevel === "ELEVATED"
-                      ? "bg-amber-100 text-amber-800 border-amber-200"
-                      : "bg-emerald-100 text-emerald-800 border-emerald-200"
+                      ? "bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-800"
+                      : "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800"
                   }`}
                 >
                   STATUS: {liveVerdict.riskLevel}
                 </span>
 
-                <span className="text-slate-300">•</span>
+                <span className="text-slate-300 dark:text-slate-600">•</span>
 
-                <span className="text-xs sm:text-sm font-mono text-slate-600">
-                  Latency: <strong className="text-slate-900 font-semibold">{liveVerdict.latencyMs} ms</strong>
+                <span className="text-xs sm:text-sm font-mono text-slate-600 dark:text-slate-400">
+                  Latency: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{liveVerdict.latencyMs} ms</strong>
                 </span>
 
-                <span className="text-slate-300">•</span>
+                <span className="text-slate-300 dark:text-slate-600">•</span>
 
-                <span className="text-xs sm:text-sm font-mono text-slate-600">
-                  Confidence: <strong className="text-slate-900 font-semibold">{liveVerdict.confidence}%</strong>
+                <span className="text-xs sm:text-sm font-mono text-slate-600 dark:text-slate-400">
+                  Confidence: <strong className="text-slate-900 dark:text-slate-100 font-semibold">{liveVerdict.confidence}%</strong>
                 </span>
               </div>
 
-              <h3 className="text-base sm:text-lg font-bold text-ink mt-1">
+              <h3 className="text-base sm:text-lg font-bold text-ink dark:text-white mt-1">
                 {liveVerdict.isAttack ? (
-                  <span className="text-rose-800">Threat Detected: {liveVerdict.prediction}</span>
+                  <span className="text-rose-800 dark:text-rose-300">Threat Detected: {liveVerdict.prediction}</span>
                 ) : (
-                  <span className="text-emerald-800">Clean Flow: {liveVerdict.prediction}</span>
+                  <span className="text-emerald-800 dark:text-emerald-300">Clean Flow: {liveVerdict.prediction}</span>
                 )}
               </h3>
             </div>
@@ -659,9 +659,9 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                 onClick={() =>
                   onOpenAiAssistant({ ...liveVerdict, inputs: manualInputs })
                 }
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 bg-white text-slate-800 hover:bg-slate-50 text-xs sm:text-sm font-medium transition-colors shadow-xs cursor-pointer"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-800 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-700 text-xs sm:text-sm font-medium transition-colors shadow-xs cursor-pointer"
               >
-                <Bot className="w-4 h-4 text-blue" />
+                <Bot className="w-4 h-4 text-blue dark:text-blue-400" />
                 <span>Explain in Sentinel AI</span>
               </button>
             )}
@@ -671,7 +671,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                 setModalResult(liveVerdict);
                 setShowModal(true);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-xs sm:text-sm font-medium transition-colors shadow-sm cursor-pointer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 dark:bg-blue-600 text-white hover:bg-slate-800 dark:hover:bg-blue-500 text-xs sm:text-sm font-medium transition-colors shadow-sm cursor-pointer"
             >
               <Info className="w-4 h-4" />
               <span>View Incident Details</span>
@@ -680,29 +680,29 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
         </div>
 
         {/* Human Language Summary Bar */}
-        <div className="mt-4 pt-3.5 border-t border-slate-200/90 text-xs sm:text-sm text-slate-700 flex items-start gap-2.5">
-          <Bot className="w-4 h-4 text-blue shrink-0 mt-0.5" />
+        <div className="mt-4 pt-3.5 border-t border-slate-200/90 dark:border-slate-800 text-xs sm:text-sm text-slate-700 dark:text-slate-300 flex items-start gap-2.5">
+          <Bot className="w-4 h-4 text-blue dark:text-blue-400 shrink-0 mt-0.5" />
           <p className="leading-relaxed">
-            <strong className="text-slate-900 font-semibold">Sentinel AI Analysis: </strong>
+            <strong className="text-slate-900 dark:text-white font-semibold">Sentinel AI Analysis: </strong>
             {liveVerdict.humanExplanationHinglish}
           </p>
         </div>
       </div>
 
-      {/* 2. Main Edge Telemetry Matrix Card (Pure White with Crisp Shadow) */}
-      <div className="bg-white border border-slate-200/90 hover:border-blue-400/80 hover:shadow-xl rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out space-y-6">
+      {/* 2. Main Edge Telemetry Matrix Card (With Crisp Dark Mode) */}
+      <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-400/80 dark:hover:border-blue-500/80 hover:shadow-xl rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out space-y-6">
         {/* Top Controls: Preset selector + Mode tabs + Audio toggle */}
-        <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-border gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between pb-4 border-b border-border dark:border-slate-800 gap-4">
           <div>
             <div className="flex items-center gap-2.5">
-              <span className="text-sm sm:text-base font-bold text-ink tracking-tight">
+              <span className="text-sm sm:text-base font-bold text-ink dark:text-white tracking-tight">
                 Edge Flow Telemetry Matrix
               </span>
-              <span className="px-2.5 py-0.5 rounded-md text-xs font-mono bg-slate-100 text-slate-700 border border-slate-200 font-semibold">
+              <span className="px-2.5 py-0.5 rounded-md text-xs font-mono bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 font-semibold">
                 K = 10 Features
               </span>
             </div>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-1">
               Deterministic inference evaluated directly against unscaled Decision Tree rules.
             </p>
           </div>
@@ -713,33 +713,33 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
               onClick={() => setSoundEnabled(!soundEnabled)}
               className={`p-2 rounded-xl border text-xs sm:text-sm font-medium flex items-center gap-2 transition-colors cursor-pointer ${
                 soundEnabled
-                  ? "bg-slate-100 border-slate-300 text-slate-800 shadow-xs"
-                  : "bg-white border-slate-200 text-slate-400"
+                  ? "bg-slate-100 dark:bg-slate-800 border-slate-300 dark:border-slate-700 text-slate-800 dark:text-slate-200 shadow-xs"
+                  : "bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-500"
               }`}
               title={soundEnabled ? "Audio chime enabled" : "Audio muted"}
               aria-label="Toggle audio alarms"
             >
               {soundEnabled ? (
                 <>
-                  <Volume2 className="w-4 h-4 text-blue" />
+                  <Volume2 className="w-4 h-4 text-blue dark:text-blue-400" />
                   <span className="hidden sm:inline text-xs font-mono">Sound ON</span>
                 </>
               ) : (
                 <>
-                  <VolumeX className="w-4 h-4 text-slate-400" />
+                  <VolumeX className="w-4 h-4 text-slate-400 dark:text-slate-500" />
                   <span className="hidden sm:inline text-xs font-mono">Muted</span>
                 </>
               )}
             </button>
 
             {/* Manual vs CSV Tab */}
-            <div className="inline-flex bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs sm:text-sm shadow-inner">
+            <div className="inline-flex bg-slate-100 dark:bg-slate-800/90 p-1 rounded-xl border border-slate-200 dark:border-slate-700 text-xs sm:text-sm shadow-inner">
               <button
                 onClick={() => setActiveTab("manual")}
                 className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                   activeTab === "manual"
-                    ? "bg-white text-ink shadow-sm font-semibold"
-                    : "text-slate-600 hover:text-ink"
+                    ? "bg-white dark:bg-slate-700 text-ink dark:text-white shadow-sm font-semibold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-ink dark:hover:text-white"
                 }`}
               >
                 Manual Flow
@@ -748,8 +748,8 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                 onClick={() => setActiveTab("csv")}
                 className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all cursor-pointer ${
                   activeTab === "csv"
-                    ? "bg-white text-ink shadow-sm font-semibold"
-                    : "text-slate-600 hover:text-ink"
+                    ? "bg-white dark:bg-slate-700 text-ink dark:text-white shadow-sm font-semibold"
+                    : "text-slate-600 dark:text-slate-400 hover:text-ink dark:hover:text-white"
                 }`}
               >
                 CSV Batch
@@ -769,7 +769,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
         {/* Scenario Presets Bar */}
         {activeTab === "manual" && (
           <div>
-            <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono mb-2.5">
+            <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono mb-2.5">
               Test Presets (Click to Load):
             </div>
             <div className="flex items-center gap-2 flex-wrap">
@@ -788,8 +788,8 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                     onClick={() => applyPreset(p.key as any)}
                     className={`px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition-all border shadow-xs cursor-pointer ${
                       isSelected
-                        ? "bg-slate-900 text-white border-slate-900 font-semibold"
-                        : "bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:text-slate-900"
+                        ? "bg-slate-900 dark:bg-blue-600 text-white border-slate-900 dark:border-blue-600 font-semibold"
+                        : "bg-slate-50 dark:bg-slate-800/60 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white"
                     }`}
                   >
                     {p.label}
@@ -817,17 +817,17 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                 return (
                   <div
                     key={feat}
-                    className="p-3.5 rounded-xl border border-slate-200/90 bg-white hover:border-blue-500 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col justify-between group"
+                    className="p-3.5 rounded-xl border border-slate-200/90 dark:border-slate-800 bg-white dark:bg-slate-900 hover:border-blue-500 dark:hover:border-blue-500 hover:shadow-lg hover:-translate-y-1 transition-all duration-300 ease-out flex flex-col justify-between group"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <label
                         htmlFor={`input-${feat}`}
-                        className="text-xs sm:text-sm font-medium text-slate-800 truncate"
+                        className="text-xs sm:text-sm font-medium text-slate-800 dark:text-slate-200 truncate"
                         title={meta.desc}
                       >
                         {meta.label}
                       </label>
-                      <span className="text-[11px] font-mono text-slate-500 bg-slate-100 px-1.5 py-0.5 rounded border border-slate-200">
+                      <span className="text-[11px] font-mono text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700">
                         {meta.unit}
                       </span>
                     </div>
@@ -840,11 +840,11 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                         min={meta.min}
                         value={val}
                         onChange={(e) => handleInputChange(feat, e.target.value)}
-                        className="w-full px-3 py-2 text-sm font-mono font-bold bg-slate-50/70 border border-slate-200 rounded-lg text-slate-900 focus:bg-white focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20 transition-all"
+                        className="w-full px-3 py-2 text-sm font-mono font-bold bg-slate-50/70 dark:bg-slate-800/80 border border-slate-200 dark:border-slate-700 rounded-lg text-slate-900 dark:text-white focus:bg-white dark:focus:bg-slate-800 focus:outline-none focus:border-blue focus:ring-2 focus:ring-blue/20 transition-all"
                       />
                     </div>
 
-                    <div className="mt-2 flex items-center justify-between text-xs text-slate-400 font-mono">
+                    <div className="mt-2 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 font-mono">
                       <span>{feat}</span>
                       <span>±{meta.step}</span>
                     </div>
@@ -854,13 +854,13 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
             </div>
 
             {/* Action Bar */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-200 flex-wrap gap-3">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800 flex-wrap gap-3">
               <button
                 onClick={() => {
                   setManualInputs(defaultBenignValues);
                   setActivePresetName("Normal Telemetry");
                 }}
-                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 bg-white text-slate-600 hover:text-slate-900 text-xs sm:text-sm font-medium transition-colors shadow-xs cursor-pointer"
+                className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs sm:text-sm font-medium transition-colors shadow-xs cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" />
                 <span>Reset Defaults</span>
@@ -869,7 +869,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
               <button
                 onClick={handleClassify}
                 disabled={loading}
-                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue text-white hover:bg-blue/90 text-sm font-semibold transition-all shadow-sm border border-blue cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-xl bg-blue dark:bg-blue-600 text-white hover:bg-blue/90 dark:hover:bg-blue-500 text-sm font-semibold transition-all shadow-sm border border-blue dark:border-blue-600 cursor-pointer disabled:opacity-50"
               >
                 <Play className="w-4 h-4 fill-current" />
                 <span>{loading ? "Evaluating Flow..." : "Classify Flow Sample"}</span>
@@ -881,26 +881,26 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
         {/* Tab 2: Batch CSV Upload */}
         {activeTab === "csv" && (
           <div className="space-y-4">
-            <div className="p-8 border-2 border-dashed border-slate-200 rounded-2xl text-center bg-slate-50/60 hover:bg-slate-50 transition-colors">
-              <Upload className="w-10 h-10 text-slate-400 mx-auto mb-3" />
-              <div className="text-sm font-semibold text-slate-800">
+            <div className="p-8 border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-2xl text-center bg-slate-50/60 dark:bg-slate-800/40 hover:bg-slate-50 dark:hover:bg-slate-800/60 transition-colors">
+              <Upload className="w-10 h-10 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
+              <div className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                 Upload CSV File with 10 Monitored Features
               </div>
-              <p className="text-xs text-slate-500 mt-1 max-w-md mx-auto">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 max-w-md mx-auto">
                 Evaluates first 25 network flows through the lightweight decision tree engine in client-side memory.
               </p>
               <input
                 type="file"
                 accept=".csv"
                 onChange={handleCsvUpload}
-                className="mt-4 text-xs sm:text-sm text-slate-500 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-900 file:text-white hover:file:bg-slate-800 cursor-pointer"
+                className="mt-4 text-xs sm:text-sm text-slate-500 dark:text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-900 dark:file:bg-blue-600 file:text-white hover:file:bg-slate-800 dark:hover:file:bg-blue-500 cursor-pointer"
               />
             </div>
 
             {csvResults.length > 0 && (
-              <div className="border border-slate-200 rounded-xl overflow-x-auto shadow-xs">
+              <div className="border border-slate-200 dark:border-slate-800 rounded-xl overflow-x-auto shadow-xs">
                 <table className="w-full text-xs sm:text-sm text-left">
-                  <thead className="bg-slate-50 border-b border-slate-200 font-mono text-xs text-slate-600">
+                  <thead className="bg-slate-50 dark:bg-slate-800/80 border-b border-slate-200 dark:border-slate-800 font-mono text-xs text-slate-600 dark:text-slate-300">
                     <tr>
                       <th className="px-4 py-3">Row #</th>
                       <th className="px-4 py-3">Feature Snapshot</th>
@@ -909,24 +909,24 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                       <th className="px-4 py-3">Latency</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 font-mono">
+                  <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-mono">
                     {csvResults.map((r) => (
-                      <tr key={r.rowIdx} className="hover:bg-slate-50/70">
-                        <td className="px-4 py-3 text-slate-500">{r.rowIdx}</td>
-                        <td className="px-4 py-3 text-slate-800">{r.featuresSample}</td>
+                      <tr key={r.rowIdx} className="hover:bg-slate-50/70 dark:hover:bg-slate-800/50">
+                        <td className="px-4 py-3 text-slate-500 dark:text-slate-400">{r.rowIdx}</td>
+                        <td className="px-4 py-3 text-slate-800 dark:text-slate-200">{r.featuresSample}</td>
                         <td className="px-4 py-3">
                           <span
                             className={`px-2 py-0.5 rounded text-xs font-semibold ${
                               r.isAttack
-                                ? "bg-rose-100 text-rose-800 border border-rose-200"
-                                : "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                                ? "bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800"
+                                : "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
                             }`}
                           >
                             {r.predicted}
                           </span>
                         </td>
-                        <td className="px-4 py-3 text-slate-700">{r.confidence}%</td>
-                        <td className="px-4 py-3 text-slate-700">{r.latencyMs} ms</td>
+                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{r.confidence}%</td>
+                        <td className="px-4 py-3 text-slate-700 dark:text-slate-300">{r.latencyMs} ms</td>
                       </tr>
                     ))}
                   </tbody>
@@ -942,14 +942,14 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           {/* Backdrop */}
           <div
-            className="fixed inset-0 bg-slate-950/65 backdrop-blur-xs transition-opacity"
+            className="fixed inset-0 bg-slate-950/70 backdrop-blur-xs transition-opacity"
             onClick={() => setShowModal(false)}
           />
 
           {/* Modal Container */}
-          <div className="relative bg-white rounded-2xl shadow-float border border-slate-200 max-w-lg w-full p-6 z-10 space-y-4">
+          <div className="relative bg-white dark:bg-slate-900 rounded-2xl shadow-float border border-slate-200 dark:border-slate-800 max-w-lg w-full p-6 z-10 space-y-4">
             {/* Header with Close */}
-            <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-100">
+            <div className="flex items-start justify-between gap-3 pb-4 border-b border-slate-100 dark:border-slate-800">
               <div className="flex items-center gap-3.5">
                 <div
                   className={`w-11 h-11 rounded-xl flex items-center justify-center shrink-0 border shadow-xs ${
@@ -970,22 +970,22 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
                     <span
                       className={`text-xs font-mono font-semibold px-2 py-0.5 rounded border shadow-xs ${
                         modalResult.riskLevel === "CRITICAL"
-                          ? "bg-rose-100 text-rose-800 border-rose-200"
+                          ? "bg-rose-100 dark:bg-rose-950/80 text-rose-800 dark:text-rose-200 border-rose-200 dark:border-rose-800"
                           : modalResult.riskLevel === "HIGH"
-                          ? "bg-rose-100/80 text-rose-800 border-rose-200"
+                          ? "bg-rose-100/80 dark:bg-rose-950/80 text-rose-800 dark:text-rose-200 border-rose-200 dark:border-rose-800"
                           : modalResult.riskLevel === "ELEVATED"
-                          ? "bg-amber-100 text-amber-800 border-amber-200"
-                          : "bg-emerald-100 text-emerald-800 border-emerald-200"
+                          ? "bg-amber-100 dark:bg-amber-950/80 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-800"
+                          : "bg-emerald-100 dark:bg-emerald-950/80 text-emerald-800 dark:text-emerald-200 border-emerald-200 dark:border-emerald-800"
                       }`}
                     >
                       {modalResult.riskLevel}
                     </span>
-                    <span className="text-xs font-mono text-slate-500">
+                    <span className="text-xs font-mono text-slate-500 dark:text-slate-400">
                       {modalResult.latencyMs} ms • {modalResult.confidence}% confidence
                     </span>
                   </div>
 
-                  <h3 className="text-base sm:text-lg font-bold text-ink mt-1">
+                  <h3 className="text-base sm:text-lg font-bold text-ink dark:text-white mt-1">
                     {modalResult.isAttack
                       ? `Incident Alert: ${modalResult.prediction}`
                       : "Verified Clean Telemetry"}
@@ -995,7 +995,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
 
               <button
                 onClick={() => setShowModal(false)}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
                 aria-label="Close dialog"
               >
                 <X className="w-5 h-5" />
@@ -1004,10 +1004,10 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
 
             {/* Technical Behavior Assessment */}
             <div className="space-y-1.5">
-              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono">
+              <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono">
                 Technical Behavior Assessment
               </div>
-              <p className="text-xs sm:text-sm text-slate-800 leading-relaxed bg-slate-50 p-3.5 rounded-xl border border-slate-200 font-medium">
+              <p className="text-xs sm:text-sm text-slate-800 dark:text-slate-200 leading-relaxed bg-slate-50 dark:bg-slate-800/60 p-3.5 rounded-xl border border-slate-200 dark:border-slate-700 font-medium">
                 {modalResult.description}
               </p>
             </div>
@@ -1015,38 +1015,38 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
             {/* Sentinel AI Plain Language Diagnosis */}
             <div className="space-y-1.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono flex items-center gap-2">
-                  <Bot className="w-4 h-4 text-blue" />
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono flex items-center gap-2">
+                  <Bot className="w-4 h-4 text-blue dark:text-blue-400" />
                   <span>Sentinel AI Diagnosis (Aasan Bhasha)</span>
                 </span>
-                <span className="text-xs font-mono text-blue font-semibold">
+                <span className="text-xs font-mono text-blue dark:text-blue-400 font-semibold">
                   Plain Language
                 </span>
               </div>
-              <div className="p-3.5 rounded-xl bg-blue-50/80 border border-blue-200 text-slate-800 text-xs sm:text-sm leading-relaxed font-medium">
+              <div className="p-3.5 rounded-xl bg-blue-50/80 dark:bg-blue-950/30 border border-blue-200 dark:border-blue-900/60 text-slate-800 dark:text-slate-200 text-xs sm:text-sm leading-relaxed font-medium">
                 {modalResult.humanExplanationHinglish}
               </div>
             </div>
 
             {/* Recommended Defensive Protocol */}
             <div className="space-y-1.5">
-              <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider font-mono">
+              <div className="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider font-mono">
                 Recommended Defense Action
               </div>
-              <p className="text-slate-700 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-200 font-mono text-xs">
+              <p className="text-slate-700 dark:text-slate-300 leading-relaxed bg-slate-50 dark:bg-slate-800/60 p-3 rounded-xl border border-slate-200 dark:border-slate-700 font-mono text-xs">
                 {modalResult.actionAdvice}
               </p>
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-end gap-2.5 pt-4 border-t border-slate-100 dark:border-slate-800">
               {onOpenAiAssistant && (
                 <button
                   onClick={() => {
                     setShowModal(false);
                     onOpenAiAssistant({ ...modalResult, inputs: manualInputs });
                   }}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-blue text-blue hover:bg-blue-50 text-xs sm:text-sm font-medium transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-xl border border-blue dark:border-blue-500 text-blue dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-950/40 text-xs sm:text-sm font-medium transition-colors cursor-pointer"
                 >
                   <Bot className="w-4 h-4" />
                   <span>Open in AI Assistant</span>
@@ -1055,7 +1055,7 @@ export default function PredictionDemo({ task, onOpenAiAssistant }: PredictionDe
 
               <button
                 onClick={() => setShowModal(false)}
-                className="px-5 py-2 rounded-xl bg-slate-900 text-white hover:bg-slate-800 text-xs sm:text-sm font-medium transition-colors shadow-sm cursor-pointer"
+                className="px-5 py-2 rounded-xl bg-slate-900 dark:bg-blue-600 text-white hover:bg-slate-800 dark:hover:bg-blue-500 text-xs sm:text-sm font-medium transition-colors shadow-sm cursor-pointer"
               >
                 Acknowledge & Close
               </button>

@@ -27,16 +27,16 @@ export default function ClassDistributionCard({ task }: ClassDistributionProps) 
   const items = task === "binary" ? binaryDistribution : multiclassDistribution;
 
   return (
-    <div className="bg-white border border-slate-200/90 hover:border-blue-400 hover:shadow-xl hover:-translate-y-1 rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out h-full flex flex-col justify-between">
-      <div className="flex items-center justify-between pb-4 border-b border-border shrink-0">
+    <div className="bg-white dark:bg-slate-900 border border-slate-200/90 dark:border-slate-800 hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-xl hover:-translate-y-1 rounded-2xl p-6 shadow-sm transition-all duration-300 ease-out h-full flex flex-col justify-between">
+      <div className="flex items-center justify-between pb-4 border-b border-border dark:border-slate-800 shrink-0">
         <div>
           <div className="flex items-center gap-2">
-            <PieChart className="w-4 h-4 text-blue" />
-            <h3 className="text-base font-bold text-ink">Class Distribution</h3>
+            <PieChart className="w-4 h-4 text-blue dark:text-blue-400" />
+            <h3 className="text-base font-bold text-ink dark:text-white">Class Distribution</h3>
           </div>
-          <p className="text-xs sm:text-sm text-slate-500 mt-0.5">Authoritative ground truth split balance</p>
+          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 mt-0.5">Authoritative ground truth split balance</p>
         </div>
-        <span className="text-xs font-mono font-medium px-2.5 py-1 rounded-md bg-slate-100 border border-slate-200 text-slate-600 shrink-0">
+        <span className="text-xs font-mono font-medium px-2.5 py-1 rounded-md bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-600 dark:text-slate-300 shrink-0">
           16,000 Samples
         </span>
       </div>
@@ -45,18 +45,18 @@ export default function ClassDistributionCard({ task }: ClassDistributionProps) 
         {items.map((item) => (
           <div key={item.name} className="space-y-1.5">
             <div className="flex items-center justify-between text-xs sm:text-sm">
-              <span className="font-medium text-slate-800 flex items-center gap-2">
+              <span className="font-medium text-slate-800 dark:text-slate-200 flex items-center gap-2">
                 <span
                   className="w-2.5 h-2.5 rounded-full inline-block"
                   style={{ backgroundColor: item.color }}
                 ></span>
                 {item.name}
               </span>
-              <span className="text-slate-500 font-mono text-xs">
+              <span className="text-slate-500 dark:text-slate-400 font-mono text-xs">
                 {item.count.toLocaleString()} ({item.pct}%)
               </span>
             </div>
-            <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
               <div
                 className="h-full rounded-full transition-all duration-300"
                 style={{ width: `${item.pct}%`, backgroundColor: item.color }}

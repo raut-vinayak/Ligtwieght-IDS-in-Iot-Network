@@ -21,12 +21,29 @@
   --warning: #f59e0b;
 }
 
+.dark {
+  --canvas: #070B14; /* Deep midnight obsidian */
+  --surface: #0E1526; /* Sleek dark SOC card surface */
+  --surface-subtle: #162036;
+  --border: #1E293B;
+  --border-strong: #334155;
+  --ink: #F8FAFC;
+  --muted: #94A3B8;
+  --faint: #64748B;
+  --navy: #070B14;
+  --navy-dark: #030712;
+  --navy-panel: #0E1526;
+  --blue: #3B82F6;
+  --indigo: #60A5FA;
+}
+
 body {
   background-color: var(--canvas);
   color: var(--ink);
   font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Polished Minimalist Scrollbars */
@@ -43,6 +60,13 @@ body {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
 
 /* Number input spinner cleanup */

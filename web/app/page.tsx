@@ -13,9 +13,41 @@ export default function DashboardPage() {
   const [selectedK, setSelectedK] = useState<number>(10);
   const [selectedModel, setSelectedModel] = useState<string>("DecisionTree");
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [theme, setTheme] = useState<"light" | "dark">("light");
 
   const [summaryData, setSummaryData] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+
+  // Sync theme with localStorage and documentElement class on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("ids_theme") as "light" | "dark" | null;
+      if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
+        setTheme("dark");
+        document.documentElement.classList.add("dark");
+      } else {
+        setTheme("light");
+        document.documentElement.classList.remove("dark");
+      }
+    } catch (e) {
+      console.debug("Could not read theme preference:", e);
+    }
+  }, []);
+
+  const handleToggleTheme = () => {
+    const nextTheme = theme === "light" ? "dark" : "light";
+    setTheme(nextTheme);
+    try {
+      localStorage.setItem("ids_theme", nextTheme);
+      if (nextTheme === "dark") {
+        document.documentElement.classList.add("dark");
+      } else {
+        document.documentElement.classList.remove("dark");
+      }
+    } catch (e) {
+      console.debug("Could not store theme preference:", e);
+    }
+  };
 
   // Active Flow diagnosed by AI Assistant
   const [recentFlow, setRecentFlow] = useState<{
@@ -98,13 +130,15 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-canvas">
+    <div className="flex h-screen w-full overflow-hidden bg-canvas dark:bg-[#070B14] text-ink dark:text-slate-100 transition-colors duration-200">
       {/* 1. Left Sidebar (Collapsible Mobile Drawer + Desktop Fixed) */}
       <Sidebar
         currentTab={currentTab}
         onSelectTab={setCurrentTab}
         mobileOpen={mobileNavOpen}
         onCloseMobile={() => setMobileNavOpen(false)}
+        theme={theme}
+        onToggleTheme={handleToggleTheme}
       />
 
       {/* 2. Main Content Canvas */}
@@ -118,6 +152,8 @@ export default function DashboardPage() {
           }}
           onExport={handleExport}
           onOpenMobileNav={() => setMobileNavOpen(true)}
+          theme={theme}
+          onToggleTheme={handleToggleTheme}
         />
 
         <main className="flex-1 p-4 sm:p-6 overflow-y-auto min-w-0 scroll-smooth">
